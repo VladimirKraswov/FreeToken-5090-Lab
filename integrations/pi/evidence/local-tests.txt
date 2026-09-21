@@ -1,0 +1,41 @@
+✔ recorded thinking-only length -> exactly one short continuation, without AUTONOMOUS marker (2.93925ms)
+✔ usage >= 60000 -> compact -> continue, never before compaction finishes (0.55525ms)
+✔ unknown context uses actual usage including cached input (0.420542ms)
+✔ already compacted by Pi -> no redundant compaction using stale usage (0.378291ms)
+✔ duplicate settled events and reloaded extension cannot requeue (0.466084ms)
+✔ recovery length -> stop; human input starts a new bounded budget (0.490042ms)
+✔ stop -> no continuation or compaction (0.381584ms)
+✔ toolUse -> no continuation or compaction (0.297792ms)
+✔ aborted -> no continuation or compaction (0.270292ms)
+✔ error -> no continuation or compaction (0.302333ms)
+✔ DONE file blocks recovery without changing the project (0.617875ms)
+✔ DONE standalone final text blocks recovery (0.294416ms)
+✔ NEEDS_INPUT file blocks recovery without changing the project (0.617916ms)
+✔ NEEDS_INPUT standalone final text blocks recovery (0.25275ms)
+✔ mentions of marker paths or markers in thinking are not terminal declarations (0.283167ms)
+✔ queued human follow-up prevents duplicate recovery (0.211667ms)
+✔ compaction then input -> no delayed continuation (0.286667ms)
+✔ compaction then aborted -> no delayed continuation (0.35725ms)
+✔ compaction then error -> no delayed continuation (0.293333ms)
+✔ compaction then shutdown -> no delayed continuation (0.260125ms)
+✔ compaction then marker -> no delayed continuation (0.834083ms)
+✔ compaction then pending -> no delayed continuation (0.285875ms)
+✔ compaction failure (callback) consumes budget, no retry loop (0.554708ms)
+✔ compaction failure (throw) consumes budget, no retry loop (0.352041ms)
+✔ unrelated model and later user message do not revive old length (0.28175ms)
+✔ Qwen resume resets old thinking once, unrelated models are untouched (0.218375ms)
+✔ switching to Qwen selects Low, without forcing it on each ordinary turn (0.234042ms)
+✔ Pi SDK integration: length-tools (231.182709ms)
+✔ Pi SDK integration: compact-tools (61.694125ms)
+✔ Pi SDK integration: length-again (35.584958ms)
+✔ wrapper starts one process, preserves exit status 0 (470.823583ms)
+✔ wrapper starts one process, preserves exit status 7 (213.452625ms)
+✔ wrapper starts one process, preserves exit status 130 (215.812917ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1184.511625

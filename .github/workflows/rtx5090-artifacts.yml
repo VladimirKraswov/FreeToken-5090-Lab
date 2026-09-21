@@ -22,3 +22,23 @@ jobs:
         run: python benchmarks/rtx5090/test_stream_bench.py
       - name: Check launcher syntax
         run: bash -n deploy/rtx5090/serve.sh
+
+  pi-autonomy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '26'
+          cache: npm
+          cache-dependency-path: integrations/pi/package-lock.json
+      - name: Install shell used by the optional Pi wrapper
+        run: sudo apt-get update -qq && sudo apt-get install -y zsh
+      - name: Install the pinned Pi SDK for CPU tests
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: integrations/pi
+      - name: Check published sources and examples
+        run: python3 integrations/pi/verify_publication.py
+      - name: Test bounded recovery through Pi SDK and wrapper
+        run: npm test
+        working-directory: integrations/pi

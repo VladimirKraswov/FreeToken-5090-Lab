@@ -177,3 +177,10 @@ client and launcher syntax on a hosted CPU runner. It does not claim to rerun
 the GPU model tests. Inherited upstream release/nightly/issue-label workflows
 are disabled in this fork; no automated wheel publishing is configured.
 The homelab is not attached as a GitHub Actions runner.
+
+## Pi and VS Code agent operation
+
+The later [Pi autonomy integration](../../integrations/pi/README.md) addresses
+per-response output exhaustion with Low/16384 and one bounded recovery turn.
+It includes configuration merge examples, deployment instructions and CPU-only
+SDK tests. It does not change the Medium benchmark protocol above.

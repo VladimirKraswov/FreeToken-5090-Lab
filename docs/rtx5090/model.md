@@ -16,8 +16,9 @@
   image at the 4096 image-token cap, consuming 4120 total prompt tokens; the
   earlier 1536x1536 check consumed 2328. Neither proves every possible image.
 - OpenAI chat, Responses and tool calling checked. API alias: `qwen38-flash-next`.
-- Clients explicitly request reasoning effort `medium`; the API's native
-  default for an omitted effort remains `xhigh`.
+- Benchmark clients explicitly requested reasoning effort `medium`. The later
+  [Pi autonomy profile](pi-autonomy.md) uses `low` and maxTokens16384. The API's
+  native default for an omitted effort remains `xhigh`.
 - Model sampling defaults: temperature 1.0, top-k 20, top-p 0.95. Benchmarks
   explicitly record temperature; most controlled comparisons use greedy 0.
 

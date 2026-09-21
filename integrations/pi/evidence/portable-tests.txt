@@ -1,0 +1,45 @@
+
+> freetoken-pi-autonomy-regressions@1.0.0 test
+> node --test tests/*.test.mjs
+
+✔ recorded thinking-only length -> exactly one short continuation, without AUTONOMOUS marker (3.3215ms)
+✔ usage >= 60000 -> compact -> continue, never before compaction finishes (0.716375ms)
+✔ unknown context uses actual usage including cached input (0.62025ms)
+✔ already compacted by Pi -> no redundant compaction using stale usage (0.62175ms)
+✔ duplicate settled events and reloaded extension cannot requeue (1.046ms)
+✔ recovery length -> stop; human input starts a new bounded budget (1.024833ms)
+✔ stop -> no continuation or compaction (1.162292ms)
+✔ toolUse -> no continuation or compaction (0.576708ms)
+✔ aborted -> no continuation or compaction (0.292792ms)
+✔ error -> no continuation or compaction (0.302583ms)
+✔ DONE file blocks recovery without changing the project (0.643041ms)
+✔ DONE standalone final text blocks recovery (0.558042ms)
+✔ NEEDS_INPUT file blocks recovery without changing the project (1.080709ms)
+✔ NEEDS_INPUT standalone final text blocks recovery (0.396333ms)
+✔ mentions of marker paths or markers in thinking are not terminal declarations (0.409041ms)
+✔ queued human follow-up prevents duplicate recovery (0.469792ms)
+✔ compaction then input -> no delayed continuation (0.468291ms)
+✔ compaction then aborted -> no delayed continuation (0.457041ms)
+✔ compaction then error -> no delayed continuation (0.350833ms)
+✔ compaction then shutdown -> no delayed continuation (0.253417ms)
+✔ compaction then marker -> no delayed continuation (0.74775ms)
+✔ compaction then pending -> no delayed continuation (0.380459ms)
+✔ compaction failure (callback) consumes budget, no retry loop (0.60825ms)
+✔ compaction failure (throw) consumes budget, no retry loop (0.392958ms)
+✔ unrelated model and later user message do not revive old length (0.371167ms)
+✔ Qwen resume resets old thinking once, unrelated models are untouched (0.330208ms)
+✔ switching to Qwen selects Low, without forcing it on each ordinary turn (0.490667ms)
+✔ Pi SDK integration: length-tools (176.936375ms)
+✔ Pi SDK integration: compact-tools (65.379875ms)
+✔ Pi SDK integration: length-again (40.410666ms)
+✔ wrapper starts one process, preserves exit status 0 (368.252292ms)
+✔ wrapper starts one process, preserves exit status 7 (217.903833ms)
+✔ wrapper starts one process, preserves exit status 130 (226.568209ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1263.681959

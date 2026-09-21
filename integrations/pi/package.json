@@ -1,0 +1,16 @@
+{
+  "name": "freetoken-pi-autonomy-regressions",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:live": "node live-smoke.mjs"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.85.1"
+  }
+}

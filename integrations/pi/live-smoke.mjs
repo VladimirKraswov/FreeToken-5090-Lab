@@ -1,0 +1,32 @@
+import {mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';import {join} from 'node:path';import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {createRequire} from 'node:module';
+import {createAgentSession,DefaultResourceLoader,SettingsManager,SessionManager} from '@earendil-works/pi-coding-agent';
+const require=createRequire(import.meta.resolve('@earendil-works/pi-coding-agent'));const {Type}=await import(require.resolve('typebox'));
+if(!process.env.FT_BASE)throw new Error('Set FT_BASE to the inference API base, including /v1');
+const root=mkdtempSync(join(tmpdir(),'qwen-autonomy-smoke-')),cwd=join(root,'work'),agentDir=join(root,'agent');
+mkdirSync(join(cwd,'.pi'),{recursive:true});mkdirSync(agentDir);
+writeFileSync(join(cwd,'.pi/TASK.md'),'# Smoke test\nOnly inspect this temporary test repository. Report READY after the inspection tool.\n');
+execFileSync('git',['init','--quiet'],{cwd});
+const config=JSON.parse(readFileSync(new URL('./examples/models.merge.json',import.meta.url),'utf8'));
+config.providers['local-qwen'].baseUrl=process.env.FT_BASE;
+config.providers['local-qwen'].apiKey=process.env.FT_API_KEY??'local';
+writeFileSync(join(agentDir,'models.json'),JSON.stringify({providers:{'local-qwen':config.providers['local-qwen']}}),{mode:0o600});
+const settings=SettingsManager.inMemory({defaultProvider:'local-qwen',defaultModel:'qwen38-flash-next',defaultThinkingLevel:'low',extensions:[fileURLToPath(new URL('./extensions/autonomous-recovery.ts',import.meta.url))],packages:[],compaction:{enabled:false},retry:{enabled:false},defaultProjectTrust:'trust'});
+const loader=new DefaultResourceLoader({cwd,agentDir,settingsManager:settings,noSkills:true,noPromptTemplates:true,noThemes:true,noContextFiles:true,systemPrompt:'You are testing tool use in an isolated temporary directory. Follow the user instruction concisely.'});await loader.reload();
+let calls=0;const started=Date.now();
+const {session,extensionsResult}=await createAgentSession({cwd,agentDir,settingsManager:settings,resourceLoader:loader,sessionManager:SessionManager.inMemory(cwd),tools:['inspect_checkpoint'],thinkingLevel:'medium',customTools:[{name:'inspect_checkpoint',label:'Inspect test checkpoint and Git',description:'Read .pi/TASK.md and inspect git status in this isolated temporary test repository. Read-only; takes no arguments.',parameters:Type.Object({}),async execute(){calls++;return {content:[{type:'text',text:readFileSync(join(cwd,'.pi/TASK.md'),'utf8')+'\nGIT STATUS:\n'+execFileSync('git',['status','--short'],{cwd,encoding:'utf8'})}],details:{readOnly:true}};}}]});
+const errors=[];await session.bindExtensions({onError:e=>errors.push(String(e))});
+const timer=setTimeout(()=>{void session.abort();},75000);
+try{
+ await session.prompt('Immediately call inspect_checkpoint before giving a final answer. Do not plan or explain. After the tool returns, reply exactly READY.');await session.waitForIdle();
+ const assistants=session.messages.filter(m=>m.role==='assistant');
+ const first=assistants[0],last=assistants.at(-1);
+ const beforeTool=first.content.slice(0,first.content.findIndex(b=>b.type==='toolCall'));
+ const words=beforeTool.map(b=>b.type==='thinking'?b.thinking:b.type==='text'?b.text:'').join(' ').split(/\s+/).filter(Boolean).length;
+ const output=last.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+ const report={timestamp:new Date().toISOString(),model:session.model.id,thinking:session.thinkingLevel,maxTokens:session.model.maxTokens,extensionCount:extensionsResult.extensions.length,toolCalls:calls,wordsBeforeFirstTool:words,stopReason:last.stopReason,output,elapsed_s:(Date.now()-started)/1000,errors,passed:calls===1&&words<=300&&last.stopReason==='stop'&&output.includes('READY')&&errors.length===0};
+ writeFileSync(process.env.FT_SMOKE_OUT??'live-smoke.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
+ if(!report.passed)process.exitCode=1;
+}finally{clearTimeout(timer);session.dispose();rmSync(root,{recursive:true,force:true});}

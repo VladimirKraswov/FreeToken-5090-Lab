@@ -1,0 +1,41 @@
+{
+  "failure": {
+    "compaction_tokensBefore": 82324,
+    "input": 24785,
+    "output": 32768,
+    "thinking_chars": 110943,
+    "toolCalls": 0,
+    "stopReason": "length"
+  },
+  "configuration": {
+    "thinking": "low",
+    "maxTokens": 16384,
+    "contextWindow": 131072,
+    "compact_before_recovery_at": 60000,
+    "max_automatic_followups_per_human_turn": 1,
+    "model": "local-qwen/qwen38-flash-next"
+  },
+  "validation": {
+    "unit_and_sdk_and_wrapper_tests": 33,
+    "live_smoke": {
+      "timestamp": "2026-09-21T20:54:18.552Z",
+      "model": "qwen38-flash-next",
+      "thinking": "low",
+      "maxTokens": 16384,
+      "extensionCount": 1,
+      "toolCalls": 1,
+      "wordsBeforeFirstTool": 12,
+      "stopReason": "stop",
+      "output": "\n\nREADY",
+      "elapsed_s": 28.2,
+      "errors": [],
+      "passed": true
+    }
+  },
+  "files_sha256": {
+    "extensions/autonomous-recovery.ts": "42d3c5df10aec57f720a7a09f7c2505df50d5bbca20ced27f455f1cb556a4026",
+    "bin/pi-local-autonomous": "95b9d796eef70b581fbf5be7afe5ce1d62d8d822331e2e37b5f3c512b45ce867",
+    "operations/AUTONOMOUS_WORKER.md": "793d845b4a5e1cc37e5024e892222f75b3cce3f14ae8a7fdf1c34ea782ae11ed"
+  },
+  "note": "Recorded local validation before publication; portable test imports/paths differ, deployed extension and bounded wrapper are byte-identical."
+}

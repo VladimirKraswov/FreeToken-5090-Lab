@@ -1,0 +1,9 @@
+{
+  "defaultThinkingLevel": "low",
+  "modelThinkingLevels": {
+    "local-qwen/qwen38-flash-next": "low"
+  },
+  "extensions": [
+    "~/.pi/agent/extensions/autonomous-recovery.ts"
+  ]
+}

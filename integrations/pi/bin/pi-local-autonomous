@@ -1,0 +1,14 @@
+#!/bin/zsh
+set -eu
+
+agent_dir="${0:A:h:h}"
+# One Pi process only. Recovery is bounded inside the TypeScript extension.
+# An exit/abort/error must never cause an unconditional supervisor restart.
+if [[ -e .pi/DONE || -e .pi/NEEDS_INPUT ]]; then
+  exit 0
+fi
+exec "$agent_dir/bin/pi-local" \
+  --no-extensions --extension "$agent_dir/extensions/autonomous-recovery.ts" \
+  --append-system-prompt "$agent_dir/operations/AUTONOMOUS_WORKER.md" \
+  --thinking low \
+  "$@"
