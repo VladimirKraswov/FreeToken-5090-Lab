@@ -656,6 +656,15 @@ class OffloadMoeCache:
     def _invalidate_prefill_buffer(self, buffer_id: int) -> None:
         slot_start = buffer_id * self.num_experts
         slot_end = slot_start + self.num_experts
+        if self.device.type == "cuda" and os.getenv("FREETOKEN_PREFILL_INVALIDATE_FUSED", "1") != "0":
+            # Boolean indexing below calls nonzero(), draining queued GPU work on the host.
+            # Fixed-shape stores preserve the copy/compute stream ordering without that wait.
+            from freetoken.kernel.triton.prefill_invalidate import invalidate_prefill_buffer
+
+            invalidate_prefill_buffer(
+                self.id_of_slot, self.slot_for_id, self.usage, slot_start, self.num_experts,
+            )
+            return
         old_ids = self.id_of_slot[slot_start:slot_end]
         self.slot_for_id.view(-1)[old_ids[old_ids >= 0].long()] = -1
         old_ids.fill_(-1)
