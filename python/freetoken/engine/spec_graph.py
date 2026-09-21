@@ -62,6 +62,8 @@ class SpecVerifyGraph:
     def __init__(self, engine: "Engine", rows: int) -> None:
         self.engine = engine
         self.rows = rows
+        # Each adaptive depth captures its own addressing buffers; replay must stage those.
+        self.attn_spec = getattr(engine.attn_backend, "_spec", None)
         dev = engine.device
         i32 = torch.int32
         self.input_ids = torch.zeros(rows, dtype=i32, device=dev)
@@ -111,6 +113,8 @@ class SpecVerifyGraph:
         batch.fla_metadata = self._fla()
         batch.linear_table_idx = self.fla_slot
         attn = self.engine.attn_backend
+        if self.attn_spec is not None:
+            attn._spec = self.attn_spec
         if getattr(batch, "attn_metadata", None) is None:
             attn.prepare_metadata(batch)
         attn.stage_spec(batch.attn_metadata, table_idx=table_idx, kv_len=kv_len)
@@ -319,7 +323,7 @@ class SpecVerifyGraph:
         drafts = [d]
         if prof is not None:
             prof.mark("mtp_window")
-        for j in range(1, eng.spec_k):
+        for j in range(1, eng._draft_depth(req)):
             p = pos_row + j
             if p + 1 > (req.spec_alloc_len or 0):
                 break  # no reserved KV page for this draft position

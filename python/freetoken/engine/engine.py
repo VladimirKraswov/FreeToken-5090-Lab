@@ -46,6 +46,7 @@ from .graph import GraphRunner, get_free_memory
 from .sample import BatchSamplingArgs, Sampler
 from .spec import (
     SpecResult,
+    AdaptiveMTP,
     accept_drafts,
     pack_spec_message,
     spec_message_len,
@@ -666,6 +667,10 @@ class Engine:
         # --spec-mtp: draft depth; the stacked bf16 MTP experts captured at load, quantized into
         # the offload cache's extra bank layer (see _append_mtp_bank)
         self.spec_k = int(getattr(config, "spec_mtp", 0) or 0)
+        self.spec_adaptive = os.environ.get("FT_SPEC_ADAPTIVE") == "1"
+        if self.spec_adaptive and (self.spec_k != 4 or config.is_pp or config.tp_info.size != 1):
+            raise ValueError("FT_SPEC_ADAPTIVE requires --spec-mtp 4 and one GPU")
+        self._spec_graphs = {}
         self._spec_profiler = None
         self._spec_graph = None  # SpecVerifyGraph once captured (end of __init__)
         self._mtp_raw: Dict[str, torch.Tensor] = {}
@@ -1074,6 +1079,17 @@ class Engine:
         )
 
     def _capture_spec_graph(self) -> None:
+        self._spec_graphs = {}
+        depths = (4, 3, 2) if self.spec_adaptive else (self.spec_k,)
+        if self.spec_adaptive and not hasattr(self.attn_backend, "_idx_slot"):
+            raise ValueError("FT_SPEC_ADAPTIVE is currently validated for QSA only")
+        for depth in depths:
+            self._capture_spec_graph_depth(depth)
+            if self._spec_graph is not None:
+                self._spec_graphs[depth + 1] = self._spec_graph
+        self._spec_graph = self._spec_graphs.get(self.spec_k + 1)
+
+    def _capture_spec_graph_depth(self, depth: int) -> None:
         """Capture the K+1-row verify window as a CUDA graph (see engine/spec_graph), then the
         draft head's window pass and chain step. Needs the decode graphs enabled (same
         static-buffer machinery) and an attention backend that stages the window;
@@ -1091,7 +1107,7 @@ class Engine:
                 f"attention backend {type(self.attn_backend).__name__} does not stage it); eager"
             )
             return
-        rows = self.spec_k + 1
+        rows = depth + 1
         try:
             self.attn_backend.init_spec_capture(rows)
             sg = SpecVerifyGraph(self, rows)
@@ -2009,7 +2025,7 @@ class Engine:
         # one per real request in decode (padding rows never leave the GPU)
         rows = batch.input_ids.numel() if batch.is_prefill else batch.size
         # the captured K+1-row verify window (engine/spec_graph); shorter windows stay eager
-        sg = self._spec_graph
+        sg = self._spec_graphs.get(rows) if self.spec_adaptive else self._spec_graph
         if sg is not None and not (batch.spec_verify and spec_graph_applicable(batch, rows, sg.rows)):
             sg = None
         # diagnostics: cross-check a one-row verify window against the plain decode path
@@ -2121,6 +2137,12 @@ class Engine:
             req = batch.reqs[0]
             sampled = self.sampler.sample(logits[:rows], _expand_sampling_args(args, rows)).to(torch.int32)
             accepted = accept_drafts(sampled.tolist(), req.spec_drafts)
+            if self.spec_adaptive:
+                controller = self._adaptive_controller(req)
+                previous = controller.depth
+                controller.observe(len(accepted), len(req.spec_drafts))
+                if previous != controller.depth:
+                    logger.info(f"adaptive MTP: request={req.uid} depth={previous}->{controller.depth}")
             if prof is not None:
                 prof.mark("sample_accept")
             self.model.spec_rollback(batch, len(accepted), self.ctx)
@@ -2313,6 +2335,15 @@ class Engine:
             )
         logger.warning(f"spec step check pos={pos} tok={token} {msg} | " + " ".join(parts))
 
+    def _adaptive_controller(self, req: Req) -> AdaptiveMTP:
+        controller = getattr(req, "_mtp_adaptive", None)
+        if controller is None:
+            controller = req._mtp_adaptive = AdaptiveMTP()
+        return controller
+
+    def _draft_depth(self, req: Req) -> int:
+        return self._adaptive_controller(req).depth if self.spec_adaptive else self.spec_k
+
     # ------------------------------------------------------------------ MTP draft head
     def _mtp_draft(
         self, batch: Batch, rows: int, *, row: int, next_token: int, draft: bool = True, prof=None,
@@ -2357,7 +2388,7 @@ class Engine:
         if prof is not None:
             prof.mark("mtp_window")
         pos_row = int(batch.positions[row].item())
-        for j in range(1, self.spec_k):
+        for j in range(1, self._draft_depth(req)):
             p = pos_row + j
             if p + 1 > (req.spec_alloc_len or 0):
                 break  # no reserved KV page for this draft position

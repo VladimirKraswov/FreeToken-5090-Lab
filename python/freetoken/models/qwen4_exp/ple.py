@@ -621,6 +621,8 @@ class PLELayer(BaseOP):
         gate = (key.view(shape) * query.view(shape)).sum(-1, keepdim=True) / math.sqrt(self.hidden_size)
         gate = torch.sigmoid(gate.sign() * gate.abs().clamp_min(1e-6).sqrt())
         gated = (gate * value.unsqueeze(-2)).flatten(-2)
+        # The convolution needs gated only; retaining the projections inflates long-prefill VRAM.
+        del key, query, value, embeddings, gate
         states = conv_states if conv_states is not None else self._conv_state_slab(R)
         x = self.norm_conv.forward(gated)
         fla = getattr(batch, "fla_metadata", None)

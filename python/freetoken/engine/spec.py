@@ -24,6 +24,34 @@ class SpecResult:
     drafts: list[int] = field(default_factory=list)
 
 
+@dataclass
+class AdaptiveMTP:
+    """Bounded, per-request acceptance controller; the target still verifies every draft."""
+
+    depth: int = 3
+    steps: int = 0
+    accepted: int = 0
+    proposed: int = 0
+
+    def observe(self, accepted_tokens: int, draft_count: int) -> int:
+        if draft_count <= 0:
+            return self.depth
+        if not 1 <= accepted_tokens <= draft_count + 1:
+            raise ValueError("invalid speculative acceptance count")
+        # The final token is a target sample, not an accepted draft.
+        self.accepted += accepted_tokens - 1
+        self.proposed += draft_count
+        self.steps += 1
+        if self.steps >= 8:
+            rate = self.accepted / self.proposed
+            if rate >= 0.85:
+                self.depth = min(4, self.depth + 1)
+            elif rate <= 0.60:
+                self.depth = max(2, self.depth - 1)
+            self.steps = self.accepted = self.proposed = 0
+        return self.depth
+
+
 def accept_drafts(sampled: Sequence[int], drafts: Sequence[int]) -> list[int]:
     """Verification rule: row j of the window sampled ``sampled[j]``; draft ``drafts[j]`` (the
     input of row j+1) is accepted iff it equals ``sampled[j]``. Returns ``sampled[:m+1]`` for
@@ -78,14 +106,17 @@ def rebuild_conv_state(prev_state: torch.Tensor, conv_in: torch.Tensor, accepted
     return cat[..., -width:].contiguous()
 
 
-def ngram_context_after(host_ids: Sequence[int], drafts: Sequence[int], accepted: int, ctx_len: int, boundary: int) -> list[int]:
+def ngram_context_after(host_ids: Sequence[int] | torch.Tensor, drafts: Sequence[int], accepted: int, ctx_len: int, boundary: int) -> list[int]:
     """PLE n-gram context (the last ``ctx_len`` processed ids) after ``accepted`` rows of the
     window ``[host_ids[-1], drafts...]`` were kept. ``host_ids`` is the request's committed
     id list before the window (its last id is the window's first input)."""
-    seq = list(host_ids) + list(drafts)
     end = len(host_ids) - 1 + accepted  # rows 0..accepted-1 = seq[len-1 : len-1+accepted]
-    window = seq[max(0, end - ctx_len) : end]
-    return [boundary] * (ctx_len - len(window)) + [int(t) for t in window]
+    start = max(0, end - ctx_len)
+    # PLE needs only a few ids; copying the full prompt makes every decode step O(context).
+    window = [int(t) for t in host_ids[start : min(end, len(host_ids))]]
+    if end > len(host_ids):
+        window.extend(int(t) for t in drafts[max(0, start - len(host_ids)) : end - len(host_ids)])
+    return [boundary] * (ctx_len - len(window)) + window
 
 
 __all__ = [

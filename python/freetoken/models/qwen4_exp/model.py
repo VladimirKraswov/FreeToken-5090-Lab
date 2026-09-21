@@ -182,6 +182,8 @@ class Qwen4ExpMTP(BaseOP):
         e = self.pre_fc_norm_embedding.forward(emb.forward(next_ids).to(residual.dtype))
         fe = self.fc_embedding.forward(e)
         r = fh + fe.repeat(1, self.hc_count)
+        # These full-chunk buffers are dead before the expert GEMM's allocation peak.
+        del rn, fh, e, fe
         pieces = getattr(batch, "prefill_pieces", None)
         if pieces is not None and pieces[-1][1] == t:
             return self.layers.op_list[0].forward_pieces(r, batch, pieces, get_global_ctx())
@@ -502,7 +504,7 @@ class Qwen4ExpForCausalLM(BaseLLMModel):
             req = batch.reqs[0]
             args = self._config.qwen4_args
             ids = ngram_context_after(
-                req.input_ids.tolist(), req.spec_drafts, accepted,
+                req.input_ids, req.spec_drafts, accepted,
                 args.ngram_size - 1, args.ngram_boundary_token_id,
             )
             rewrite_ngram_context(_state_slot(req), ids)

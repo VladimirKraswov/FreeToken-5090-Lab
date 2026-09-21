@@ -44,6 +44,37 @@ requires_hf_ref = pytest.mark.skipif(
 # fixtures
 # --------------------------------------------------------------------------------------
 
+def test_projection_temporaries_do_not_overlap_convolution():
+    import math
+    import weakref
+
+    live = []
+
+    def tracked(x):
+        live.append(weakref.ref(x))
+        return x
+
+    def conv(x, meta, states):
+        assert all(ref() is None for ref in live), "projection buffers overlap convolution"
+        return x
+
+    layer = SimpleNamespace(
+        _pending=None, hc_count=2, hidden_size=3,
+        ple_embedding=SimpleNamespace(
+            row_ids=lambda meta: None,
+            table=SimpleNamespace(lookup=lambda ids: tracked(torch.ones(4, 3)))),
+        key_proj=SimpleNamespace(forward=lambda x: tracked(torch.ones(4, 6))),
+        norm_key=SimpleNamespace(forward=lambda x: x),
+        value_proj=SimpleNamespace(forward=lambda x: tracked(x + 1)),
+        norm_query=SimpleNamespace(forward=lambda x: tracked(x + 1)),
+        norm_conv=SimpleNamespace(forward=lambda x: x * 2),
+        _conv_state_slab=lambda x: None, _short_conv=conv,
+    )
+    result = PLELayer.forward(layer, torch.zeros(4, 6), SimpleNamespace(), meta=object())
+    expected = 6 * torch.sigmoid(torch.tensor(math.sqrt(3)).sqrt())
+    torch.testing.assert_close(result, torch.full((4, 6), expected))
+
+
 def _config() -> ModelConfig:
     return parse_config(toy_hf_config())
 

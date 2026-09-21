@@ -92,6 +92,69 @@ def test_pages_to_free_and_state_helpers():
     assert ngram_context_after([13], [21, 22], accepted=1, ctx_len=2, boundary=0) == [0, 13]
 
 
+def test_ngram_context_reads_only_the_required_tail():
+    from freetoken.engine.spec import ngram_context_after
+
+    class LongHistory:
+        def __len__(self):
+            return 131072
+
+        def __iter__(self):
+            raise AssertionError("must not copy the full prompt during decode")
+
+        def __getitem__(self, key):
+            assert isinstance(key, slice)
+            indices = range(*key.indices(len(self)))
+            assert len(indices) <= 2
+            return list(indices)
+
+    assert ngram_context_after(LongHistory(), [7, 8], 1, 2, -1) == [131070, 131071]
+    assert ngram_context_after(LongHistory(), [7, 8], 2, 2, -1) == [131071, 7]
+    assert ngram_context_after(LongHistory(), [7, 8], 3, 2, -1) == [7, 8]
+
+
+def test_mtp_releases_projection_temporaries_before_expert_forward():
+    import weakref
+    from freetoken.models.qwen4_exp.model import Qwen4ExpMTP
+
+    temporaries = []
+
+    def op(fn):
+        def forward(x):
+            y = fn(x)
+            temporaries.append(weakref.ref(y))
+            return y
+        return SimpleNamespace(forward=forward)
+
+    def experts(residual, batch):
+        assert all(ref() is None for ref in temporaries), "projection buffers overlap the MoE peak"
+        return residual
+
+    head = SimpleNamespace(
+        hc_count=2, hidden_size=3, _image_token_id=None,
+        embed_tokens=SimpleNamespace(forward=lambda ids: torch.ones(len(ids), 3)),
+        pre_fc_norm_hidden=op(lambda x: x + 1), fc_hidden=op(lambda x: x * 2),
+        pre_fc_norm_embedding=op(lambda x: x + 1), fc_embedding=op(lambda x: x * 3),
+        layers=SimpleNamespace(op_list=[SimpleNamespace(forward=experts)]),
+    )
+    result = Qwen4ExpMTP.forward(head, torch.zeros(4, 6), torch.zeros(4, dtype=torch.int64), SimpleNamespace())
+    assert torch.equal(result, torch.full((4, 6), 8.0))
+
+
+@pytest.mark.parametrize("length", [1, 2, 8, 105083])
+@pytest.mark.parametrize("accepted", [0, 1, 2, 3])
+@pytest.mark.parametrize("ctx_len", [0, 1, 2, 5])
+def test_ngram_context_matches_full_history_reference(length, accepted, ctx_len):
+    from freetoken.engine.spec import ngram_context_after
+
+    host = torch.arange(length, dtype=torch.int32)
+    drafts = [17, 19]
+    end = length - 1 + accepted
+    expected = (host.tolist() + drafts)[max(0, end - ctx_len):end]
+    expected = [-1] * (ctx_len - len(expected)) + expected
+    assert ngram_context_after(host, drafts, accepted, ctx_len, -1) == expected
+
+
 def test_req_spec_window_bookkeeping():
     from freetoken.core import Req
 
@@ -304,3 +367,71 @@ def test_spec_graph_applicable_only_for_full_windows():
     assert not spec_graph_applicable(batch(6, verify=False), 6, 6)
     assert not spec_graph_applicable(batch(6, cached=0), 6, 6)  # no cached prefix to continue
     assert not spec_graph_applicable(batch(6, n=2), 6, 6)
+
+
+def test_adaptive_mtp_excludes_bonus_and_holds_between_thresholds():
+    from freetoken.engine.spec import AdaptiveMTP
+
+    controller = AdaptiveMTP()
+    for _ in range(8):
+        controller.observe(3, 3)  # 2/3 drafts, not 3/3: hold at 3.
+    assert controller.depth == 3
+    for _ in range(7):
+        controller.observe(4, 3)
+    assert controller.depth == 3  # wait for the complete observation window
+    controller.observe(4, 3)
+    assert controller.depth == 4
+
+
+def test_adaptive_mtp_moves_both_directions_and_stays_bounded():
+    from freetoken.engine.spec import AdaptiveMTP
+
+    controller = AdaptiveMTP()
+    for _ in range(40):
+        controller.observe(controller.depth + 1, controller.depth)
+        assert 2 <= controller.depth <= 4
+    assert controller.depth == 4
+    for _ in range(40):
+        controller.observe(1, controller.depth)
+        assert 2 <= controller.depth <= 4
+    assert controller.depth == 2
+    assert AdaptiveMTP().depth == 3  # a new request does not inherit prior statistics
+
+
+def test_adaptive_mtp_handles_truncated_windows_and_rejects_bad_counts():
+    from freetoken.engine.spec import AdaptiveMTP
+
+    controller = AdaptiveMTP()
+    assert controller.observe(1, 0) == 3
+    for _ in range(8):
+        controller.observe(2, 1)
+    assert controller.depth == 4
+    with pytest.raises(ValueError):
+        controller.observe(4, 2)
+
+
+def test_spec_graph_stages_its_own_addressing_after_other_depth_capture():
+    from freetoken.engine.spec_graph import SpecVerifyGraph
+
+    class Attention:
+        def stage_spec(self, md, **kwargs):
+            md.addressing = self._spec
+
+    attention = Attention()
+    engine = SimpleNamespace(attn_backend=attention)
+    graphs = []
+    for rows in (3, 5):
+        graph = SpecVerifyGraph.__new__(SpecVerifyGraph)
+        graph.engine = engine
+        graph.attn_spec = {'rows': rows}
+        graph.input_ids = torch.zeros(rows)
+        graph.positions = torch.zeros(rows)
+        graph.mrope_positions = None
+        graph.out_loc = torch.zeros(rows)
+        graph.fla_slot = torch.zeros(1)
+        graph._fla = lambda: None
+        graphs.append(graph)
+    for graph in (graphs[0], graphs[1], graphs[0]):
+        batch = SimpleNamespace(attn_metadata=SimpleNamespace())
+        graph._bind(batch, table_idx=1, slot=2, kv_len=105000)
+        assert batch.attn_metadata.addressing is graph.attn_spec
