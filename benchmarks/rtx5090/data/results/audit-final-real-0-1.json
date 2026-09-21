@@ -1,0 +1,27 @@
+{
+  "label": "audit-final-real",
+  "repeat": 1,
+  "padding_tokens": 0,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "started_at": "2026-09-21T17:27:43Z",
+  "nonce": "run-audit-pair-1",
+  "base": "http://<inference-host>:1919",
+  "elapsed_s": 63.753715459024534,
+  "first_event_s": 0.04154570901300758,
+  "ttft_s": 40.01296104199719,
+  "last_token_s": 63.752900875057094,
+  "usage": {
+    "prompt_tokens": 104870,
+    "completion_tokens": 1024,
+    "total_tokens": 105894
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1024,
+  "end_to_end_tps": 16.06180898834265,
+  "decode_tps": 43.09193735088513,
+  "median_chunk_interval_ms": 0.08345802780240774,
+  "max_chunk_interval_ms": 124.77216706611216,
+  "text_sha256": "0fc4ea1ca1d683783875a972efac3a560aa5da58af97b1b1b4df0fe519f80677"
+}

@@ -1,0 +1,42 @@
+{
+  "status": "warm",
+  "cases": [
+    {
+      "name": "greedy",
+      "elapsed_s": 8.122572439000578,
+      "usage": {
+        "prompt_tokens": 23,
+        "completion_tokens": 256,
+        "total_tokens": 279
+      }
+    },
+    {
+      "name": "sampling",
+      "elapsed_s": 4.909732420999717,
+      "usage": {
+        "prompt_tokens": 24,
+        "completion_tokens": 128,
+        "total_tokens": 152
+      }
+    },
+    {
+      "name": "prefill",
+      "elapsed_s": 11.759660433001045,
+      "usage": {
+        "prompt_tokens": 16019,
+        "completion_tokens": 64,
+        "total_tokens": 16083
+      }
+    },
+    {
+      "name": "vision",
+      "elapsed_s": 6.263441962999423,
+      "usage": {
+        "prompt_tokens": 82,
+        "completion_tokens": 64,
+        "total_tokens": 146
+      }
+    }
+  ],
+  "timestamp": "2026-09-21T17:25:57Z"
+}

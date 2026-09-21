@@ -1,0 +1,26 @@
+............F                                                            [100%]
+=================================== FAILURES ===================================
+_______________ test_invalidation_has_no_data_dependent_nonzero ________________
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="needs CUDA")
+    def test_invalidation_has_no_data_dependent_nonzero():
+        c = cache("cuda")
+        seed(c, 0)
+        OffloadMoeCache._invalidate_prefill_buffer(c, 0)  # JIT outside the measurement
+        seed(c, 0)
+        with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU]) as prof:
+            OffloadMoeCache._invalidate_prefill_buffer(c, 0)
+>       assert not any("nonzero" in event.key for event in prof.key_averages())
+E       assert not True
+E        +  where True = any(<generator object test_invalidation_has_no_data_dependent_nonzero.<locals>.<genexpr> at 0x77b3e23ce810>)
+
+tests/moe/test_prefill_invalidate.py:61: AssertionError
+=============================== warnings summary ===============================
+tests/moe/test_prefill_invalidate.py::test_invalidation_has_no_data_dependent_nonzero
+  /opt/freetoken/venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+    _warn_once(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/moe/test_prefill_invalidate.py::test_invalidation_has_no_data_dependent_nonzero
+1 failed, 12 passed, 1 deselected, 1 warning in 6.24s

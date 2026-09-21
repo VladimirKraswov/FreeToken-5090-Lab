@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-09-21T17:32:06Z",
+  "health": {
+    "status": "ok",
+    "model": "qwen38-flash-next",
+    "uptime_s": 401,
+    "maintenance": "serving",
+    "version": "0.1.3"
+  },
+  "long_context_retrieval": {
+    "elapsed_s": 42.58502349990886,
+    "usage": {
+      "prompt_tokens": 105077,
+      "completion_tokens": 102,
+      "total_tokens": 105179
+    },
+    "finish_reason": "stop",
+    "content": "ALPHA = HARBOR-5826\nBETA = ORBIT-9417\nGAMMA = CEDAR-3072",
+    "tool_calls": null,
+    "passed": true
+  },
+  "vision": {
+    "elapsed_s": 9.196405582944863,
+    "usage": {
+      "prompt_tokens": 4120,
+      "completion_tokens": 63,
+      "total_tokens": 4183
+    },
+    "finish_reason": "stop",
+    "content": "Red",
+    "tool_calls": null,
+    "image_size_px": [
+      2048,
+      2048
+    ],
+    "passed": true
+  },
+  "tools": {
+    "elapsed_s": 6.323533665970899,
+    "usage": {
+      "prompt_tokens": 279,
+      "completion_tokens": 54,
+      "total_tokens": 333
+    },
+    "finish_reason": "tool_calls",
+    "content": "",
+    "tool_calls": [
+      {
+        "id": "call_get-weather_0_0f9f21ff",
+        "index": 0,
+        "type": "function",
+        "function": {
+          "name": "get_weather",
+          "arguments": "{\"city\": \"Moscow\"}"
+        }
+      }
+    ],
+    "passed": true
+  },
+  "responses_api": {
+    "elapsed_s": 1.4897639580303803,
+    "usage": {
+      "input_tokens": 15,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 20,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 35
+    },
+    "content": "READY",
+    "passed": true
+  },
+  "passed": true
+}

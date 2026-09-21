@@ -10,5 +10,33 @@
     "power_draw_w": 391.94,
     "temperature_c": 56
   },
-  "note": "Single NVML observation during the CPU8 audit prefill, not a peak/average or energy-per-token measurement."
+  "note": "Single NVML observation during the CPU8 audit prefill, not a peak/average or energy-per-token measurement.",
+  "final_health": {
+    "service_active": "active",
+    "service_enabled": "enabled",
+    "watchdog_active": "active",
+    "watchdog_enabled": "enabled",
+    "restarts": 0,
+    "nvml_csv": "name, driver_version, memory.total [MiB], memory.used [MiB], memory.free [MiB], power.limit [W], power.draw [W], temperature.gpu, pcie.link.gen.current, pcie.link.width.current\nNVIDIA GeForce RTX 5090, 595.91.07, 32607 MiB, 31850 MiB, 262 MiB, 500.00 W, 28.56 W, 45, 1, 16",
+    "guest_error_count_since_audit": 0,
+    "checked_at_utc": "2026-09-21T17:34:04.255586+00:00",
+    "error_scan_since_utc": "2026-09-21T14:00:00Z",
+    "note": "Post-validation idle reading, not peak/average telemetry; Gen1 idle is expected.",
+    "api_supervisor_memory": {
+      "VmRSS": "891068 kB",
+      "VmSwap": "0 kB",
+      "VmLck": "0 kB"
+    },
+    "gpu_worker_memory": [
+      {
+        "Name": "python",
+        "VmRSS": "122739832 kB",
+        "VmSwap": "0 kB",
+        "VmLck": "0 kB"
+      }
+    ],
+    "host_error_count_since_audit": 0,
+    "llm_vm_state": "running",
+    "media_vm_state": "stopped"
+  }
 }

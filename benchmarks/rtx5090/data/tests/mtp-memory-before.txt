@@ -1,0 +1,54 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_mtp_releases_projection_temporaries_before_expert_forward ________
+
+    def test_mtp_releases_projection_temporaries_before_expert_forward():
+        import weakref
+        from freetoken.models.qwen4_exp.model import Qwen4ExpMTP
+
+        temporaries = []
+
+        def op(fn):
+            def forward(x):
+                y = fn(x)
+                temporaries.append(weakref.ref(y))
+                return y
+            return SimpleNamespace(forward=forward)
+
+        def experts(residual, batch):
+            assert all(ref() is None for ref in temporaries), "projection buffers overlap the MoE peak"
+            return residual
+
+        head = SimpleNamespace(
+            hc_count=2, hidden_size=3, _image_token_id=None,
+            embed_tokens=SimpleNamespace(forward=lambda ids: torch.ones(len(ids), 3)),
+            pre_fc_norm_hidden=op(lambda x: x + 1), fc_hidden=op(lambda x: x * 2),
+            pre_fc_norm_embedding=op(lambda x: x + 1), fc_embedding=op(lambda x: x * 3),
+            layers=SimpleNamespace(op_list=[SimpleNamespace(forward=experts)]),
+        )
+>       result = Qwen4ExpMTP.forward(head, torch.zeros(4, 6), torch.zeros(4, dtype=torch.int64), SimpleNamespace())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/distributed/test_spec_mtp.py:140:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/freetoken/models/qwen4_exp/model.py:188: in forward
+    return self.layers.op_list[0].forward(r, batch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+residual = tensor([[8., 8., 8., 8., 8., 8.],
+        [8., 8., 8., 8., 8., 8.],
+        [8., 8., 8., 8., 8., 8.],
+        [8., 8., 8., 8., 8., 8.]])
+batch = namespace()
+
+    def experts(residual, batch):
+>       assert all(ref() is None for ref in temporaries), "projection buffers overlap the MoE peak"
+E       AssertionError: projection buffers overlap the MoE peak
+E       assert False
+E        +  where False = all(<generator object test_mtp_releases_projection_temporaries_before_expert_forward.<locals>.experts.<locals>.<genexpr> at 0x78b50099e5a0>)
+
+tests/distributed/test_spec_mtp.py:130: AssertionError
+=========================== short test summary info ============================
+FAILED tests/distributed/test_spec_mtp.py::test_mtp_releases_projection_temporaries_before_expert_forward
+1 failed, 78 deselected in 5.15s

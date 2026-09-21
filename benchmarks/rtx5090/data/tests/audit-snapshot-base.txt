@@ -1,0 +1,39 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_track_snapshot_equals_a_prefill_stopped_at_the_boundary _________
+
+    def test_track_snapshot_equals_a_prefill_stopped_at_the_boundary():
+        """The snapshot in the donated slot equals the state a prefill truncated at the boundary leaves."""
+        from freetoken.kernel.fla.chunk import CHUNK_SIZE
+
+        torch.manual_seed(17)
+        config = _config()
+        args = config.qwen4_args
+        layer = _make_layer(config)
+        pool = _state_pool(config)
+        live, dst = 1, 5
+        tokens = _no_eos_tokens(CHUNK_SIZE + 6)
+        req = _tracked_req(0, 0, tokens, live=live, ping_pong=(dst, 6))
+        batch = _track_batch(req, tokens, pool)
+
+        fla = batch.fla_metadata
+        assert fla.track_dst.tolist() == [dst]
+        assert req.mamba_last_track_seqlen == CHUNK_SIZE
+        assert fla.track_boundary_row.tolist() == [CHUNK_SIZE]
+
+        R = torch.randn(len(tokens), args.ple_state_width)
+        slab = pool.slot_state("ple_conv", args.ple_layer_ids[0])
+        layer.forward(R, batch, meta=_meta([tokens], [[EOS, EOS]], slots=[live]), conv_states=slab)
+        got = pool.slot_state("ple_conv", args.ple_layer_ids[0])[dst].clone()
+
+        stopped = torch.zeros_like(slab)
+        _forward(layer, R[:CHUNK_SIZE], _meta([tokens[:CHUNK_SIZE]], [[EOS, EOS]], slots=[live]), stopped)
+>       assert torch.equal(got, stopped[live])
+E       assert False
+E        +  where False = <built-in method equal of type object at 0x799b8953e180>(tensor([[ 1.5071, -0.4702,  0.7472,  ..., -0.0501, -2.1029,  0.6012],\n        [ 1.0182, -0.9920, -0.2743,  ...,  0.598...2779, -0.8105,  ..., -0.6143,  0.7205, -0.2166],\n        [-0.9108,  1.2236,  0.5897,  ..., -1.1375,  0.8250,  0.7716]]), tensor([[ 1.5071, -0.4702,  0.7472,  ..., -0.0501, -2.1029,  0.6012],\n        [ 1.0182, -0.9920, -0.2743,  ...,  0.598...2779, -0.8105,  ..., -0.6143,  0.7205, -0.2166],\n        [-0.9108,  1.2236,  0.5897,  ..., -1.1375,  0.8250,  0.7716]]))
+E        +    where <built-in method equal of type object at 0x799b8953e180> = torch.equal
+
+tests/models/qwen4_exp/test_ple.py:605: AssertionError
+=========================== short test summary info ============================
+FAILED tests/models/qwen4_exp/test_ple.py::test_track_snapshot_equals_a_prefill_stopped_at_the_boundary
+1 failed, 30 deselected in 5.63s

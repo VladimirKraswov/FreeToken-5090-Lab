@@ -12,8 +12,9 @@
   with BF16 KV; validated prompts exceed 100000 actual model tokens.
 - `max_output_tokens=32768` is still constrained by total prompt+output capacity.
 - Native Vision enabled, encoder weights in host RAM, image embedding cache on
-  CPU, image limit 4096 tokens. Functional validation used a 1536x1536 image
-  consuming 2328 prompt tokens; this is not validation of every possible image.
+  CPU, image limit 4096 tokens. Final functional validation used a 2048x2048
+  image at the 4096 image-token cap, consuming 4120 total prompt tokens; the
+  earlier 1536x1536 check consumed 2328. Neither proves every possible image.
 - OpenAI chat, Responses and tool calling checked. API alias: `qwen38-flash-next`.
 - Clients explicitly request reasoning effort `medium`; the API's native
   default for an omitted effort remains `xhigh`.

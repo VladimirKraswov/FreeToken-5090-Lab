@@ -1,0 +1,56 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_projection_temporaries_do_not_overlap_convolution ____________
+
+    def test_projection_temporaries_do_not_overlap_convolution():
+        import math
+        import weakref
+
+        live = []
+
+        def tracked(x):
+            live.append(weakref.ref(x))
+            return x
+
+        def conv(x, meta, states):
+            assert all(ref() is None for ref in live), "projection buffers overlap convolution"
+            return x
+
+        layer = SimpleNamespace(
+            _pending=None, hc_count=2, hidden_size=3,
+            ple_embedding=SimpleNamespace(
+                row_ids=lambda meta: None,
+                table=SimpleNamespace(lookup=lambda ids: tracked(torch.ones(4, 3)))),
+            key_proj=SimpleNamespace(forward=lambda x: tracked(torch.ones(4, 6))),
+            norm_key=SimpleNamespace(forward=lambda x: x),
+            value_proj=SimpleNamespace(forward=lambda x: tracked(x + 1)),
+            norm_query=SimpleNamespace(forward=lambda x: tracked(x + 1)),
+            norm_conv=SimpleNamespace(forward=lambda x: x * 2),
+            _conv_state_slab=lambda x: None, _short_conv=conv,
+        )
+>       result = PLELayer.forward(layer, torch.zeros(4, 6), SimpleNamespace(), meta=object())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/models/qwen4_exp/test_ple.py:73:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/freetoken/models/qwen4_exp/ple.py:629: in forward
+    return gated + self._short_conv(x, meta, states)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+x = tensor([[3.1541, 3.1541, 3.1541, 3.1541, 3.1541, 3.1541],
+        [3.1541, 3.1541, 3.1541, 3.1541, 3.1541, 3.1541],
+        [3.1541, 3.1541, 3.1541, 3.1541, 3.1541, 3.1541],
+        [3.1541, 3.1541, 3.1541, 3.1541, 3.1541, 3.1541]])
+meta = <object object at 0x7163b74093e0>, states = None
+
+    def conv(x, meta, states):
+>       assert all(ref() is None for ref in live), "projection buffers overlap convolution"
+E       AssertionError: projection buffers overlap convolution
+E       assert False
+E        +  where False = all(<generator object test_projection_temporaries_do_not_overlap_convolution.<locals>.conv.<locals>.<genexpr> at 0x71643b51d080>)
+
+tests/models/qwen4_exp/test_ple.py:58: AssertionError
+=========================== short test summary info ============================
+FAILED tests/models/qwen4_exp/test_ple.py::test_projection_temporaries_do_not_overlap_convolution
+1 failed, 19 deselected in 5.40s

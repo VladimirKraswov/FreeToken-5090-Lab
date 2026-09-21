@@ -27,5 +27,16 @@
       "relative_to_cpu12_mtp3_percent": -5.796195819243022
     }
   },
-  "selection_rule": "Require >2% mean decode gain in the controlled pair before replacing the established profile; do not promote sub-percent noise. Final confirmation follows the restore."
+  "selection_rule": "Require >2% mean decode gain in the controlled pair before replacing the established profile; do not promote sub-percent noise. Final confirmation completed after restoring CPU12/MTP3.",
+  "final_confirmation": {
+    "audit-final-real": {
+      "decode_mean_tps": 42.58779906288728,
+      "ttft_mean_s": 40.48057235451415
+    },
+    "audit-final-sampled": {
+      "decode_mean_tps": 37.86418102596636,
+      "ttft_mean_s": 40.062768854084425
+    }
+  },
+  "functional_validation": "audit-final-validation.json: passed"
 }

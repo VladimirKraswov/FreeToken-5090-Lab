@@ -1,0 +1,49 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_fused_hash_captures_and_replays_in_a_cuda_graph _____________
+
+    @requires_cuda
+    def test_fused_hash_captures_and_replays_in_a_cuda_graph():
+        """Fixed shapes, no host reads: the hash is part of the captured decode step."""
+        import weakref
+
+        layer = _make_layer(_config(), device="cuda")
+        embedding = layer.ple_embedding
+        ids = torch.randint(0, VOCAB, (4,), dtype=torch.int64, device="cuda")
+        context = torch.randint(0, VOCAB, (4, embedding.ngram_size - 1), dtype=torch.int64,
+                                device="cuda")
+        meta = PLEMetadata(
+            input_ids=ids,
+            cu_seqlens=torch.arange(5, dtype=torch.int32, device="cuda"),
+            seq_lens=(1,) * 4,
+            ngram_context=context,
+            state_slots=torch.arange(4, dtype=torch.int64, device="cuda"),
+            fresh_slots=None,
+            is_decode=True,
+        )
+        out = torch.zeros(4, embedding.num_heads, dtype=torch.int64, device="cuda")
+        embedding.row_ids(meta, out)  # prime the index cache and the JIT before capture
+        captured_indices = [weakref.ref(t) for t in embedding._token_index(meta)]
+
+        graph = torch.cuda.CUDAGraph()
+        side = torch.cuda.Stream()
+        side.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(side):
+            embedding.row_ids(meta, out)
+        torch.cuda.current_stream().wait_stream(side)
+        with torch.cuda.graph(graph):
+            embedding.row_ids(meta, out)
+
+        # A real server sees many prefill lengths after capturing its decode graphs.
+        # Evicting an eager memo must not free addresses those graphs still read.
+        for length in range(1, ple_module._TOKEN_INDEX_CACHE_SIZE + 2):
+            other = _meta([list(range(length))], [[EOS, EOS]], device="cuda")
+            embedding._token_index(other)
+>       assert all(ref() is not None for ref in captured_indices)
+E       assert False
+E        +  where False = all(<generator object test_fused_hash_captures_and_replays_in_a_cuda_graph.<locals>.<genexpr> at 0x74127dcf2f60>)
+
+tests/models/qwen4_exp/test_ple.py:320: AssertionError
+=========================== short test summary info ============================
+FAILED tests/models/qwen4_exp/test_ple.py::test_fused_hash_captures_and_replays_in_a_cuda_graph
+1 failed, 30 deselected in 7.04s

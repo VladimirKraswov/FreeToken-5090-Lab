@@ -169,3 +169,11 @@ Preserve a known-good launcher and source commit before a trial. On failure,
 stop the process, restore that launcher/commit, restart, warm and run functional
 validation. Switching Python files underneath a running process does not update
 the already imported engine. Restore the watchdog after maintenance.
+
+## Repository CI
+
+The fork's GitHub Actions workflow checks the benchmark artifacts, streaming
+client and launcher syntax on a hosted CPU runner. It does not claim to rerun
+the GPU model tests. Inherited upstream release/nightly/issue-label workflows
+are disabled in this fork; no automated wheel publishing is configured.
+The homelab is not attached as a GitHub Actions runner.

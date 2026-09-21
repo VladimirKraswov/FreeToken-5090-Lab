@@ -28,13 +28,16 @@ exclusive PCIe passthrough, not simultaneously shared. V100 and temporary 3090
 nodes do not contribute to these measurements. Existing unrelated host guests
 remained present; this is not a bare-metal benchmark.
 
-Warm inference RSS was about 122 GiB, including the pinned expert banks and
-47.7 GiB PLE table. The guest and its QEMU process had no swapped pages. The host
+The final GPU worker RSS was about 117 GiB, plus about 0.85 GiB for the API
+supervisor, including the resident expert banks and 47.7 GiB pinned PLE table.
+Earlier warm observations reached about 122 GiB. The inference processes, guest
+and its QEMU process had no swapped pages at their recorded checks. The host
 as a whole had about 1.7 GiB swap usage from other workloads; claiming that the
 entire host never swapped would be incorrect. QEMU's roughly 160 GiB RSS was
 backed by hugepages (observed through AnonHugePages).
 
-The pre-audit warm NVML reading was 31814 MiB used and 298 MiB free. This includes
+The final post-validation NVML reading was 31850 MiB used and 262 MiB free
+(earlier pre-audit: 31814 MiB used and 298 MiB free). This includes
 PyTorch allocator reservations and is not all active model tensors. Memory ratio
 0.87 is a planner input, not a promise of 13% free memory after graphs and JIT.
 This profile deliberately runs close to capacity; higher concurrent request

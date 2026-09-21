@@ -1,0 +1,40 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_ngram_context_reads_only_the_required_tail ________________
+
+    def test_ngram_context_reads_only_the_required_tail():
+        from freetoken.engine.spec import ngram_context_after
+
+        class LongHistory:
+            def __len__(self):
+                return 131072
+
+            def __iter__(self):
+                raise AssertionError("must not copy the full prompt during decode")
+
+            def __getitem__(self, key):
+                assert isinstance(key, slice)
+                indices = range(*key.indices(len(self)))
+                assert len(indices) <= 2
+                return list(indices)
+
+>       assert ngram_context_after(LongHistory(), [7, 8], 1, 2, -1) == [131070, 131071]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/distributed/test_spec_mtp.py:111:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python/freetoken/engine/spec.py:85: in ngram_context_after
+    seq = list(host_ids) + list(drafts)
+          ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <distributed.test_spec_mtp.test_ngram_context_reads_only_the_required_tail.<locals>.LongHistory object at 0x7c401070e360>
+
+    def __iter__(self):
+>       raise AssertionError("must not copy the full prompt during decode")
+E       AssertionError: must not copy the full prompt during decode
+
+tests/distributed/test_spec_mtp.py:103: AssertionError
+=========================== short test summary info ============================
+FAILED tests/distributed/test_spec_mtp.py::test_ngram_context_reads_only_the_required_tail
+1 failed, 77 deselected in 5.50s
