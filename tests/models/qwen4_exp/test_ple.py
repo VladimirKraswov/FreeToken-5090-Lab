@@ -283,6 +283,8 @@ def test_fused_hash_matches_the_torch_reference(decode):
 @requires_cuda
 def test_fused_hash_captures_and_replays_in_a_cuda_graph():
     """Fixed shapes, no host reads: the hash is part of the captured decode step."""
+    import weakref
+
     layer = _make_layer(_config(), device="cuda")
     embedding = layer.ple_embedding
     ids = torch.randint(0, VOCAB, (4,), dtype=torch.int64, device="cuda")
@@ -299,6 +301,7 @@ def test_fused_hash_captures_and_replays_in_a_cuda_graph():
     )
     out = torch.zeros(4, embedding.num_heads, dtype=torch.int64, device="cuda")
     embedding.row_ids(meta, out)  # prime the index cache and the JIT before capture
+    captured_indices = [weakref.ref(t) for t in embedding._token_index(meta)]
 
     graph = torch.cuda.CUDAGraph()
     side = torch.cuda.Stream()
@@ -308,6 +311,13 @@ def test_fused_hash_captures_and_replays_in_a_cuda_graph():
     torch.cuda.current_stream().wait_stream(side)
     with torch.cuda.graph(graph):
         embedding.row_ids(meta, out)
+
+    # A real server sees many prefill lengths after capturing its decode graphs.
+    # Evicting an eager memo must not free addresses those graphs still read.
+    for length in range(1, ple_module._TOKEN_INDEX_CACHE_SIZE + 2):
+        other = _meta([list(range(length))], [[EOS, EOS]], device="cuda")
+        embedding._token_index(other)
+    assert all(ref() is not None for ref in captured_indices)
 
     for seed in range(3):
         torch.manual_seed(seed)

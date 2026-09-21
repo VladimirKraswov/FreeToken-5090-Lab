@@ -440,6 +440,7 @@ class NGramEmbedding(BaseOP):
         self.ngram_heads_offsets = torch.empty(self.num_heads, dtype=torch.int64)
         self._table = table
         self._token_index_cache: dict[tuple, Tuple[torch.Tensor, torch.Tensor]] = {}
+        self._graph_token_indices: dict[tuple, Tuple[torch.Tensor, torch.Tensor]] = {}
 
     def attach_table(self, table: PLETableBackend) -> None:
         self._table = table
@@ -505,8 +506,15 @@ class NGramEmbedding(BaseOP):
             (num_tokens,) if meta.is_decode else tuple(meta.seq_lens),
             str(device),
         )
+        pinned = self._graph_token_indices.get(key)
+        if pinned is not None:
+            return pinned
         cached = self._token_index_cache.get(key)
         if cached is not None:
+            if capturing:
+                # CUDA graphs retain device addresses, not Python references. Keep these
+                # immutable external inputs alive even when later prompt shapes evict the memo.
+                self._graph_token_indices[key] = cached
             return cached
         if meta.is_decode:  # one token per request, each at offset 0
             index = (
