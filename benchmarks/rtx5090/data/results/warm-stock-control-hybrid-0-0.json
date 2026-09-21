@@ -1,0 +1,27 @@
+{
+  "label": "warm-stock-control-hybrid",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:30:00Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 30.69236111500004,
+  "first_event_s": 0.8484848160001093,
+  "ttft_s": 13.547057440000117,
+  "last_token_s": 30.690493311999944,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 383,
+    "total_tokens": 449
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 382,
+  "end_to_end_tps": 12.478675021610487,
+  "decode_tps": 22.28258109122198,
+  "median_chunk_interval_ms": 38.423190000230534,
+  "max_chunk_interval_ms": 328.2121110000844,
+  "text_sha256": "4cb1ea3d270d3c7934918d0bf6fe20181bb1bd2982e1cfd1e625b614297b14e8"
+}

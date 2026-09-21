@@ -1,0 +1,43 @@
+{
+  "label": "round-prefill14k",
+  "config": [
+    "kai",
+    "--strategy",
+    "hybrid",
+    "--mtp",
+    "3",
+    "--threads",
+    "12",
+    "--env",
+    "PYTORCH_ALLOC_CONF=expandable_segments:True",
+    "--extra",
+    "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --max-prefill-length 14336"
+  ],
+  "result": {
+    "label": "round-prefill14k-real",
+    "repeat": 0,
+    "padding_tokens": 0,
+    "requested_output": 1024,
+    "reasoning_effort": "medium",
+    "temperature": 0.0,
+    "started_at": "2026-09-21T16:23:12Z",
+    "nonce": "run-round-real-0",
+    "base": "http://127.0.0.1:1919",
+    "elapsed_s": 64.41927469300026,
+    "first_event_s": 0.04628676200081827,
+    "ttft_s": 40.344688915000006,
+    "last_token_s": 64.41801552200013,
+    "usage": {
+      "prompt_tokens": 104868,
+      "completion_tokens": 1024,
+      "total_tokens": 105892
+    },
+    "finish_reason": "length",
+    "nonempty_chunks": 1024,
+    "end_to_end_tps": 15.895863542084662,
+    "decode_tps": 42.495165570616585,
+    "median_chunk_interval_ms": 0.4944989996147342,
+    "max_chunk_interval_ms": 207.26409399958357,
+    "text_sha256": "54fec1434ad5199afc8e66123baeabe8118fa3d6ebb0830c047b676db4a0b692"
+  }
+}

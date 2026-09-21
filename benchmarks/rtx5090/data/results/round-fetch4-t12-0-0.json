@@ -1,0 +1,27 @@
+{
+  "label": "round-fetch4-t12",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 128,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T16:04:34Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 6.689233254999635,
+  "first_event_s": 0.04234208999969269,
+  "ttft_s": 3.3731349379995663,
+  "last_token_s": 6.687695132000044,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 128,
+    "total_tokens": 195
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 127,
+  "end_to_end_tps": 19.135227479820777,
+  "decode_tps": 38.31579231231837,
+  "median_chunk_interval_ms": 0.4554510005618795,
+  "max_chunk_interval_ms": 230.63197400006175,
+  "text_sha256": "f5ce76d670d13307d2d0af53afada8c7593b6efd2f94ccd8745dc9dfe9c2b00d"
+}

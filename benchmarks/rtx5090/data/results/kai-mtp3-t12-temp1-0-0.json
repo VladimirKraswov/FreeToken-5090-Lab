@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp3-t12-temp1",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 1.0,
+  "started_at": "2026-09-21T15:27:06Z",
+  "nonce": "run-sample-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.497173258000203,
+  "first_event_s": 0.04059621399983371,
+  "ttft_s": 3.304792473999896,
+  "last_token_s": 13.495861746000173,
+  "usage": {
+    "prompt_tokens": 65,
+    "completion_tokens": 512,
+    "total_tokens": 577
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 37.93386883409246,
+  "decode_tps": 50.141941572702336,
+  "median_chunk_interval_ms": 0.46840000004522153,
+  "max_chunk_interval_ms": 212.82830800009833,
+  "text_sha256": "be4749edde864a307297d824bb3a7544bfd7d1133abf4fba3a207dcf5dc676bd"
+}

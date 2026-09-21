@@ -1,0 +1,26 @@
+{
+  "label": "kai-mtp2-t16",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-21T15:03:12Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.423753767999642,
+  "first_event_s": 0.040955099999791855,
+  "ttft_s": 2.8050201429996378,
+  "last_token_s": 13.422468277000007,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 512,
+    "total_tokens": 579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 38.141343237428615,
+  "decode_tps": 48.12832552142347,
+  "median_chunk_interval_ms": 0.41317449995403877,
+  "max_chunk_interval_ms": 200.18032000007224,
+  "text_sha256": "8cff32e4c1fc5297740cf509298a288d243518e3527ec1c8f5cc92fb1f4b0688"
+}

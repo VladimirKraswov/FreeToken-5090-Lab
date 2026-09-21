@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp2-fixed-p2",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:10:39Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.253187807000359,
+  "first_event_s": 0.04072922600016682,
+  "ttft_s": 2.7762111170000026,
+  "last_token_s": 13.251871558000403,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 512,
+    "total_tokens": 579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 38.632214939983015,
+  "decode_tps": 48.77974070255381,
+  "median_chunk_interval_ms": 0.41411300003346696,
+  "max_chunk_interval_ms": 194.7918710002341,
+  "text_sha256": "8cff32e4c1fc5297740cf509298a288d243518e3527ec1c8f5cc92fb1f4b0688"
+}

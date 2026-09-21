@@ -1,0 +1,27 @@
+{
+  "label": "warm-kai-mtp3-t12-ram",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:25:24Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.786610927999845,
+  "first_event_s": 0.8391977409996798,
+  "ttft_s": 4.23950596099985,
+  "last_token_s": 13.785257284999716,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 27.853110674220684,
+  "decode_tps": 40.122562069793695,
+  "median_chunk_interval_ms": 0.5110619999868504,
+  "max_chunk_interval_ms": 1442.7647130000878,
+  "text_sha256": "7f5bceaf5ff972924ac59b34c50ed7c212800dd35e0e20822a33bb089e953f03"
+}

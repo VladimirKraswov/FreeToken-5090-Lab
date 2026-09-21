@@ -1,0 +1,27 @@
+{
+  "label": "stock-control-offload",
+  "repeat": 0,
+  "padding_tokens": 75000,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:35:24Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 70.19765576700047,
+  "first_event_s": 0.008450859000731725,
+  "ttft_s": 55.850177194000025,
+  "last_token_s": 70.19642017700062,
+  "usage": {
+    "prompt_tokens": 75068,
+    "completion_tokens": 511,
+    "total_tokens": 75579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 510,
+  "end_to_end_tps": 7.279445366325442,
+  "decode_tps": 35.54937697655883,
+  "median_chunk_interval_ms": 25.930884999979753,
+  "max_chunk_interval_ms": 132.7442659994631,
+  "text_sha256": "cc960b8b152f6d207a2c73d91cea769911d1c01407488d61ceabf30f4011cde9"
+}

@@ -1,0 +1,17 @@
+{
+  "engine_code_commit": "79b4dcb9c3620123426f75f1c900ff0c1cbae987",
+  "files_sha256": {
+    "python/freetoken/engine/engine.py": "677cd57dc7b86ad40ff10b3e81f28665fdcbe9acc4c573c09824f036a49e2d19",
+    "python/freetoken/engine/spec.py": "10874f71436578ce612c965bec65bffb9a3f4d78bf7172485f4f3f4299909bbb",
+    "python/freetoken/engine/spec_graph.py": "d7fd980312235ad927d93c38f6fdc0bf61f00ab98bd4b2d8c38c25b69ea39d4c",
+    "python/freetoken/kernel/triton/ple_hash.py": "5a10b010448b01bfb7344dc7c4485843d1a57b6a8547fdff6b5a1650010c10d5",
+    "python/freetoken/kernel/triton/prefill_invalidate.py": "85b84bd4fc5348fa56562e9cbf4cdf58784194ffcf4c8869bbe5ef88880aa037",
+    "python/freetoken/models/qwen4_exp/model.py": "a250f3ff4da44cc316b2fe06f364b2a538075e5ff5518b26d936cfa2e7dd65a0",
+    "python/freetoken/models/qwen4_exp/ple.py": "40ca1bfb530354bda0fff179aaeea01834eeb3ccde51b52532e80258a71f3752",
+    "python/freetoken/moe/offload_cache.py": "a275e9679c1203d8147d779e0e60453f9367a88717f672336d398a9a24d9e0f7",
+    "tests/distributed/test_spec_mtp.py": "6796870f94b2f0360c48ef50b7ecd8131871529764b270c78360f23d7378ff55",
+    "tests/models/qwen4_exp/test_ple.py": "70d5c54ebe5d21eadd2ad6f12df46ffbfc77f3372b5c831e4ab0c9ef74890545",
+    "tests/moe/test_prefill_invalidate.py": "19eecb570f38e01f3b5f1cc29b5bb37834298214d5c4cbd1a23ba2b25bac7f4f"
+  },
+  "local_and_deployed_match": true
+}

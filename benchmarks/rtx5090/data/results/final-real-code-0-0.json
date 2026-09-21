@@ -1,0 +1,27 @@
+{
+  "label": "final-real-code",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "started_at": "2026-09-21T16:30:16Z",
+  "nonce": "run-round-real-0",
+  "base": "http://<inference-host>:1919",
+  "elapsed_s": 65.92235783301294,
+  "first_event_s": 0.8958633330184966,
+  "ttft_s": 41.2430926670786,
+  "last_token_s": 65.92193850001786,
+  "usage": {
+    "prompt_tokens": 104868,
+    "completion_tokens": 1024,
+    "total_tokens": 105892
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1024,
+  "end_to_end_tps": 15.53342498145896,
+  "decode_tps": 41.45250579889701,
+  "median_chunk_interval_ms": 0.08820893708616495,
+  "max_chunk_interval_ms": 250.0665420666337,
+  "text_sha256": "1711b57ee5f3053876d63fbfaf656dcd418312812b95c62e7d89a58ec12cc121"
+}

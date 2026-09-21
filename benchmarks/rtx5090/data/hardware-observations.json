@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-21",
+  "gpu": "RTX 5090",
+  "power_limit_w": 500,
+  "load_observation": {
+    "pcie_generation": 3,
+    "pcie_width": 16,
+    "memory_used_mib": 31830,
+    "memory_free_mib": 282,
+    "power_draw_w": 391.94,
+    "temperature_c": 56
+  },
+  "note": "Single NVML observation during the CPU8 audit prefill, not a peak/average or energy-per-token measurement."
+}

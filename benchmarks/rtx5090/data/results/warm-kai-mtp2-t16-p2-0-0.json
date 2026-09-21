@@ -1,0 +1,27 @@
+{
+  "label": "warm-kai-mtp2-t16-p2",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:05:47Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 12.197271832999832,
+  "first_event_s": 0.9024018069999329,
+  "ttft_s": 3.687672736999957,
+  "last_token_s": 12.19593974899999,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 31.48244994926525,
+  "decode_tps": 45.015042365245236,
+  "median_chunk_interval_ms": 0.5002799998692353,
+  "max_chunk_interval_ms": 143.15801400016426,
+  "text_sha256": "c8a69593bf7f18ea7e14afb1910cdf7c97a0f9af7edc739a5aa2e0501c2aa757"
+}

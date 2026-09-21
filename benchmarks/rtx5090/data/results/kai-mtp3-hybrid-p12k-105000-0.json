@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp3-hybrid-p12k",
+  "repeat": 0,
+  "padding_tokens": 105000,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:51:37Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 55.02203299900066,
+  "first_event_s": 0.009226818000570347,
+  "ttft_s": 45.010552575000474,
+  "last_token_s": 55.020762034000654,
+  "usage": {
+    "prompt_tokens": 105068,
+    "completion_tokens": 512,
+    "total_tokens": 105580
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 9.30536318076977,
+  "decode_tps": 51.04788287327593,
+  "median_chunk_interval_ms": 0.4548735000753368,
+  "max_chunk_interval_ms": 170.9270760002255,
+  "text_sha256": "0bc3641b006f569826dde504194d251740b12e2274136b36e87cf7b215e0efa8"
+}

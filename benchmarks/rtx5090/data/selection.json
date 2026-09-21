@@ -1,0 +1,31 @@
+{
+  "selected": {
+    "cpu_threads": 12,
+    "mtp_depth": 3,
+    "prefill_tokens": 14336,
+    "context_tokens": 131072,
+    "kv_dtype": "bf16",
+    "moe_strategy": "hybrid",
+    "moe_hybrid_fetch": "calibrated_auto",
+    "memory_ratio": 0.87,
+    "vision": true,
+    "nvfp4_backend": "triton",
+    "adaptive_mtp": false
+  },
+  "baseline_mean_tps": 42.7893447398357,
+  "comparisons": {
+    "audit-cpu8": {
+      "decode_mean_tps": 38.33419319929525,
+      "relative_to_cpu12_mtp3_percent": -10.41182464379462
+    },
+    "audit-cpu16": {
+      "decode_mean_tps": 42.949360071493885,
+      "relative_to_cpu12_mtp3_percent": 0.3739606965965425
+    },
+    "audit-mtp2": {
+      "decode_mean_tps": 40.30919052894386,
+      "relative_to_cpu12_mtp3_percent": -5.796195819243022
+    }
+  },
+  "selection_rule": "Require >2% mean decode gain in the controlled pair before replacing the established profile; do not promote sub-percent noise. Final confirmation follows the restore."
+}

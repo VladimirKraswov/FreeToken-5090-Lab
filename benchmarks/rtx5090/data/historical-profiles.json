@@ -1,0 +1,263 @@
+[
+  {
+    "label": "kai-mtp2-fixed-p2",
+    "profile": [
+      "--",
+      "kai",
+      "--mtp",
+      "2",
+      "--threads",
+      "16",
+      "--extra",
+      "--prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats"
+    ],
+    "started": 1790003321.6138723,
+    "finished": 1790003489.6455824
+  },
+  {
+    "label": "kai-mtp2-ram",
+    "profile": [
+      "--",
+      "kai",
+      "--mtp",
+      "2",
+      "--threads",
+      "16",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.90 --ple-backend pinned --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats"
+    ],
+    "started": 1790003667.1395953,
+    "finished": 1790003978.2975242,
+    "success": true
+  },
+  {
+    "label": "kai-mtp2-t16-p2",
+    "profile": [],
+    "started": 1790003146.936947,
+    "finished": 1790003209.141693
+  },
+  {
+    "label": "kai-mtp3-hybrid-p12k",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d"
+    ],
+    "started": 1790005690.720527,
+    "finished": 1790005952.7335813,
+    "success": true
+  },
+  {
+    "label": "kai-mtp3-offload-p12k",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "offload",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d"
+    ],
+    "started": 1790005320.6725376,
+    "finished": 1790005612.0767899,
+    "success": true
+  },
+  {
+    "label": "kai-mtp3-t12-ram",
+    "profile": [
+      "--",
+      "kai",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.90 --ple-backend pinned --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d"
+    ],
+    "started": 1790004125.8387268,
+    "finished": 1790004425.9543247,
+    "success": true
+  },
+  {
+    "label": "kai-mtp5-p12k",
+    "profile": [
+      "--",
+      "kai",
+      "--mtp",
+      "5",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d"
+    ],
+    "started": 1790005034.3380606,
+    "finished": 1790005290.2545853,
+    "success": true
+  },
+  {
+    "label": "round-adaptive",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "4",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--env",
+      "FT_SPEC_ADAPTIVE=1",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d"
+    ],
+    "started": 1790006138.6240773,
+    "finished": 1790006403.9399562,
+    "success": true
+  },
+  {
+    "label": "round-fetch-best-t16",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "16",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --moe-hybrid-max-fetch 4 "
+    ],
+    "started": 1790007037.3957248,
+    "finished": 1790007235.5457175,
+    "success": true
+  },
+  {
+    "label": "round-fetch4-t12",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --moe-hybrid-max-fetch 4"
+    ],
+    "started": 1790006481.4472535,
+    "finished": 1790006681.4531066,
+    "success": true
+  },
+  {
+    "label": "round-fetch8-t12",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --moe-hybrid-max-fetch 8"
+    ],
+    "started": 1790006753.5792444,
+    "finished": 1790006956.3770406,
+    "success": true
+  },
+  {
+    "label": "round-prefill10k",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --max-prefill-length 10240"
+    ],
+    "started": 1790007307.0990946,
+    "finished": 1790007510.1733618,
+    "success": true
+  },
+  {
+    "label": "round-prefill14k",
+    "profile": [
+      "--",
+      "kai",
+      "--strategy",
+      "hybrid",
+      "--mtp",
+      "3",
+      "--threads",
+      "12",
+      "--env",
+      "PYTORCH_ALLOC_CONF=expandable_segments:True",
+      "--extra",
+      "--memory-ratio 0.87 --ple-backend pinned --max-prefill-length 12288 --prefill-mixer-pieces 2 --prefill-chunk-budget 0.85 --no-moe-collect-stats --moe-prefill-hit-d2d --max-prefill-length 14336"
+    ],
+    "started": 1790007589.8919592,
+    "finished": 1790007792.8747916,
+    "success": true
+  },
+  {
+    "label": "stock-control-hybrid",
+    "profile": [
+      "--",
+      "stock",
+      "--strategy",
+      "hybrid"
+    ],
+    "started": 1790004456.925124,
+    "finished": 1790004782.2127457,
+    "success": true
+  },
+  {
+    "label": "stock-control-offload",
+    "profile": [
+      "--",
+      "stock",
+      "--strategy",
+      "offload"
+    ],
+    "started": 1790004782.2993155,
+    "finished": 1790005031.2564542,
+    "success": true
+  }
+]

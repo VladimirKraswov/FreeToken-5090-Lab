@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp2-ram",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:18:00Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.445816601999923,
+  "first_event_s": 0.04007660399975066,
+  "ttft_s": 2.757574335999834,
+  "last_token_s": 13.444293926999762,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 512,
+    "total_tokens": 579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 38.07875826030867,
+  "decode_tps": 47.816357082144336,
+  "median_chunk_interval_ms": 0.47276999998757674,
+  "max_chunk_interval_ms": 191.92381799985014,
+  "text_sha256": "bb1ba238d318c1b45dc168162179894be702a10bbfd5d5dd8ce0a8e5654e6451"
+}

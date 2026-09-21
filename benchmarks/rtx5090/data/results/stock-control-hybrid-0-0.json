@@ -1,0 +1,27 @@
+{
+  "label": "stock-control-hybrid",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:30:31Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 26.385745119999683,
+  "first_event_s": 0.07349965399998837,
+  "ttft_s": 5.596856441999989,
+  "last_token_s": 26.384102578999773,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 511,
+    "total_tokens": 578
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 510,
+  "end_to_end_tps": 19.366517704011162,
+  "decode_tps": 24.534274364137016,
+  "median_chunk_interval_ms": 37.56629899999098,
+  "max_chunk_interval_ms": 139.15915600000517,
+  "text_sha256": "691294b54ee5ae4003a45710e658169d1d4e7aadc60098acabc082fa14d8d192"
+}

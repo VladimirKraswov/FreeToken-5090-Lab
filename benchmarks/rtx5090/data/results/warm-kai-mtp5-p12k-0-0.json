@@ -1,0 +1,27 @@
+{
+  "label": "warm-kai-mtp5-p12k",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:40:08Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 12.284477094000067,
+  "first_event_s": 0.8317121290001523,
+  "ttft_s": 4.231038107999666,
+  "last_token_s": 12.283141539000098,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 31.25896178255334,
+  "decode_tps": 47.565211162769955,
+  "median_chunk_interval_ms": 0.48801099956108374,
+  "max_chunk_interval_ms": 237.56415500065486,
+  "text_sha256": "c8a69593bf7f18ea7e14afb1910cdf7c97a0f9af7edc739a5aa2e0501c2aa757"
+}

@@ -1,0 +1,517 @@
+{
+  "checked_date": "2026-09-21",
+  "upstream_head": "cc1f5c2c91855f2cc7787ad6b909f7e46a5d5825",
+  "kai_head": "c206a6dfc614e983c57f71da391ff4ee76289ed2",
+  "branches": {
+    "yuuki-net": [
+      {
+        "name": "kai",
+        "commit": {
+          "sha": "c206a6dfc614e983c57f71da391ff4ee76289ed2",
+          "url": "https://api.github.com/repos/yuuki-net/FreeToken-Kai/commits/c206a6dfc614e983c57f71da391ff4ee76289ed2"
+        }
+      },
+      {
+        "name": "main",
+        "commit": {
+          "sha": "af71ba43206e124f5ff6419b47ee36c6e9981078",
+          "url": "https://api.github.com/repos/yuuki-net/FreeToken-Kai/commits/af71ba43206e124f5ff6419b47ee36c6e9981078"
+        }
+      }
+    ],
+    "lzxlchlcx": [
+      {
+        "name": "analysis/expert-prediction-hit8",
+        "commit": {
+          "sha": "90c7d43eaad5258396490472720b918a5ce8fedb",
+          "url": "https://api.github.com/repos/lzxlchlcx/FreeToken-FreeRoll/commits/90c7d43eaad5258396490472720b918a5ce8fedb"
+        }
+      },
+      {
+        "name": "main",
+        "commit": {
+          "sha": "cc1f5c2c91855f2cc7787ad6b909f7e46a5d5825",
+          "url": "https://api.github.com/repos/lzxlchlcx/FreeToken-FreeRoll/commits/cc1f5c2c91855f2cc7787ad6b909f7e46a5d5825"
+        }
+      }
+    ],
+    "JUNQINGV587": [
+      {
+        "name": "bak/full0913-tp2-20260915",
+        "commit": {
+          "sha": "499375cfa253de9d72d84e6e19109e7ed470a69c",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/499375cfa253de9d72d84e6e19109e7ed470a69c"
+        }
+      },
+      {
+        "name": "build/pypi-readiness",
+        "commit": {
+          "sha": "76edc1628213062e3efc49fb02599e09555ad059",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/76edc1628213062e3efc49fb02599e09555ad059"
+        }
+      },
+      {
+        "name": "chore/issue-templates",
+        "commit": {
+          "sha": "4f49dc12f09f515b29566103fe556603e9ff6ce4",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/4f49dc12f09f515b29566103fe556603e9ff6ce4"
+        }
+      },
+      {
+        "name": "chore/release-0.1.3",
+        "commit": {
+          "sha": "01b6e3dfe0d602585859a046e939f1e8cdd14075",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/01b6e3dfe0d602585859a046e939f1e8cdd14075"
+        }
+      },
+      {
+        "name": "ci/engine-manifest",
+        "commit": {
+          "sha": "50760f1ba7d3816af59195f977c2b3ae167ccf36",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/50760f1ba7d3816af59195f977c2b3ae167ccf36"
+        }
+      },
+      {
+        "name": "dev/refine-readme",
+        "commit": {
+          "sha": "9ecbc9f33f77e0598bd4c4e4f01970b14b35b40b",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/9ecbc9f33f77e0598bd4c4e4f01970b14b35b40b"
+        }
+      },
+      {
+        "name": "exp/cache-freqpin",
+        "commit": {
+          "sha": "ef0211454172ae2707ec4a2faa2e7a4638a9b5cd",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/ef0211454172ae2707ec4a2faa2e7a4638a9b5cd"
+        }
+      },
+      {
+        "name": "exp/hc-prefill-fusion",
+        "commit": {
+          "sha": "21e4b93b9b24adeb6b18a0ac58d5913cb4f30704",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/21e4b93b9b24adeb6b18a0ac58d5913cb4f30704"
+        }
+      },
+      {
+        "name": "exp/kvmem-host-tier",
+        "commit": {
+          "sha": "ad136ba43424a56006ad4a584a12781ac429322d",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/ad136ba43424a56006ad4a584a12781ac429322d"
+        }
+      },
+      {
+        "name": "exp/owner-hybrid",
+        "commit": {
+          "sha": "c94aae2dd523527f61e98f543caf968b1e905fbe",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/c94aae2dd523527f61e98f543caf968b1e905fbe"
+        }
+      },
+      {
+        "name": "feat/chat-reasoning-effort",
+        "commit": {
+          "sha": "852136b1a1eb479dcee7c520d3ee02632946958f",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/852136b1a1eb479dcee7c520d3ee02632946958f"
+        }
+      },
+      {
+        "name": "feat/decode-token-checkpoint",
+        "commit": {
+          "sha": "ea5348b4e316b7a73f27e94af012039f7ec778f8",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/ea5348b4e316b7a73f27e94af012039f7ec778f8"
+        }
+      },
+      {
+        "name": "feat/ftw-hotfix-script",
+        "commit": {
+          "sha": "416c48ec73fbee74e4a26883b7b4b0a0bd263035",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/416c48ec73fbee74e4a26883b7b4b0a0bd263035"
+        }
+      },
+      {
+        "name": "feat/gemma4-mm-squash",
+        "commit": {
+          "sha": "89b2cdde324060cd7c0c90beb87a8964749b2998",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/89b2cdde324060cd7c0c90beb87a8964749b2998"
+        }
+      },
+      {
+        "name": "feat/glm5-next",
+        "commit": {
+          "sha": "d52f5a61c947391008c654b45fe338e2212b4372",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/d52f5a61c947391008c654b45fe338e2212b4372"
+        }
+      },
+      {
+        "name": "feat/glm5-next-mm",
+        "commit": {
+          "sha": "6c6bab625f5907a25383496f2bdaa014b8d9d322",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/6c6bab625f5907a25383496f2bdaa014b8d9d322"
+        }
+      },
+      {
+        "name": "feat/launch-dsh",
+        "commit": {
+          "sha": "4d1ee5198949e686a01f12a947863cbf0985ef81",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/4d1ee5198949e686a01f12a947863cbf0985ef81"
+        }
+      },
+      {
+        "name": "feat/launch-vlm",
+        "commit": {
+          "sha": "db64879de40dce213adbc2f3ffb88d316774118a",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/db64879de40dce213adbc2f3ffb88d316774118a"
+        }
+      },
+      {
+        "name": "feat/minimax-m3-mm",
+        "commit": {
+          "sha": "ae0e11f3541bf07d1bd55b09459ea8e9c4101701",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/ae0e11f3541bf07d1bd55b09459ea8e9c4101701"
+        }
+      },
+      {
+        "name": "feat/multi-gpu-select",
+        "commit": {
+          "sha": "b6d5e005c8fc3a28ea3af5edcff0d6a8821a8aed",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/b6d5e005c8fc3a28ea3af5edcff0d6a8821a8aed"
+        }
+      },
+      {
+        "name": "feat/muse-glimmer-mm",
+        "commit": {
+          "sha": "fe803547d85f1623b044914c5ff831309ef0af68",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/fe803547d85f1623b044914c5ff831309ef0af68"
+        }
+      },
+      {
+        "name": "feat/ple-disk",
+        "commit": {
+          "sha": "6450c3c7f65e9b7816d5e9c853179f634db9663a",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/6450c3c7f65e9b7816d5e9c853179f634db9663a"
+        }
+      },
+      {
+        "name": "feat/qwen3-5-moe-scheme-reader",
+        "commit": {
+          "sha": "b52216c3df070f40918963806cf9c1c07210dc48",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/b52216c3df070f40918963806cf9c1c07210dc48"
+        }
+      },
+      {
+        "name": "feat/qwen4-exp-fp8-dense",
+        "commit": {
+          "sha": "540b2cea49fb013dc04ceab3caa34cc38418b530",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/540b2cea49fb013dc04ceab3caa34cc38418b530"
+        }
+      },
+      {
+        "name": "feat/qwen4-exp-squashed",
+        "commit": {
+          "sha": "e3b6d7bdc74da8c9f88d182415ec4e8dfbb967c3",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/e3b6d7bdc74da8c9f88d182415ec4e8dfbb967c3"
+        }
+      },
+      {
+        "name": "feat/qwen-mm-squash",
+        "commit": {
+          "sha": "e4a489abf1ddfa9f65498c81e9f6df75e2239701",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/e4a489abf1ddfa9f65498c81e9f6df75e2239701"
+        }
+      },
+      {
+        "name": "feat/split-residency",
+        "commit": {
+          "sha": "831d38a66bc45543411078c6805de8c42e7603fa",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/831d38a66bc45543411078c6805de8c42e7603fa"
+        }
+      },
+      {
+        "name": "feat/support-sm_80",
+        "commit": {
+          "sha": "184a4f114d00b7805274841488f2906233b5a961",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/184a4f114d00b7805274841488f2906233b5a961"
+        }
+      },
+      {
+        "name": "fix/aot-models-no-moe-import",
+        "commit": {
+          "sha": "8593e373c5af02856f804d36c5a0832a2e25ec49",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/8593e373c5af02856f804d36c5a0832a2e25ec49"
+        }
+      },
+      {
+        "name": "fix/ct-mixed-precision",
+        "commit": {
+          "sha": "cc08f3adbd43044c249ab04063531319a1bbb950",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/cc08f3adbd43044c249ab04063531319a1bbb950"
+        }
+      },
+      {
+        "name": "fix/ftw-ple-table",
+        "commit": {
+          "sha": "234ecc03f230d7bed53119b824dedb4ed915d916",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/234ecc03f230d7bed53119b824dedb4ed915d916"
+        }
+      },
+      {
+        "name": "fix/ftw-vision-load",
+        "commit": {
+          "sha": "d411d3a9292ca3ed188b77733d13cf4152301815",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/d411d3a9292ca3ed188b77733d13cf4152301815"
+        }
+      },
+      {
+        "name": "fix/modelopt-w4a16-no-input-scale",
+        "commit": {
+          "sha": "6332b5cef293ba7046cc3c745a55380684b264da",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/6332b5cef293ba7046cc3c745a55380684b264da"
+        }
+      },
+      {
+        "name": "fix/prefill-jit-warmup",
+        "commit": {
+          "sha": "a8326af90894ce7e242e48fcc542e39159557cc5",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/a8326af90894ce7e242e48fcc542e39159557cc5"
+        }
+      },
+      {
+        "name": "fix/qwen4-exp-quant-flags",
+        "commit": {
+          "sha": "d113ac56c9675b98377a985644b56058c326b6b9",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/d113ac56c9675b98377a985644b56058c326b6b9"
+        }
+      },
+      {
+        "name": "fix/triton-topk-histogram",
+        "commit": {
+          "sha": "5a0787e1a3a49f76ab0f9bda87fefc06955bb86d",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/5a0787e1a3a49f76ab0f9bda87fefc06955bb86d"
+        }
+      },
+      {
+        "name": "fp8-scaled-mm",
+        "commit": {
+          "sha": "879beab90d6b141768a3d388bf4dbac480c9566d",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/879beab90d6b141768a3d388bf4dbac480c9566d"
+        }
+      },
+      {
+        "name": "perf/default-vendored-topk-router",
+        "commit": {
+          "sha": "d8db64f99eed7ae8283a4cc5bff273121768e64e",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/d8db64f99eed7ae8283a4cc5bff273121768e64e"
+        }
+      },
+      {
+        "name": "refactor/quant-config-handoff",
+        "commit": {
+          "sha": "d0f0262e257356e793abb0b5f42982aad911229a",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/d0f0262e257356e793abb0b5f42982aad911229a"
+        }
+      },
+      {
+        "name": "refactor/quant-squash",
+        "commit": {
+          "sha": "b98e3859a0cdefcc1543c67ac76420d68bf5096f",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/b98e3859a0cdefcc1543c67ac76420d68bf5096f"
+        }
+      },
+      {
+        "name": "sm89-moe-offload",
+        "commit": {
+          "sha": "79a0fa3233d6f9dfc6bdcd0a333f4427e9fbfcd4",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/79a0fa3233d6f9dfc6bdcd0a333f4427e9fbfcd4"
+        }
+      },
+      {
+        "name": "support-minimax-m3",
+        "commit": {
+          "sha": "5ae12723a0d31654d2899db0632bf1ea3d7e4c56",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/5ae12723a0d31654d2899db0632bf1ea3d7e4c56"
+        }
+      },
+      {
+        "name": "support-muse-glimmer",
+        "commit": {
+          "sha": "1b02c7324ab5acec5ac18f14a504fc0d4e3a80d0",
+          "url": "https://api.github.com/repos/JUNQINGV587/FreeToken/commits/1b02c7324ab5acec5ac18f14a504fc0d4e3a80d0"
+        }
+      }
+    ],
+    "vektory79": [
+      {
+        "name": "main",
+        "commit": {
+          "sha": "6410c97e15d789f38262083cd386404dccd9dd7a",
+          "url": "https://api.github.com/repos/vektory79/FreeToken/commits/6410c97e15d789f38262083cd386404dccd9dd7a"
+        }
+      },
+      {
+        "name": "vektory79",
+        "commit": {
+          "sha": "849010ba7f5ea5fb692712a79b6cd3c525d22e93",
+          "url": "https://api.github.com/repos/vektory79/FreeToken/commits/849010ba7f5ea5fb692712a79b6cd3c525d22e93"
+        }
+      }
+    ],
+    "Cerynitius": [
+      {
+        "name": "master",
+        "commit": {
+          "sha": "b6888110f11fb5142de1ccc109b9db620b36fb0b",
+          "url": "https://api.github.com/repos/Cerynitius/freetoken-ox-boost/commits/b6888110f11fb5142de1ccc109b9db620b36fb0b"
+        }
+      }
+    ],
+    "perryh": [
+      {
+        "name": "main",
+        "commit": {
+          "sha": "3febdd71d4e9024e8f3d9a59ef0edbd100105832",
+          "url": "https://api.github.com/repos/perryh/qwen3.8-flash-next-nvfp4-freetoken/commits/3febdd71d4e9024e8f3d9a59ef0edbd100105832"
+        }
+      }
+    ],
+    "Gamal-ElDeen": [
+      {
+        "name": "main",
+        "commit": {
+          "sha": "0a6956d32ab5807914a2d1b08a1f3c958cd93b56",
+          "url": "https://api.github.com/repos/Gamal-ElDeen/FreeToken-serving-nvidia-Qwen3.8-Flash-Next-NVFP4-on-RTX5090-32GB-VRAM-with-128-DDR5/commits/0a6956d32ab5807914a2d1b08a1f3c958cd93b56"
+        }
+      }
+    ],
+    "brz6699": [
+      {
+        "name": "main",
+        "commit": {
+          "sha": "6800d6dbada54bea4ec254295796f802375251d7",
+          "url": "https://api.github.com/repos/brz6699/freetoken-win-qwen3.8-flash-next/commits/6800d6dbada54bea4ec254295796f802375251d7"
+        }
+      },
+      {
+        "name": "windows-build",
+        "commit": {
+          "sha": "6800d6dbada54bea4ec254295796f802375251d7",
+          "url": "https://api.github.com/repos/brz6699/freetoken-win-qwen3.8-flash-next/commits/6800d6dbada54bea4ec254295796f802375251d7"
+        }
+      }
+    ],
+    "aswinkumar1999": [
+      {
+        "name": "main",
+        "commit": {
+          "sha": "1b90e9fc97a77b317313aff9cfcd24b86985e9e4",
+          "url": "https://api.github.com/repos/aswinkumar1999/FreeToken/commits/1b90e9fc97a77b317313aff9cfcd24b86985e9e4"
+        }
+      }
+    ]
+  },
+  "issues": [
+    {
+      "number": 174,
+      "title": "MoE offload cache: LRU realizes ~8-18% decode hit rate on DSV4 fine-grained MoE, frequency-pinning oracle shows 46% at the same size",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/174",
+      "state": "open",
+      "updated_at": "2026-08-25T08:12:43Z"
+    },
+    {
+      "number": 176,
+      "title": "Feature: Predictive Expert Offloading",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/176",
+      "state": "open",
+      "updated_at": "2026-08-27T11:52:50Z"
+    },
+    {
+      "number": 258,
+      "title": "feat(dflash): support dflash",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/258",
+      "state": "open",
+      "updated_at": "2026-08-29T13:23:12Z"
+    },
+    {
+      "number": 300,
+      "title": "feat: Automatic KV/MoE Laddering for decode speed vs context-length trade off ( upto 33% faster decode ) ",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/300",
+      "state": "open",
+      "updated_at": "2026-08-30T22:35:41Z"
+    },
+    {
+      "number": 303,
+      "title": "fix(engine): account for attention workspace in cache-pool sizing",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/303",
+      "state": "open",
+      "updated_at": "2026-08-30T23:02:07Z"
+    },
+    {
+      "number": 306,
+      "title": "Long-context decode: client wall-clock is ~half the scheduler gen throughput",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/306",
+      "state": "open",
+      "updated_at": "2026-09-05T23:29:09Z"
+    },
+    {
+      "number": 308,
+      "title": "ft bench bw -o writes a profile that hybrid never loads (silent fetch cap of 1)",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/308",
+      "state": "open",
+      "updated_at": "2026-08-31T03:09:54Z"
+    },
+    {
+      "number": 324,
+      "title": "[Showcase & Fix] Qwen3.8-Flash-Next on Dual RTX 5090 Blackwell + Tool Call Recovery Patch",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/324",
+      "state": "open",
+      "updated_at": "2026-09-01T19:44:50Z"
+    },
+    {
+      "number": 335,
+      "title": "[Bug] b12x NVFP4 backend on sm_120 (RTX 5090) serves batch 1 only: not CUDA-graph capturable, and the worker dies with a tile-config ValueError at batch >= 2 (Qwen3.8-Flash-Next-NVFP4)",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/335",
+      "state": "open",
+      "updated_at": "2026-09-01T23:08:23Z"
+    },
+    {
+      "number": 338,
+      "title": "perf(ple): fuse the n-gram row-id hash into one Triton kernel",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/338",
+      "state": "open",
+      "updated_at": "2026-09-11T21:09:27Z"
+    },
+    {
+      "number": 421,
+      "title": "MTP for qwen4_exp (Qwen3.8-Flash-Next): is the draft/verify path planned beyond DSV4?",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/421",
+      "state": "open",
+      "updated_at": "2026-09-15T17:10:39Z"
+    },
+    {
+      "number": 491,
+      "title": "refactor(moe): extract hybrid decode orchestration",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/491",
+      "state": "open",
+      "updated_at": "2026-09-21T03:02:05Z"
+    },
+    {
+      "number": 501,
+      "title": "Cached-prefix prefill runs 10-40x slower than a cold prefill on a hybrid MoE model (scheduler spends 90% in _invalidate_prefill_buffer + stream sync)",
+      "html_url": "https://github.com/FlashML-org/FreeToken/issues/501",
+      "state": "open",
+      "updated_at": "2026-09-17T06:13:09Z"
+    },
+    {
+      "number": 505,
+      "title": "fix(scheduler): preserve pending hybrid checkpoint across prefill chunks",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/505",
+      "state": "open",
+      "updated_at": "2026-09-18T22:58:55Z"
+    },
+    {
+      "number": 71,
+      "title": "[3/3] perf(dsv4): add hardware-aware adaptive verification",
+      "html_url": "https://github.com/FlashML-org/FreeToken/pull/71",
+      "state": "open",
+      "updated_at": "2026-09-16T18:23:24Z"
+    }
+  ]
+}

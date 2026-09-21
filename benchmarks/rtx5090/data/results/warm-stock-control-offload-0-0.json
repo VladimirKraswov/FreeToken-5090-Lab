@@ -1,0 +1,27 @@
+{
+  "label": "warm-stock-control-offload",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:34:46Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 17.609732635,
+  "first_event_s": 0.8411763530002645,
+  "ttft_s": 6.512433966000572,
+  "last_token_s": 17.60833176200049,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 383,
+    "total_tokens": 449
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 382,
+  "end_to_end_tps": 21.749336457202833,
+  "decode_tps": 34.427137580314714,
+  "median_chunk_interval_ms": 26.271826999618497,
+  "max_chunk_interval_ms": 124.03353799982142,
+  "text_sha256": "a1dcfa6fc56cf21891e10a47303167173a6f5432d91a33d4d67669f8bb9ade2a"
+}

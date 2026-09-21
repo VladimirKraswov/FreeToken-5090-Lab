@@ -1,0 +1,26 @@
+{
+  "label": "stock-hybrid",
+  "repeat": 0,
+  "padding_tokens": 75000,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-21T14:46:47Z",
+  "nonce": "run-1790002007505641764",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 218.207996053,
+  "first_event_s": 0.015663904999883016,
+  "ttft_s": 55.82092908300001,
+  "last_token_s": 218.20603854699993,
+  "usage": {
+    "prompt_tokens": 75083,
+    "completion_tokens": 383,
+    "total_tokens": 75466
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 382,
+  "end_to_end_tps": 1.755206073690233,
+  "decode_tps": 2.35243244445814,
+  "median_chunk_interval_ms": 422.00752400003694,
+  "max_chunk_interval_ms": 981.586684000149,
+  "text_sha256": "442c3eabd850ce0fb7e0787acc242c99be2bb8870b088dc127c0344b7efcd8ec"
+}

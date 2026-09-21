@@ -1,0 +1,27 @@
+{
+  "label": "audit-cpu16",
+  "repeat": 1,
+  "padding_tokens": 0,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "started_at": "2026-09-21T17:15:43Z",
+  "nonce": "run-audit-pair-1",
+  "base": "http://<inference-host>:1919",
+  "elapsed_s": 63.5495342919603,
+  "first_event_s": 0.03850870893802494,
+  "ttft_s": 39.99825954192784,
+  "last_token_s": 63.549204624956474,
+  "usage": {
+    "prompt_tokens": 104870,
+    "completion_tokens": 1024,
+    "total_tokens": 105894
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1024,
+  "end_to_end_tps": 16.113414699398465,
+  "decode_tps": 43.43774724935339,
+  "median_chunk_interval_ms": 0.0862909946590662,
+  "max_chunk_interval_ms": 120.77454198151827,
+  "text_sha256": "0fc4ea1ca1d683783875a972efac3a560aa5da58af97b1b1b4df0fe519f80677"
+}

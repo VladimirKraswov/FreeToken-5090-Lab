@@ -1,0 +1,27 @@
+{
+  "label": "audit-mtp2",
+  "repeat": 1,
+  "padding_tokens": 0,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "started_at": "2026-09-21T17:21:21Z",
+  "nonce": "run-audit-pair-1",
+  "base": "http://<inference-host>:1919",
+  "elapsed_s": 65.66709841706324,
+  "first_event_s": 0.04173487506341189,
+  "ttft_s": 40.07120508409571,
+  "last_token_s": 65.66678125003818,
+  "usage": {
+    "prompt_tokens": 104870,
+    "completion_tokens": 1024,
+    "total_tokens": 105894
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1024,
+  "end_to_end_tps": 15.593806102051238,
+  "decode_tps": 39.96784418399637,
+  "median_chunk_interval_ms": 0.08162495214492083,
+  "max_chunk_interval_ms": 205.38016594946384,
+  "text_sha256": "e469b83b4f78a6d167cce472377e1a15fee24e39dbfec6fadfd5d5815bf6ec17"
+}

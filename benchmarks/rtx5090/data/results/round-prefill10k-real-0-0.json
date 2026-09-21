@@ -1,0 +1,27 @@
+{
+  "label": "round-prefill10k-real",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0.0,
+  "started_at": "2026-09-21T16:18:30Z",
+  "nonce": "run-round-real-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 79.5053376399992,
+  "first_event_s": 0.04638874899956136,
+  "ttft_s": 54.915502244999516,
+  "last_token_s": 79.50380695399963,
+  "usage": {
+    "prompt_tokens": 104868,
+    "completion_tokens": 1024,
+    "total_tokens": 105892
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1024,
+  "end_to_end_tps": 12.879638404111686,
+  "decode_tps": 41.60514570268641,
+  "median_chunk_interval_ms": 0.48302000050171046,
+  "max_chunk_interval_ms": 119.82652400001825,
+  "text_sha256": "3b42526829b26cc738317960cb4cc8ecce4e9758f064ac4b1089715d6ca5058b"
+}

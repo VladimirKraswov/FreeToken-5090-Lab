@@ -1,0 +1,27 @@
+{
+  "label": "final-tunnel",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T16:33:35Z",
+  "nonce": "run-tunnel-a-0",
+  "base": "http://<ssh-tunnel>:18019",
+  "elapsed_s": 13.74238341592718,
+  "first_event_s": 0.03409270790871233,
+  "ttft_s": 3.3585541249485686,
+  "last_token_s": 13.742293707909994,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 512,
+    "total_tokens": 579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 37.25700153341676,
+  "decode_tps": 49.21155773575975,
+  "median_chunk_interval_ms": 2.977374999318272,
+  "max_chunk_interval_ms": 145.21020802203566,
+  "text_sha256": "a192929adbf64e6fb3670ab25670f91fb66f8c1063ebf9f113e1527763b7c894"
+}

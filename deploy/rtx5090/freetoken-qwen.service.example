@@ -1,0 +1,21 @@
+[Unit]
+Description=Qwen Flash Next on RTX 5090
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=freetoken
+WorkingDirectory=/srv/freetoken
+EnvironmentFile=/etc/freetoken/rtx5090.env
+ExecStart=/opt/FreeToken-5090-Lab/deploy/rtx5090/serve.sh
+ExecStartPost=/usr/bin/python3 /opt/FreeToken-5090-Lab/benchmarks/rtx5090/warmup.py
+Restart=always
+RestartSec=15
+TimeoutStartSec=0
+TimeoutStopSec=180
+LimitMEMLOCK=infinity
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp3-offload-p12k",
+  "repeat": 0,
+  "padding_tokens": 105000,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:45:49Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 62.588361872999485,
+  "first_event_s": 0.008489771999848017,
+  "ttft_s": 45.143460337999386,
+  "last_token_s": 62.58701779199964,
+  "usage": {
+    "prompt_tokens": 105068,
+    "completion_tokens": 512,
+    "total_tokens": 105580
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 8.18043458365182,
+  "decode_tps": 29.294483155029514,
+  "median_chunk_interval_ms": 0.44708050018016365,
+  "max_chunk_interval_ms": 305.77625000023545,
+  "text_sha256": "14a63ee56a0bbf75e06f1049a545eb78a956882695269213ff2a77679b7a9b7c"
+}

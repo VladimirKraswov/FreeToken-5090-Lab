@@ -1,0 +1,27 @@
+{
+  "label": "warm-round-fetch-best-t16",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T16:13:36Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.36482433600031,
+  "first_event_s": 0.8210251709997465,
+  "ttft_s": 3.586464199999682,
+  "last_token_s": 13.363525912999648,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 28.732139708386143,
+  "decode_tps": 39.173323360611306,
+  "median_chunk_interval_ms": 0.48803999970914447,
+  "max_chunk_interval_ms": 235.9300340003756,
+  "text_sha256": "7f5bceaf5ff972924ac59b34c50ed7c212800dd35e0e20822a33bb089e953f03"
+}

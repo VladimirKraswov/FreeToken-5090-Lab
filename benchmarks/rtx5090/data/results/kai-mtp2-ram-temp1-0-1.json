@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp2-ram-temp1",
+  "repeat": 1,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 1.0,
+  "started_at": "2026-09-21T15:21:51Z",
+  "nonce": "run-sample-1",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 13.47044655000036,
+  "first_event_s": 0.004004799000085768,
+  "ttft_s": 2.6982221310004206,
+  "last_token_s": 13.469180362000316,
+  "usage": {
+    "prompt_tokens": 65,
+    "completion_tokens": 512,
+    "total_tokens": 577
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 38.009133409165734,
+  "decode_tps": 47.44238990076954,
+  "median_chunk_interval_ms": 0.4324710000673804,
+  "max_chunk_interval_ms": 193.27231400029632,
+  "text_sha256": "ad57298f12afea7c2e476c3a25d859a35daf227c343b5480481843a87d646708"
+}

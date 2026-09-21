@@ -1,0 +1,27 @@
+{
+  "label": "round-prefill10k",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 128,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T16:18:23Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 6.409763128000122,
+  "first_event_s": 0.040682447999643045,
+  "ttft_s": 3.404643382999893,
+  "last_token_s": 6.408424438000111,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 128,
+    "total_tokens": 195
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 127,
+  "end_to_end_tps": 19.96953669642651,
+  "decode_tps": 42.280045607382256,
+  "median_chunk_interval_ms": 0.5251614998087462,
+  "max_chunk_interval_ms": 265.4123020001862,
+  "text_sha256": "f5ce76d670d13307d2d0af53afada8c7593b6efd2f94ccd8745dc9dfe9c2b00d"
+}

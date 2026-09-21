@@ -1,0 +1,27 @@
+{
+  "label": "warm-kai-mtp2-fixed-p2",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:10:27Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 12.103628900999865,
+  "first_event_s": 0.827413150999746,
+  "ttft_s": 3.6024453999998514,
+  "last_token_s": 12.102313325999603,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 31.726022264965366,
+  "decode_tps": 45.05952366959298,
+  "median_chunk_interval_ms": 0.7126489997517638,
+  "max_chunk_interval_ms": 142.41529099990657,
+  "text_sha256": "c8a69593bf7f18ea7e14afb1910cdf7c97a0f9af7edc739a5aa2e0501c2aa757"
+}

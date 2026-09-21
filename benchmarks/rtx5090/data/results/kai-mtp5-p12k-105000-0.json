@@ -1,0 +1,27 @@
+{
+  "label": "kai-mtp5-p12k",
+  "repeat": 0,
+  "padding_tokens": 105000,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T15:40:34Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 55.434777638000014,
+  "first_event_s": 0.010766289000457618,
+  "ttft_s": 44.91422102600063,
+  "last_token_s": 55.433478883000134,
+  "usage": {
+    "prompt_tokens": 105068,
+    "completion_tokens": 512,
+    "total_tokens": 105580
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 9.23607925954823,
+  "decode_tps": 48.57757143580059,
+  "median_chunk_interval_ms": 0.45958050031913444,
+  "max_chunk_interval_ms": 255.45804900048097,
+  "text_sha256": "43e9e50db2279c43c9b7a4ea76c0a321a39c27132c3a5c5d8e2b53512b231bf3"
+}

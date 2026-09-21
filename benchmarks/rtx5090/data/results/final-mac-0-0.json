@@ -1,0 +1,27 @@
+{
+  "label": "final-mac",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-21T16:32:30Z",
+  "nonce": "run-paired-a-0",
+  "base": "http://<inference-host>:1919",
+  "elapsed_s": 13.947435333044268,
+  "first_event_s": 0.20869008300360292,
+  "ttft_s": 3.530021458049305,
+  "last_token_s": 13.943439249997027,
+  "usage": {
+    "prompt_tokens": 67,
+    "completion_tokens": 512,
+    "total_tokens": 579
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 36.70925785093762,
+  "decode_tps": 49.07130494611825,
+  "median_chunk_interval_ms": 0.08462503319606185,
+  "max_chunk_interval_ms": 199.71445901319385,
+  "text_sha256": "7c5429807f1732213da389407e5331b94ce8fe4e9ea1e0f6ea22b58ff6801892"
+}

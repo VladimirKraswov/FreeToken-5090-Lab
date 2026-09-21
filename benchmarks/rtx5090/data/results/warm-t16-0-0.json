@@ -1,0 +1,26 @@
+{
+  "label": "warm-t16",
+  "repeat": 0,
+  "padding_tokens": 0,
+  "requested_output": 384,
+  "reasoning_effort": "medium",
+  "started_at": "2026-09-21T15:03:00Z",
+  "nonce": "run-warm-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 12.238220739000099,
+  "first_event_s": 0.8532205290002821,
+  "ttft_s": 3.738953734000006,
+  "last_token_s": 12.236926678000145,
+  "usage": {
+    "prompt_tokens": 66,
+    "completion_tokens": 384,
+    "total_tokens": 450
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 383,
+  "end_to_end_tps": 31.377110136303525,
+  "decode_tps": 45.0695715935894,
+  "median_chunk_interval_ms": 0.3992780000316998,
+  "max_chunk_interval_ms": 143.1568010002593,
+  "text_sha256": "c8a69593bf7f18ea7e14afb1910cdf7c97a0f9af7edc739a5aa2e0501c2aa757"
+}

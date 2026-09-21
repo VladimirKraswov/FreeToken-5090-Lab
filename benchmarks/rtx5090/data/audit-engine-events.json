@@ -1,0 +1,1254 @@
+[
+  {
+    "timestamp_utc": "2026-09-21T16:45:11.010078+00:00",
+    "message": "[2026-09-21|16:45:11|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 20.70"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:15.998496+00:00",
+    "message": "[2026-09-21|16:45:15|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2873.83"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:20.983248+00:00",
+    "message": "[2026-09-21|16:45:20|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2875.97"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:25.973264+00:00",
+    "message": "[2026-09-21|16:45:25|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2872.93"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:30.967392+00:00",
+    "message": "[2026-09-21|16:45:30|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2870.61"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:35.976584+00:00",
+    "message": "[2026-09-21|16:45:35|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2862.00"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:41.000975+00:00",
+    "message": "[2026-09-21|16:45:41|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2853.18"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:45.932727+00:00",
+    "message": "[2026-09-21|16:45:45|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 916.11"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:46.873241+00:00",
+    "message": "[2026-09-21|16:45:46|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.70, step time (ms): 35936.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 0.10, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:48.512638+00:00",
+    "message": "[2026-09-21|16:45:48|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 82.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.48, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:50.166264+00:00",
+    "message": "[2026-09-21|16:45:50|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.55, step time (ms): 82.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.94, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:51.936381+00:00",
+    "message": "[2026-09-21|16:45:51|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 88.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.50, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:53.493525+00:00",
+    "message": "[2026-09-21|16:45:53|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 77.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.17, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:54.700157+00:00",
+    "message": "[2026-09-21|16:45:54|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 60.3, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.75, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:56.075335+00:00",
+    "message": "[2026-09-21|16:45:56|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.10, step time (ms): 68.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.08, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:57.696582+00:00",
+    "message": "[2026-09-21|16:45:57|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 81.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.88, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:45:59.321200+00:00",
+    "message": "[2026-09-21|16:45:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 81.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.86, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:01.085832+00:00",
+    "message": "[2026-09-21|16:46:01|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.70, step time (ms): 88.2, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.94, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:02.825650+00:00",
+    "message": "[2026-09-21|16:46:02|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.55, step time (ms): 87.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.81, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:04.391408+00:00",
+    "message": "[2026-09-21|16:46:04|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 78.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.07, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:05.964599+00:00",
+    "message": "[2026-09-21|16:46:05|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 78.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.87, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:07.555357+00:00",
+    "message": "[2026-09-21|16:46:07|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 79.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.86, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:08.989607+00:00",
+    "message": "[2026-09-21|16:46:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 71.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.93, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:15.838465+00:00",
+    "message": "[2026-09-21|16:46:15|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 479.37"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:20.819583+00:00",
+    "message": "[2026-09-21|16:46:20|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2878.07"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:25.803366+00:00",
+    "message": "[2026-09-21|16:46:25|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2876.53"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:30.789412+00:00",
+    "message": "[2026-09-21|16:46:30|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2875.22"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:35.783587+00:00",
+    "message": "[2026-09-21|16:46:35|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2870.55"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:40.787232+00:00",
+    "message": "[2026-09-21|16:46:40|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2865.11"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:45.808448+00:00",
+    "message": "[2026-09-21|16:46:45|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2855.09"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:50.742101+00:00",
+    "message": "[2026-09-21|16:46:50|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 915.75"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:50.898083+00:00",
+    "message": "[2026-09-21|16:46:50|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 2095.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.41, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:52.436435+00:00",
+    "message": "[2026-09-21|16:46:52|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.60, step time (ms): 76.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.80, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:54.128580+00:00",
+    "message": "[2026-09-21|16:46:54|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.60, step time (ms): 84.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.55, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:55.921821+00:00",
+    "message": "[2026-09-21|16:46:55|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.75, step time (ms): 89.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.82, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:57.593211+00:00",
+    "message": "[2026-09-21|16:46:57|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 83.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.07, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:46:59.117962+00:00",
+    "message": "[2026-09-21|16:46:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.55, step time (ms): 76.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.57, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:00.815329+00:00",
+    "message": "[2026-09-21|16:47:00|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.30, step time (ms): 84.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.88, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:02.347397+00:00",
+    "message": "[2026-09-21|16:47:02|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 76.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.04, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:03.932992+00:00",
+    "message": "[2026-09-21|16:47:03|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 79.3, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.89, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:05.565340+00:00",
+    "message": "[2026-09-21|16:47:05|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.00, step time (ms): 81.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.76, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:07.074045+00:00",
+    "message": "[2026-09-21|16:47:07|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.50, step time (ms): 75.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.40, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:08.666157+00:00",
+    "message": "[2026-09-21|16:47:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.10, step time (ms): 79.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.94, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:10.202906+00:00",
+    "message": "[2026-09-21|16:47:10|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 76.8, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.25, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:11.611363+00:00",
+    "message": "[2026-09-21|16:47:11|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 70.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.47, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:12.990439+00:00",
+    "message": "[2026-09-21|16:47:12|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 69.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.23, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:47:14.482607+00:00",
+    "message": "[2026-09-21|16:47:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 74.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.88, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:31.891173+00:00",
+    "message": "[2026-09-21|16:56:31|core|rank=0] INFO     --moe-hybrid-max-fetch auto: fetching 37.7% of each decode step's expert misses over PCIe (benched PCIe/CPU bandwidth ratio), the rest on the CPU"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:31.903771+00:00",
+    "message": "[2026-09-21|16:56:31|core|rank=0] INFO     CPU MoE executor ready: threads=12 (pinned to cores 0..11) isa=avx2 fmt=nvfp4 H=2560 I=640 experts=512 layers=49 top_k=10 act=silu max_tokens=64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:33.879516+00:00",
+    "message": "[2026-09-21|16:56:33|core|rank=0] INFO     context limit 131072 tokens (KV pool 131072 tokens)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:51.309461+00:00",
+    "message": "[2026-09-21|16:56:51|core|rank=0] INFO     --spec-mtp: captured the 4-row verify window as a CUDA graph (36 GDN stashes, 0.35 GiB of graph memory, free 3.26 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:51.354225+00:00",
+    "message": "[2026-09-21|16:56:51|core|rank=0] INFO     --spec-mtp: captured the draft head (window + chain step) as CUDA graphs (0.04 GiB of graph memory, free 3.22 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:55.872651+00:00",
+    "message": "[2026-09-21|16:56:55|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 23, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 6.06"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:57.738265+00:00",
+    "message": "[2026-09-21|16:56:57|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 283.0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 10.25, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:56:59.107482+00:00",
+    "message": "[2026-09-21|16:56:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 68.5, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 41.63, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:00.445692+00:00",
+    "message": "[2026-09-21|16:57:00|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.45, step time (ms): 66.9, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 36.62, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:01.836325+00:00",
+    "message": "[2026-09-21|16:57:01|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 69.5, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 41.71, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:03.947418+00:00",
+    "message": "[2026-09-21|16:57:03|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 24, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 2.97"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:04.749131+00:00",
+    "message": "[2026-09-21|16:57:04|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.35, step time (ms): 145.6, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 23.00, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:05.965769+00:00",
+    "message": "[2026-09-21|16:57:05|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 60.8, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 48.50, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:12.571531+00:00",
+    "message": "[2026-09-21|16:57:12|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1662.31"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:17.482993+00:00",
+    "message": "[2026-09-21|16:57:17|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 1683, #cached-token: 0, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 342.67"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:17.595776+00:00",
+    "message": "[2026-09-21|16:57:17|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 1.85, step time (ms): 581.5, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 3.18, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:23.883547+00:00",
+    "message": "[2026-09-21|16:57:23|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 82, #cached-token: 0, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 12.81"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:23.955779+00:00",
+    "message": "[2026-09-21|16:57:23|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.00, step time (ms): 318.0, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 9.43, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:25.312543+00:00",
+    "message": "[2026-09-21|16:57:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 67.8, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.75, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:31.909445+00:00",
+    "message": "[2026-09-21|16:57:31|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1786.23"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:36.862063+00:00",
+    "message": "[2026-09-21|16:57:36|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2894.59"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:41.818093+00:00",
+    "message": "[2026-09-21|16:57:41|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2892.64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:46.779564+00:00",
+    "message": "[2026-09-21|16:57:46|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2889.47"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:51.746360+00:00",
+    "message": "[2026-09-21|16:57:51|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2886.43"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:57:56.722328+00:00",
+    "message": "[2026-09-21|16:57:56|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2880.98"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:01.710098+00:00",
+    "message": "[2026-09-21|16:58:01|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2874.23"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:06.610963+00:00",
+    "message": "[2026-09-21|16:58:06|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 921.87"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:08.145494+00:00",
+    "message": "[2026-09-21|16:58:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.60, step time (ms): 2141.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.68, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:09.833926+00:00",
+    "message": "[2026-09-21|16:58:09|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 84.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.87, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:11.638654+00:00",
+    "message": "[2026-09-21|16:58:11|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.75, step time (ms): 90.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.56, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:13.346084+00:00",
+    "message": "[2026-09-21|16:58:13|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.95, step time (ms): 85.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.27, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:14.976381+00:00",
+    "message": "[2026-09-21|16:58:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 81.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 47.23, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:16.533365+00:00",
+    "message": "[2026-09-21|16:58:16|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 77.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.67, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:18.152361+00:00",
+    "message": "[2026-09-21|16:58:18|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 80.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.15, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:19.573111+00:00",
+    "message": "[2026-09-21|16:58:19|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 71.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.01, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:21.154468+00:00",
+    "message": "[2026-09-21|16:58:21|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 79.1, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.00, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:22.702644+00:00",
+    "message": "[2026-09-21|16:58:22|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.10, step time (ms): 77.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.05, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:24.460461+00:00",
+    "message": "[2026-09-21|16:58:24|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 87.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.80, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:26.049824+00:00",
+    "message": "[2026-09-21|16:58:26|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 79.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.64, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:27.611098+00:00",
+    "message": "[2026-09-21|16:58:27|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.20, step time (ms): 78.1, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.99, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:29.276685+00:00",
+    "message": "[2026-09-21|16:58:29|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 83.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.63, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:36.089194+00:00",
+    "message": "[2026-09-21|16:58:36|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 486.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:41.038442+00:00",
+    "message": "[2026-09-21|16:58:41|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2896.61"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:45.991013+00:00",
+    "message": "[2026-09-21|16:58:45|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2894.65"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:50.945333+00:00",
+    "message": "[2026-09-21|16:58:50|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2893.63"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:58:55.906103+00:00",
+    "message": "[2026-09-21|16:58:55|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2889.88"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:00.875927+00:00",
+    "message": "[2026-09-21|16:59:00|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2884.64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:05.858938+00:00",
+    "message": "[2026-09-21|16:59:05|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2876.94"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:10.763515+00:00",
+    "message": "[2026-09-21|16:59:10|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 921.18"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:10.992206+00:00",
+    "message": "[2026-09-21|16:59:10|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 2085.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.51, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:12.520498+00:00",
+    "message": "[2026-09-21|16:59:12|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 76.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.15, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:14.199171+00:00",
+    "message": "[2026-09-21|16:59:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 83.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.49, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:15.997565+00:00",
+    "message": "[2026-09-21|16:59:15|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 89.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.82, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:17.631052+00:00",
+    "message": "[2026-09-21|16:59:17|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.70, step time (ms): 81.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.30, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:19.270643+00:00",
+    "message": "[2026-09-21|16:59:19|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 82.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.47, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:20.710495+00:00",
+    "message": "[2026-09-21|16:59:20|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 72.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.89, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:22.169802+00:00",
+    "message": "[2026-09-21|16:59:22|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 73.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.54, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:23.520016+00:00",
+    "message": "[2026-09-21|16:59:23|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.30, step time (ms): 67.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 48.88, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:25.064475+00:00",
+    "message": "[2026-09-21|16:59:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 77.2, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.09, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:26.470089+00:00",
+    "message": "[2026-09-21|16:59:26|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 70.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.40, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:28.203092+00:00",
+    "message": "[2026-09-21|16:59:28|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.90, step time (ms): 86.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.01, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:29.860600+00:00",
+    "message": "[2026-09-21|16:59:29|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 82.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.04, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:31.686092+00:00",
+    "message": "[2026-09-21|16:59:31|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 91.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.63, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T16:59:33.315614+00:00",
+    "message": "[2026-09-21|16:59:33|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 81.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.66, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:07:58.127127+00:00",
+    "message": "[2026-09-21|17:07:58|core|rank=0] INFO     --moe-hybrid-max-fetch auto: fetching 37.7% of each decode step's expert misses over PCIe (benched PCIe/CPU bandwidth ratio), the rest on the CPU"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:07:58.140156+00:00",
+    "message": "[2026-09-21|17:07:58|core|rank=0] INFO     CPU MoE executor ready: threads=8 (pinned to cores 0..7) isa=avx2 fmt=nvfp4 H=2560 I=640 experts=512 layers=49 top_k=10 act=silu max_tokens=64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:00.132193+00:00",
+    "message": "[2026-09-21|17:08:00|core|rank=0] INFO     context limit 131072 tokens (KV pool 131072 tokens)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:17.669907+00:00",
+    "message": "[2026-09-21|17:08:17|core|rank=0] INFO     --spec-mtp: captured the 4-row verify window as a CUDA graph (36 GDN stashes, 0.35 GiB of graph memory, free 3.26 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:17.712673+00:00",
+    "message": "[2026-09-21|17:08:17|core|rank=0] INFO     --spec-mtp: captured the draft head (window + chain step) as CUDA graphs (0.04 GiB of graph memory, free 3.22 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:21.554939+00:00",
+    "message": "[2026-09-21|17:08:21|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 23, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 7.41"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:23.683355+00:00",
+    "message": "[2026-09-21|17:08:23|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 261.6, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 11.09, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:25.170958+00:00",
+    "message": "[2026-09-21|17:08:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 74.4, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 38.32, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:26.639078+00:00",
+    "message": "[2026-09-21|17:08:26|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.45, step time (ms): 73.4, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 33.38, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:28.184372+00:00",
+    "message": "[2026-09-21|17:08:28|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 77.3, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 37.53, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:30.885251+00:00",
+    "message": "[2026-09-21|17:08:30|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 24, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 2.57"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:31.775021+00:00",
+    "message": "[2026-09-21|17:08:31|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.35, step time (ms): 179.5, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 18.66, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:33.086412+00:00",
+    "message": "[2026-09-21|17:08:33|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 65.6, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 44.99, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:39.777241+00:00",
+    "message": "[2026-09-21|17:08:39|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1612.23"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:44.693397+00:00",
+    "message": "[2026-09-21|17:08:44|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 1683, #cached-token: 0, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 342.34"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:44.832558+00:00",
+    "message": "[2026-09-21|17:08:44|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 1.85, step time (ms): 587.3, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 3.15, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:53.178681+00:00",
+    "message": "[2026-09-21|17:08:53|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 82, #cached-token: 0, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 9.66"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:53.262923+00:00",
+    "message": "[2026-09-21|17:08:53|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.00, step time (ms): 421.5, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 7.12, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:08:54.764420+00:00",
+    "message": "[2026-09-21|17:08:54|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 75.1, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.63, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:01.480145+00:00",
+    "message": "[2026-09-21|17:09:01|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1726.92"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:06.444256+00:00",
+    "message": "[2026-09-21|17:09:06|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.93"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:11.409001+00:00",
+    "message": "[2026-09-21|17:09:11|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.57"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:16.380373+00:00",
+    "message": "[2026-09-21|17:09:16|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2883.70"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:21.356459+00:00",
+    "message": "[2026-09-21|17:09:21|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2880.98"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:26.338619+00:00",
+    "message": "[2026-09-21|17:09:26|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2877.47"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:31.331747+00:00",
+    "message": "[2026-09-21|17:09:31|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2871.18"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:36.239814+00:00",
+    "message": "[2026-09-21|17:09:36|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 920.51"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:38.008380+00:00",
+    "message": "[2026-09-21|17:09:38|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.60, step time (ms): 2162.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.66, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:39.882767+00:00",
+    "message": "[2026-09-21|17:09:39|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 93.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.81, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:41.920100+00:00",
+    "message": "[2026-09-21|17:09:41|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.75, step time (ms): 101.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.81, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:43.835811+00:00",
+    "message": "[2026-09-21|17:09:43|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.95, step time (ms): 95.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.24, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:45.656655+00:00",
+    "message": "[2026-09-21|17:09:45|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 91.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.29, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:47.391736+00:00",
+    "message": "[2026-09-21|17:09:47|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 86.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.19, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:49.203765+00:00",
+    "message": "[2026-09-21|17:09:49|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 90.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 35.87, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:50.770447+00:00",
+    "message": "[2026-09-21|17:09:50|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 78.3, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 34.47, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:52.500520+00:00",
+    "message": "[2026-09-21|17:09:52|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 86.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.30, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:54.265218+00:00",
+    "message": "[2026-09-21|17:09:54|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.10, step time (ms): 88.2, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 35.13, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:56.237028+00:00",
+    "message": "[2026-09-21|17:09:56|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 98.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.05, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:58.007780+00:00",
+    "message": "[2026-09-21|17:09:58|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 88.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 35.58, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:09:59.736137+00:00",
+    "message": "[2026-09-21|17:09:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.20, step time (ms): 86.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.03, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:01.609803+00:00",
+    "message": "[2026-09-21|17:10:01|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 93.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.56, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:08.632260+00:00",
+    "message": "[2026-09-21|17:10:08|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 442.57"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:13.592397+00:00",
+    "message": "[2026-09-21|17:10:13|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2890.22"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:18.553243+00:00",
+    "message": "[2026-09-21|17:10:18|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2889.83"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:23.517818+00:00",
+    "message": "[2026-09-21|17:10:23|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.67"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:28.484900+00:00",
+    "message": "[2026-09-21|17:10:28|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2886.18"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:33.459686+00:00",
+    "message": "[2026-09-21|17:10:33|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2881.74"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:38.448392+00:00",
+    "message": "[2026-09-21|17:10:38|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2873.68"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:43.358454+00:00",
+    "message": "[2026-09-21|17:10:43|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 920.15"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:43.633556+00:00",
+    "message": "[2026-09-21|17:10:43|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 2101.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.50, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:45.369903+00:00",
+    "message": "[2026-09-21|17:10:45|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 86.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.74, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:47.238994+00:00",
+    "message": "[2026-09-21|17:10:47|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 93.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.06, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:49.276715+00:00",
+    "message": "[2026-09-21|17:10:49|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 101.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.79, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:51.090827+00:00",
+    "message": "[2026-09-21|17:10:51|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.70, step time (ms): 90.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.79, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:52.899674+00:00",
+    "message": "[2026-09-21|17:10:52|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 90.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.59, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:54.494158+00:00",
+    "message": "[2026-09-21|17:10:54|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 79.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 35.12, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:56.092506+00:00",
+    "message": "[2026-09-21|17:10:56|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 79.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.67, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:57.548270+00:00",
+    "message": "[2026-09-21|17:10:57|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.30, step time (ms): 72.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.34, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:10:59.245282+00:00",
+    "message": "[2026-09-21|17:10:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 84.8, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.30, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:11:00.782263+00:00",
+    "message": "[2026-09-21|17:11:00|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 76.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.69, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:11:02.719625+00:00",
+    "message": "[2026-09-21|17:11:02|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.90, step time (ms): 96.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.26, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:11:04.551782+00:00",
+    "message": "[2026-09-21|17:11:04|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 91.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.84, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:11:06.603062+00:00",
+    "message": "[2026-09-21|17:11:06|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 102.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.05, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:11:08.423565+00:00",
+    "message": "[2026-09-21|17:11:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 91.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 34.61, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:13:57.117171+00:00",
+    "message": "[2026-09-21|17:13:57|core|rank=0] INFO     --moe-hybrid-max-fetch auto: fetching 37.7% of each decode step's expert misses over PCIe (benched PCIe/CPU bandwidth ratio), the rest on the CPU"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:13:57.130291+00:00",
+    "message": "[2026-09-21|17:13:57|core|rank=0] INFO     CPU MoE executor ready: threads=16 (pinned to cores 0..15) isa=avx2 fmt=nvfp4 H=2560 I=640 experts=512 layers=49 top_k=10 act=silu max_tokens=64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:13:59.104783+00:00",
+    "message": "[2026-09-21|17:13:59|core|rank=0] INFO     context limit 131072 tokens (KV pool 131072 tokens)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:07.274078+00:00",
+    "message": "[2026-09-21|17:14:07|core|rank=0] INFO     --spec-mtp: captured the 4-row verify window as a CUDA graph (36 GDN stashes, 0.35 GiB of graph memory, free 3.26 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:07.317281+00:00",
+    "message": "[2026-09-21|17:14:07|core|rank=0] INFO     --spec-mtp: captured the draft head (window + chain step) as CUDA graphs (0.04 GiB of graph memory, free 3.22 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:09.616022+00:00",
+    "message": "[2026-09-21|17:14:09|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 23, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 14.52"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:11.461216+00:00",
+    "message": "[2026-09-21|17:14:11|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 171.4, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 16.92, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:12.822999+00:00",
+    "message": "[2026-09-21|17:14:12|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 68.1, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 41.86, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:14.142501+00:00",
+    "message": "[2026-09-21|17:14:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.45, step time (ms): 66.0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 37.14, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:15.515263+00:00",
+    "message": "[2026-09-21|17:14:15|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 68.6, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 42.25, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:17.371363+00:00",
+    "message": "[2026-09-21|17:14:17|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 24, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 3.09"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:18.165792+00:00",
+    "message": "[2026-09-21|17:14:18|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.35, step time (ms): 132.5, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 25.28, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:19.379731+00:00",
+    "message": "[2026-09-21|17:14:19|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 60.7, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 48.60, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:25.969537+00:00",
+    "message": "[2026-09-21|17:14:25|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1667.32"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:30.878342+00:00",
+    "message": "[2026-09-21|17:14:30|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 1683, #cached-token: 0, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 342.86"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:30.988865+00:00",
+    "message": "[2026-09-21|17:14:30|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 1.85, step time (ms): 580.5, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 3.19, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:36.468501+00:00",
+    "message": "[2026-09-21|17:14:36|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 82, #cached-token: 0, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 14.67"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:36.539588+00:00",
+    "message": "[2026-09-21|17:14:36|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.00, step time (ms): 277.5, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 10.81, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:37.894480+00:00",
+    "message": "[2026-09-21|17:14:37|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 67.7, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.81, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:44.465602+00:00",
+    "message": "[2026-09-21|17:14:44|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1792.65"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:49.418127+00:00",
+    "message": "[2026-09-21|17:14:49|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2894.68"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:54.373231+00:00",
+    "message": "[2026-09-21|17:14:54|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2893.18"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:14:59.332469+00:00",
+    "message": "[2026-09-21|17:14:59|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2890.77"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:04.301029+00:00",
+    "message": "[2026-09-21|17:15:04|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2885.35"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:09.274796+00:00",
+    "message": "[2026-09-21|17:15:09|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2882.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:14.261060+00:00",
+    "message": "[2026-09-21|17:15:14|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2875.08"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:19.159964+00:00",
+    "message": "[2026-09-21|17:15:19|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 922.28"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:20.673835+00:00",
+    "message": "[2026-09-21|17:15:20|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.60, step time (ms): 2139.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.68, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:22.354849+00:00",
+    "message": "[2026-09-21|17:15:22|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 84.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.05, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:24.167663+00:00",
+    "message": "[2026-09-21|17:15:24|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.75, step time (ms): 90.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.37, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:25.872492+00:00",
+    "message": "[2026-09-21|17:15:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.95, step time (ms): 85.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 46.34, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:27.498001+00:00",
+    "message": "[2026-09-21|17:15:27|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 81.3, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 47.37, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:29.052630+00:00",
+    "message": "[2026-09-21|17:15:29|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 77.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.74, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:30.668192+00:00",
+    "message": "[2026-09-21|17:15:30|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 80.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.23, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:32.090080+00:00",
+    "message": "[2026-09-21|17:15:32|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 71.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.98, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:33.684518+00:00",
+    "message": "[2026-09-21|17:15:33|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 79.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.65, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:35.223886+00:00",
+    "message": "[2026-09-21|17:15:35|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.10, step time (ms): 77.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.28, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:36.983040+00:00",
+    "message": "[2026-09-21|17:15:36|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 88.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.77, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:38.580987+00:00",
+    "message": "[2026-09-21|17:15:38|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 79.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.43, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:40.146228+00:00",
+    "message": "[2026-09-21|17:15:40|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.20, step time (ms): 78.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.89, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:41.806439+00:00",
+    "message": "[2026-09-21|17:15:41|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 83.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.78, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:48.613296+00:00",
+    "message": "[2026-09-21|17:15:48|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 486.73"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:53.561747+00:00",
+    "message": "[2026-09-21|17:15:53|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2897.09"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:15:58.513504+00:00",
+    "message": "[2026-09-21|17:15:58|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2895.13"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:03.468363+00:00",
+    "message": "[2026-09-21|17:16:03|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2893.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:08.429678+00:00",
+    "message": "[2026-09-21|17:16:08|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2889.55"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:13.395378+00:00",
+    "message": "[2026-09-21|17:16:13|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.01"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:18.378686+00:00",
+    "message": "[2026-09-21|17:16:18|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2876.81"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:23.276808+00:00",
+    "message": "[2026-09-21|17:16:23|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 922.39"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:23.485489+00:00",
+    "message": "[2026-09-21|17:16:23|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 2084.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.51, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:25.008520+00:00",
+    "message": "[2026-09-21|17:16:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.45, step time (ms): 76.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.30, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:26.667739+00:00",
+    "message": "[2026-09-21|17:16:26|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 83.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.00, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:28.460469+00:00",
+    "message": "[2026-09-21|17:16:28|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.85, step time (ms): 89.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.95, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:30.085216+00:00",
+    "message": "[2026-09-21|17:16:30|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.70, step time (ms): 81.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.55, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:31.719114+00:00",
+    "message": "[2026-09-21|17:16:31|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.40, step time (ms): 81.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.62, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:33.163016+00:00",
+    "message": "[2026-09-21|17:16:33|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 72.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.78, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:34.614947+00:00",
+    "message": "[2026-09-21|17:16:34|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 72.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.77, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:35.951054+00:00",
+    "message": "[2026-09-21|17:16:35|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.30, step time (ms): 66.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 49.40, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:37.479487+00:00",
+    "message": "[2026-09-21|17:16:37|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.25, step time (ms): 76.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.53, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:38.873191+00:00",
+    "message": "[2026-09-21|17:16:38|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.05, step time (ms): 69.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.77, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:40.599711+00:00",
+    "message": "[2026-09-21|17:16:40|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.90, step time (ms): 86.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 45.18, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:42.252326+00:00",
+    "message": "[2026-09-21|17:16:42|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.65, step time (ms): 82.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.17, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:44.074455+00:00",
+    "message": "[2026-09-21|17:16:44|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.80, step time (ms): 91.1, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.71, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:16:45.685487+00:00",
+    "message": "[2026-09-21|17:16:45|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.15, step time (ms): 80.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.11, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:34.086953+00:00",
+    "message": "[2026-09-21|17:19:34|core|rank=0] INFO     --moe-hybrid-max-fetch auto: fetching 37.7% of each decode step's expert misses over PCIe (benched PCIe/CPU bandwidth ratio), the rest on the CPU"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:34.100560+00:00",
+    "message": "[2026-09-21|17:19:34|core|rank=0] INFO     CPU MoE executor ready: threads=12 (pinned to cores 0..11) isa=avx2 fmt=nvfp4 H=2560 I=640 experts=512 layers=49 top_k=10 act=silu max_tokens=64"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:36.072794+00:00",
+    "message": "[2026-09-21|17:19:36|core|rank=0] INFO     context limit 131072 tokens (KV pool 131072 tokens)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:44.247093+00:00",
+    "message": "[2026-09-21|17:19:44|core|rank=0] INFO     --spec-mtp: captured the 3-row verify window as a CUDA graph (36 GDN stashes, 0.25 GiB of graph memory, free 3.36 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:44.289966+00:00",
+    "message": "[2026-09-21|17:19:44|core|rank=0] INFO     --spec-mtp: captured the draft head (window + chain step) as CUDA graphs (0.04 GiB of graph memory, free 3.32 GiB)"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:47.074031+00:00",
+    "message": "[2026-09-21|17:19:47|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 23, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 11.15"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:48.732356+00:00",
+    "message": "[2026-09-21|17:19:48|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 186.1, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 13.44, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:49.906790+00:00",
+    "message": "[2026-09-21|17:19:49|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 58.7, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 45.98, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:50.920469+00:00",
+    "message": "[2026-09-21|17:19:50|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.15, step time (ms): 50.7, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 42.42, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:52.082656+00:00",
+    "message": "[2026-09-21|17:19:52|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.25, step time (ms): 58.1, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 38.72, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:53.199581+00:00",
+    "message": "[2026-09-21|17:19:53|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.40, step time (ms): 55.8, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 42.98, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:54.795607+00:00",
+    "message": "[2026-09-21|17:19:54|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 24, #cached-token: 0, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, #running-req: 1, #queue-req: 0, input throughput (token/s): 3.11"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:55.676517+00:00",
+    "message": "[2026-09-21|17:19:55|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 123.8, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 21.40, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:19:56.774045+00:00",
+    "message": "[2026-09-21|17:19:56|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 54.9, token usage: 0.00, #mamba-slot: 3/8, mamba usage: 0.38, gen throughput (token/s): 45.56, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:02.852520+00:00",
+    "message": "[2026-09-21|17:20:02|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1779.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:07.759867+00:00",
+    "message": "[2026-09-21|17:20:07|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 1683, #cached-token: 0, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 342.96"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:08.201066+00:00",
+    "message": "[2026-09-21|17:20:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 571.4, token usage: 0.12, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 4.55, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:14.014447+00:00",
+    "message": "[2026-09-21|17:20:14|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 82, #cached-token: 0, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 13.11"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:14.083789+00:00",
+    "message": "[2026-09-21|17:20:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 294.1, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 8.84, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:15.276518+00:00",
+    "message": "[2026-09-21|17:20:15|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.40, step time (ms): 59.6, token usage: 0.00, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.24, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:22.019796+00:00",
+    "message": "[2026-09-21|17:20:22|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 1790.81"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:26.984450+00:00",
+    "message": "[2026-09-21|17:20:26|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.65"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:31.949591+00:00",
+    "message": "[2026-09-21|17:20:31|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2887.27"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:36.916006+00:00",
+    "message": "[2026-09-21|17:20:36|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2886.59"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:41.890753+00:00",
+    "message": "[2026-09-21|17:20:41|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2881.76"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:46.873035+00:00",
+    "message": "[2026-09-21|17:20:46|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2877.40"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:51.867427+00:00",
+    "message": "[2026-09-21|17:20:51|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2870.43"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:56.772201+00:00",
+    "message": "[2026-09-21|17:20:56|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 921.13"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:57.844954+00:00",
+    "message": "[2026-09-21|17:20:57|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.75, step time (ms): 2128.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.29, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:20:59.153974+00:00",
+    "message": "[2026-09-21|17:20:59|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 65.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.49, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:00.503558+00:00",
+    "message": "[2026-09-21|17:21:00|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 67.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.72, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:01.970124+00:00",
+    "message": "[2026-09-21|17:21:01|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 73.3, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.55, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:03.332958+00:00",
+    "message": "[2026-09-21|17:21:03|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 3.00, step time (ms): 68.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.03, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:04.643921+00:00",
+    "message": "[2026-09-21|17:21:04|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 65.5, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.19, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:05.959751+00:00",
+    "message": "[2026-09-21|17:21:05|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 65.8, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.32, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:07.378226+00:00",
+    "message": "[2026-09-21|17:21:07|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.75, step time (ms): 70.9, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.77, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:08.620411+00:00",
+    "message": "[2026-09-21|17:21:08|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.45, step time (ms): 62.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.45, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:09.928537+00:00",
+    "message": "[2026-09-21|17:21:09|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 65.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.52, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:11.281002+00:00",
+    "message": "[2026-09-21|17:21:11|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.70, step time (ms): 67.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.93, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:12.730808+00:00",
+    "message": "[2026-09-21|17:21:12|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 72.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.56, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:14.117969+00:00",
+    "message": "[2026-09-21|17:21:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 69.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.49, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:15.457784+00:00",
+    "message": "[2026-09-21|17:21:15|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 67.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.56, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:16.817550+00:00",
+    "message": "[2026-09-21|17:21:16|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 68.0, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.18, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:18.150517+00:00",
+    "message": "[2026-09-21|17:21:18|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 66.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.26, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:19.505842+00:00",
+    "message": "[2026-09-21|17:21:19|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 67.8, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.37, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:20.780252+00:00",
+    "message": "[2026-09-21|17:21:20|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 63.7, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.59, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:27.332490+00:00",
+    "message": "[2026-09-21|17:21:27|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.11, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 469.11"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:32.289856+00:00",
+    "message": "[2026-09-21|17:21:32|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.22, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2891.91"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:37.246288+00:00",
+    "message": "[2026-09-21|17:21:37|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.33, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2892.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:42.207469+00:00",
+    "message": "[2026-09-21|17:21:42|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.44, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2889.65"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:47.174304+00:00",
+    "message": "[2026-09-21|17:21:47|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.55, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2886.33"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:52.150390+00:00",
+    "message": "[2026-09-21|17:21:52|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.66, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2880.98"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:21:57.144269+00:00",
+    "message": "[2026-09-21|17:21:57|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 14336, #cached-token: 0, token usage: 0.77, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 0, #queue-req: 1, input throughput (token/s): 2870.72"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:02.042177+00:00",
+    "message": "[2026-09-21|17:22:02|core|rank=0] INFO     Prefill batch, #new-seq: 1, #new-token: 4518, #cached-token: 0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, #running-req: 1, #queue-req: 0, input throughput (token/s): 922.44"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:02.271721+00:00",
+    "message": "[2026-09-21|17:22:02|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 2074.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 1.35, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:03.555948+00:00",
+    "message": "[2026-09-21|17:22:03|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.80, step time (ms): 64.2, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.61, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:04.963580+00:00",
+    "message": "[2026-09-21|17:22:04|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.75, step time (ms): 70.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.07, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:06.376796+00:00",
+    "message": "[2026-09-21|17:22:06|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 70.7, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.04, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:07.848533+00:00",
+    "message": "[2026-09-21|17:22:07|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 73.6, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.09, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:09.230081+00:00",
+    "message": "[2026-09-21|17:22:09|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 69.1, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 41.98, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:10.557581+00:00",
+    "message": "[2026-09-21|17:22:10|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.90, step time (ms): 66.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.69, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:11.836641+00:00",
+    "message": "[2026-09-21|17:22:11|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.35, step time (ms): 64.0, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.75, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:13.264831+00:00",
+    "message": "[2026-09-21|17:22:13|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 71.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 35.01, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:14.773447+00:00",
+    "message": "[2026-09-21|17:22:14|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.95, step time (ms): 75.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.11, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:16.140549+00:00",
+    "message": "[2026-09-21|17:22:16|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 68.4, token usage: 0.80, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 36.57, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:17.398545+00:00",
+    "message": "[2026-09-21|17:22:17|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.65, step time (ms): 62.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 42.13, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:18.629894+00:00",
+    "message": "[2026-09-21|17:22:18|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 61.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.61, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:19.801637+00:00",
+    "message": "[2026-09-21|17:22:19|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 58.6, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 44.38, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:20.977964+00:00",
+    "message": "[2026-09-21|17:22:20|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.20, step time (ms): 58.8, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 37.40, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:22.188803+00:00",
+    "message": "[2026-09-21|17:22:22|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.85, step time (ms): 60.5, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 47.08, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:23.476513+00:00",
+    "message": "[2026-09-21|17:22:23|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 64.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 40.38, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:24.682507+00:00",
+    "message": "[2026-09-21|17:22:24|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.40, step time (ms): 60.3, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 39.80, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:25.830080+00:00",
+    "message": "[2026-09-21|17:22:25|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.50, step time (ms): 57.4, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 43.57, #queue-req: 0"
+  },
+  {
+    "timestamp_utc": "2026-09-21T17:22:27.167016+00:00",
+    "message": "[2026-09-21|17:22:27|core|rank=0] INFO     Spec decode, #running-req: 1, accepted/step: 2.60, step time (ms): 66.9, token usage: 0.81, #mamba-slot: 4/8, mamba usage: 0.50, gen throughput (token/s): 38.89, #queue-req: 0"
+  }
+]
