@@ -193,3 +193,36 @@ def test_ttft_mean_is_zero_without_samples():
     request_ring.reset()
     request_ring.record_request(_row(ttft_ms=None))
     assert request_ring.requests_ttft_mean_ms() == 0
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_reasoning_only_stop_is_visible_without_logging_content(stream, caplog):
+    state = FakeState([_ack(out="private synthetic thought", finished=True)])
+    state.config.reasoning_parser = "qwen3"
+    request_ring.reset()
+    if stream:
+        async def drain():
+            return [ev async for ev in generate_events(42, _spec(), state, source="/v1/chat/completions")]
+        asyncio.run(drain())
+    else:
+        asyncio.run(generate_full(42, _spec(), state, source="/v1/chat/completions"))
+    row = _last_row()
+    assert row["finish_reason"] == "stop"
+    assert row["reasoning_chars"] == len("private synthetic thought")
+    assert row["content_chars"] == 0 and row["tool_calls"] == 0
+    assert row["first_action_ms"] is None
+    assert "Reasoning-only stop" in caplog.text
+    assert "private synthetic thought" not in caplog.text
+
+
+def test_first_action_is_distinct_from_first_thinking_token():
+    state = FakeState([_ack(out="thinking"), _ack(out="</think>Visible.", finished=True)])
+    state.config.reasoning_parser = "qwen3"
+    request_ring.reset()
+    async def drain():
+        return [ev async for ev in generate_events(42, _spec(), state, source="/v1/chat/completions")]
+    asyncio.run(drain())
+    row = _last_row()
+    assert row["first_action_ms"] >= row["ttft_ms"] >= 0
+    assert row["content_chars"] == len("Visible.")
+    assert row["reasoning_chars"] == len("thinking")

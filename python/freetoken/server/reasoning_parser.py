@@ -18,9 +18,10 @@ preserves the block for the tool-call parser.
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Type
+from typing import Callable, Dict, List, Optional, Tuple, Type
 
 # DeepSeek-V4 / V3.2 protocol special-token strings. The detokenizer decodes with
 # skip_special_tokens=False (so the DSML tool markers survive for the tool parser),
@@ -435,6 +436,92 @@ class ThinkReasoningParser(BaseReasoningParser):
             force_reasoning=force_reasoning,
             stream_reasoning=stream_reasoning,
         )
+
+
+class QwenReasoningParser(ThinkReasoningParser):
+    """Defer an unclosed-thinking tool candidate until its turn is complete.
+
+    Unlike the DeepSeek fallback, never promote a candidate while streaming:
+    a later </think> must be able to reclaim even a long quoted example.
+    The caller validates complete calls against the request's available tools.
+    """
+
+    TOOL_HOLD_MAX = float("inf")
+    MAX_RECOVERY_CHARS = 262_144
+
+    def __init__(self, force_reasoning: bool = False, stream_reasoning: bool = True) -> None:
+        super().__init__(force_reasoning, stream_reasoning)
+        self.tool_call_validator: Callable[[str], bool] | None = None
+        self._raw_chunks: list[str] = []
+        self._raw_chars = 0
+        self._recovery_disabled = False
+
+    def _recover(self, text: str) -> ReasoningParseResult | None:
+        if not self.tool_call_validator or self._recovery_disabled:
+            return None
+        # Require a terminal, complete block at a line boundary outside Markdown
+        # fences. Inline/quoted examples and trailing prose remain reasoning.
+        fence = None
+        offset = 0
+        for line in text.splitlines(keepends=True):
+            marker = re.match(r" {0,3}(`{3,}|~{3,})", line)
+            if marker:
+                token = marker.group(1)
+                if fence is None:
+                    fence = token
+                elif token[0] == fence[0] and len(token) >= len(fence):
+                    fence = None
+            if fence is None and re.match(r" {0,3}<tool_call>", line):
+                start = offset + line.index("<tool_call>")
+                candidate = text[start:]
+                if self.tool_call_validator(candidate):
+                    logging.getLogger(__name__).warning(
+                        "Recovered Qwen terminal tool block without </think> (%d chars)", len(candidate)
+                    )
+                    return ReasoningParseResult(text[:start], candidate)
+            offset += len(line)
+        return None
+
+    def detect_and_parse(self, text: str, *, allow_tool_recovery: bool = True) -> ReasoningParseResult:
+        if (allow_tool_recovery and len(text) <= self.MAX_RECOVERY_CHARS
+                and self.think_end_token not in text
+                and (self.force_reasoning or self.think_start_token in text)):
+            recovered = self._recover(text.replace(self.think_start_token, "", 1))
+            if recovered is not None:
+                return recovered
+        return super().detect_and_parse(text)
+
+    def parse_streaming_increment(self, new_text: str) -> ReasoningParseResult:
+        if self.tool_call_validator and not self._recovery_disabled:
+            self._raw_chars += len(new_text)
+            if self._raw_chars <= self.MAX_RECOVERY_CHARS:
+                self._raw_chunks.append(new_text)
+                self.tool_start_token = "<tool_call>"
+            else:
+                # Bounded extra storage; do not reinterpret any candidate after
+                # the evidence needed to distinguish quotes has been discarded.
+                self._recovery_disabled = True
+                self._raw_chunks.clear()
+                self.tool_start_token = None
+        return super().parse_streaming_increment(new_text)
+
+    def flush(self, *, allow_tool_recovery: bool = True) -> ReasoningParseResult:
+        if self._in_reasoning and self._buffer:
+            raw = "".join(self._raw_chunks)
+            recovered = self._recover(raw) if allow_tool_recovery and "</think>" not in raw else None
+            if recovered is not None:
+                # The prefix before _buffer has already been emitted. Release
+                # only withheld reasoning plus the validated terminal calls.
+                held_prefix = self._buffer[:-len(recovered.normal_text)]
+                self._buffer = ""
+                self._in_reasoning = False
+                self._raw_chunks.clear()
+                return ReasoningParseResult(held_prefix, recovered.normal_text)
+        self._raw_chunks.clear()
+        # Base.flush promotes any held tool prefix, including incomplete calls;
+        # Qwen only promotes candidates that passed the conservative checks above.
+        self.tool_start_token = None
+        return super().flush()
 
 
 class MiniMaxM3ReasoningParser(BaseReasoningParser):
@@ -901,7 +988,7 @@ class ReasoningParser:
     ReasoningParserEnum: Dict[str, Type[BaseReasoningParser]] = {
         "deepseekv32": DeepSeekV32ReasoningParser,
         "gpt_oss": GptOssHarmonyReasoningParser,
-        "qwen3": ThinkReasoningParser,
+        "qwen3": QwenReasoningParser,
         "glm": ThinkReasoningParser,
         "minimax": ThinkReasoningParser,
         "minimax_m3": MiniMaxM3ReasoningParser,
@@ -914,6 +1001,7 @@ class ReasoningParser:
         reasoning_parser: str,
         force_reasoning: bool = True,
         stream_reasoning: bool = True,
+        tool_call_validator: Callable[[str], bool] | None = None,
     ) -> None:
         parser_class = self.ReasoningParserEnum.get(reasoning_parser)
         if parser_class is None:
@@ -921,10 +1009,15 @@ class ReasoningParser:
         self.detector = parser_class(
             force_reasoning=force_reasoning, stream_reasoning=stream_reasoning
         )
+        if isinstance(self.detector, QwenReasoningParser):
+            self.detector.tool_call_validator = tool_call_validator
 
-    def parse_non_stream(self, full_text: str) -> Tuple[str, str]:
+    def parse_non_stream(self, full_text: str, *, allow_tool_recovery: bool = True) -> Tuple[str, str]:
         """Return ``(reasoning_text, normal_text)`` for a complete completion."""
-        result = self.detector.detect_and_parse(full_text)
+        if isinstance(self.detector, QwenReasoningParser):
+            result = self.detector.detect_and_parse(full_text, allow_tool_recovery=allow_tool_recovery)
+        else:
+            result = self.detector.detect_and_parse(full_text)
         return result.reasoning_text, result.normal_text
 
     def parse_stream_chunk(self, chunk_text: str) -> Tuple[str, str]:
@@ -932,13 +1025,16 @@ class ReasoningParser:
         result = self.detector.parse_streaming_increment(chunk_text)
         return result.reasoning_text, result.normal_text
 
-    def flush(self) -> Tuple[str, str]:
+    def flush(self, *, allow_tool_recovery: bool = True) -> Tuple[str, str]:
         """Drain buffered residue at end-of-stream as ``(reasoning_delta, normal_delta)``."""
-        result = self.detector.flush()
+        if isinstance(self.detector, QwenReasoningParser):
+            result = self.detector.flush(allow_tool_recovery=allow_tool_recovery)
+        else:
+            result = self.detector.flush()
         return result.reasoning_text, result.normal_text
 
 
-def build_reasoning_parser(config, force_reasoning: bool) -> Optional[ReasoningParser]:
+def build_reasoning_parser(config, force_reasoning: bool, *, tool_call_validator=None) -> Optional[ReasoningParser]:
     """Construct the configured reasoning parser, or ``None`` when the server has
     no reasoning parser set. Shared by every protocol adapter's generation path."""
     name = getattr(config, "reasoning_parser", None)
@@ -948,7 +1044,7 @@ def build_reasoning_parser(config, force_reasoning: bool) -> Optional[ReasoningP
         # MiniMax-M2's template always starts generation inside an implicit
         # <think> block and the model only emits the closing </think> marker.
         force_reasoning = True
-    return ReasoningParser(name, force_reasoning=force_reasoning)
+    return ReasoningParser(name, force_reasoning=force_reasoning, tool_call_validator=tool_call_validator)
 
 
 SUPPORTED_REASONING_PARSERS = list(ReasoningParser.ReasoningParserEnum.keys())

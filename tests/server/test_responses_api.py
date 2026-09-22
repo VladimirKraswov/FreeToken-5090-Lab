@@ -967,3 +967,24 @@ def test_convert_function_call_output_text_list_stays_a_plain_tool_message():
     spec = RP.convert_responses_to_genspec(req, {})
     assert [m["role"] for m in spec.messages] == ["user", "assistant", "tool"]
     assert spec.messages[2]["content"] == "ab"
+
+
+def test_qwen_missing_think_closer_reaches_responses_function_call():
+    text = 'Inspect.\n<tool_call>\n<function=inspect>\n<parameter=path>\nfile.txt\n</parameter>\n</function>\n</tool_call>'
+    for stream in (False, True):
+        fake = FakeState([(text, True, 5, 20)], finish_reason='stop')
+        fake.config.reasoning_parser = 'qwen3'
+        fake.config.tool_call_parser = 'qwen3_coder'
+        response = _client(fake).post('/v1/responses', json={
+            'model':'qwen', 'input':'Inspect file.txt', 'stream':stream,
+            'tools':[{'type':'function','name':'inspect','parameters':{'type':'object','properties':{'path':{'type':'string'}},'required':['path']}}],
+        })
+        assert response.status_code == 200
+        if stream:
+            events=[json.loads(line[6:]) for line in response.text.splitlines() if line.startswith('data: {')]
+            body=next(e['response'] for e in events if e['type']=='response.completed')
+        else:
+            body=response.json()
+        calls=[item for item in body['output'] if item['type']=='function_call']
+        assert len(calls)==1 and calls[0]['name']=='inspect'
+        assert json.loads(calls[0]['arguments'])=={'path':'file.txt'}

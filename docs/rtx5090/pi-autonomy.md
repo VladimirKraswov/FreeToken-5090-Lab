@@ -1,5 +1,7 @@
 # Qwen в Pi Code GUI: исчерпание ответа и ограниченное восстановление
 
+> Update 2026-09-22: the installed profile now uses Medium for ordinary work and Low only for the bounded recovery. The Low measurements below describe the original incident fix. A later normal-stop incident was traced to FreeToken losing a tool call inside reasoning; see [the shared engine fix](QWEN_TOOL_HANDOFF.md). No additional normal-stop retry was added to Pi.
+
 После успешного compaction при **tokensBefore=82324** следующий ответ завершился
 с `stopReason="length"`: **24785 входных и 32768 выходных токенов**. В нём был
 только thinking размером **110943 символа**, без вызова инструмента.

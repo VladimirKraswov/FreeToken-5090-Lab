@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
+import re
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
@@ -407,16 +409,56 @@ def _make_reasoning_parser(spec: GenSpec, state: Any) -> ReasoningParser | None:
         force_reasoning = (
             resolve_thinking_mode(spec.chat_template_kwargs, spec.template_tools) == "thinking"
         )
-    return build_reasoning_parser(state.config, force_reasoning)
+    validator = None
+    if (parser_name == "qwen3" and spec.parse_tools
+            and getattr(state.config, "tool_call_parser", None) == "qwen3_coder"):
+        validator = lambda text: _valid_recovered_qwen_tools(text, spec, state)
+    return build_reasoning_parser(state.config, force_reasoning, tool_call_validator=validator)
 
 
-def _split_reasoning(text: str, spec: GenSpec, state: Any) -> tuple[str, str]:
+def _split_reasoning(text: str, spec: GenSpec, state: Any, *, allow_tool_recovery: bool = True) -> tuple[str, str]:
     """Return ``(reasoning, content)``. A no-op (``("", text)``) when no reasoning
     parser is configured, preserving the original behavior for other models."""
     parser = _make_reasoning_parser(spec, state)
     if parser is None:
         return "", text
-    return parser.parse_non_stream(text)
+    return parser.parse_non_stream(text, allow_tool_recovery=allow_tool_recovery)
+
+
+def _valid_recovered_qwen_tools(text: str, spec: GenSpec, state: Any) -> bool:
+    """Only recover complete calls to offered tools, never truncated markup."""
+    block = r"<tool_call>((?:(?!</?tool_call>)[\s\S])*?)</tool_call>"
+    if not re.fullmatch(r"(?:" + block + r"\s*)+", text):
+        return False
+    bodies = re.findall(block, text)
+    for body in bodies:
+        body = body.strip()
+        if body.startswith("{"):
+            try:
+                obj = json.loads(body)
+            except ValueError:
+                return False
+            if not isinstance(obj, dict) or not isinstance(obj.get("arguments", {}), dict):
+                return False
+        elif not re.fullmatch(
+            r"<function=[^>\s]+>\s*(?:<parameter=[^>\s]+>[\s\S]*?</parameter>\s*)*</function>", body
+        ):
+            return False
+    offered = {tool["function"]["name"]: tool["function"] for tool in spec.parser_tools or []}
+    try:
+        parsed = _make_tool_parser(spec, state).parse_non_stream(text)
+        if parsed.normal_text.strip() or len(parsed.calls) != len(bodies):
+            return False
+        for call in parsed.calls:
+            if call.name not in offered:
+                return False
+            args = json.loads(call.parameters)
+            required = offered[call.name].get("parameters", {}).get("required", [])
+            if not isinstance(args, dict) or any(key not in args for key in required):
+                return False
+    except (ValueError, KeyError, TypeError):
+        return False
+    return True
 
 
 _QWEN_TOOL_CALL_PARSERS = frozenset({"qwen", "qwen25", "qwen3_coder"})
@@ -519,6 +561,11 @@ def _record_generation(
     completion_tokens: int,
     error: str | None,
     first_token_at: float | None = None,
+    finish_reason: str | None = None,
+    reasoning_chars: int = 0,
+    content_chars: int = 0,
+    tool_calls: int = 0,
+    first_action_at: float | None = None,
 ) -> None:
     """Log one generation request into the request ring. Every protocol adapter converges here,
     so token totals are captured whatever endpoint served the request — unlike the HTTP
@@ -541,6 +588,11 @@ def _record_generation(
             completion_tokens=completion_tokens,
             stream=stream,
             error=error,
+            finish_reason=finish_reason,
+            reasoning_chars=reasoning_chars,
+            content_chars=content_chars,
+            tool_calls=tool_calls,
+            first_action_ms=int((first_action_at - start) * 1000) if first_action_at is not None else None,
         )
     )
 
@@ -556,22 +608,44 @@ async def generate_events(
     completion_tokens = 0
     first_token_at: float | None = None
     error: str | None = None
+    finish_reason: str | None = None
+    reasoning_chars = content_chars = tool_calls = 0
+    first_action_at: float | None = None
     try:
         async for ev in _generate_events_impl(uid, spec, state):
             if isinstance(ev, GenDone):
                 prompt_tokens = ev.prompt_tokens
                 completion_tokens = ev.completion_tokens
+                finish_reason = ev.finish_reason
             elif first_token_at is None:
                 first_token_at = time.monotonic()
+            if isinstance(ev, ReasoningDelta):
+                reasoning_chars += len(ev.text)
+            elif isinstance(ev, ContentDelta):
+                content_chars += len(ev.text)
+                if ev.text.strip() and first_action_at is None:
+                    first_action_at = time.monotonic()
+            elif isinstance(ev, ToolCallStart) and first_action_at is None:
+                first_action_at = time.monotonic()
+            elif isinstance(ev, ToolCallsDelta):
+                tool_calls += len(ev.calls)
+                if ev.calls and first_action_at is None:
+                    first_action_at = time.monotonic()
             yield ev
     except GenerationError as exc:
         error = str(exc)
         raise
     finally:
+        if finish_reason == "stop" and reasoning_chars and first_action_at is None:
+            logging.getLogger(__name__).warning(
+                "Reasoning-only stop uid=%s: %d reasoning chars, no answer/tool call", uid, reasoning_chars
+            )
         _record_generation(
             source=source, stream=True, start=start,
             prompt_tokens=prompt_tokens, completion_tokens=completion_tokens, error=error,
             first_token_at=first_token_at,
+            finish_reason=finish_reason, reasoning_chars=reasoning_chars,
+            content_chars=content_chars, tool_calls=tool_calls, first_action_at=first_action_at,
         )
 
 
@@ -590,11 +664,19 @@ async def generate_full(
         error = str(exc)
         raise
     finally:
+        if result and result.finish_reason == "stop" and result.reasoning and not result.content.strip() and not result.tool_calls:
+            logging.getLogger(__name__).warning(
+                "Reasoning-only stop uid=%s: %d reasoning chars, no answer/tool call", uid, len(result.reasoning)
+            )
         _record_generation(
             source=source, stream=False, start=start,
             prompt_tokens=result.prompt_tokens if result else 0,
             completion_tokens=result.completion_tokens if result else 0,
             error=error,
+            finish_reason=result.finish_reason if result else None,
+            reasoning_chars=len(result.reasoning) if result else 0,
+            content_chars=len(result.content) if result else 0,
+            tool_calls=len(result.tool_calls) if result else 0,
         )
 
 
@@ -733,7 +815,9 @@ async def _generate_events_impl(uid: int, spec: GenSpec, state: Any) -> AsyncIte
     # Drain residue held in the reasoning parser (a deferred tool block, or a
     # trailing partial token) so it is not silently dropped.
     if reasoning_parser is not None:
-        flush_reasoning, flush_content = reasoning_parser.flush()
+        flush_reasoning, flush_content = reasoning_parser.flush(
+            allow_tool_recovery=engine_finish_reason in (None, "stop") and engine_matched_stop is None,
+        )
         if flush_reasoning:
             stripped_reasoning = strip_special_tokens(flush_reasoning, specials)
             if stripped_reasoning:
@@ -820,7 +904,10 @@ async def _generate_full_impl(uid: int, spec: GenSpec, state: Any) -> GenResult:
             engine_matched_stop = getattr(ack, "matched_stop", None)
             break
 
-    reasoning_text, content_text = _split_reasoning(full_content, spec, state)
+    reasoning_text, content_text = _split_reasoning(
+        full_content, spec, state,
+        allow_tool_recovery=engine_finish_reason in (None, "stop") and engine_matched_stop is None,
+    )
     # Engine reason ("stop"/"length"); a tool call overrides it, but a truncation (length) wins.
     finish_reason = engine_finish_reason or "stop"
     tool_calls: list[ToolCallItem] = []

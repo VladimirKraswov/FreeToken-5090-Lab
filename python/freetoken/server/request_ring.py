@@ -24,6 +24,11 @@ class RequestRecord:
     completion_tokens: int | None
     stream: bool | None
     error: str | None
+    finish_reason: str | None = None
+    reasoning_chars: int | None = None
+    content_chars: int | None = None
+    tool_calls: int | None = None
+    first_action_ms: int | None = None
 
 
 class RequestRing:

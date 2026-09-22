@@ -374,3 +374,7 @@ learned the design and reused code from the following projects:
 ## License
 
 [Apache License 2.0](https://github.com/FlashML-org/FreeToken/blob/main/LICENSE).
+
+## Local RTX 5090 reliability work
+
+See [Qwen tool handoff reliability](docs/rtx5090/QWEN_TOOL_HANDOFF.md) for the missing `</think>` fix, request diagnostics, regression tests and measurements.

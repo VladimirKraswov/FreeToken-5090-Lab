@@ -866,3 +866,103 @@ def test_chat_completion_accepts_logprobs_turned_off(kwargs):
     response = run(handle_chat_completion(chat_request(tools=None, **kwargs), request=None, state=state, model_sampling={}))
 
     assert response["choices"][0]["message"]["content"] == "hi"
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_qwen_missing_think_closer_recovers_terminal_tool_call(stream):
+    output = "Inspect the next file.\n" + _QWEN_TOOL_BLOCK
+    replies = [UserReply(uid=42, incremental_output=c, finished=i == len(output)-1,
+                         finish_reason="stop" if i == len(output)-1 else None)
+               for i, c in enumerate(output)]
+    state = FakeState(replies, tool_call_parser="qwen3_coder", reasoning_parser="qwen3")
+    req = chat_request(stream=stream)
+    if stream:
+        events = parse_sse(run(_collect(stream_chat_completion_chunks(42, req, state))))
+        choices = [c for e in events if isinstance(e, dict) for c in e.get("choices", [])]
+        assert choices[-1]["finish_reason"] == "tool_calls"
+        names = [tc["function"]["name"] for c in choices for tc in c["delta"].get("tool_calls", [])
+                 if tc.get("function", {}).get("name")]
+        assert names == ["get_weather"]
+        assert "<tool_call>" not in _stream_text(events, "reasoning_content")
+    else:
+        choice = run(handle_chat_completion(req, request=None, state=state, model_sampling={}))["choices"][0]
+        assert choice["finish_reason"] == "tool_calls"
+        assert choice["message"]["tool_calls"][0]["function"]["name"] == "get_weather"
+        assert "<tool_call>" not in choice["message"]["reasoning_content"]
+
+
+@pytest.mark.parametrize("stream", [False, True])
+@pytest.mark.parametrize("case", ["quoted", "inline", "trailing", "partial", "unknown", "length", "matched_stop", "none", "long_quote"])
+def test_qwen_missing_think_closer_does_not_invent_calls(stream, case):
+    output = "Inspect next.\n" + _QWEN_TOOL_BLOCK
+    finish_reason, matched_stop = "stop", None
+    req = chat_request(stream=stream)
+    if case == "quoted": output = "Example:\n```xml\n" + _QWEN_TOOL_BLOCK + "\n```"
+    if case == "inline": output = "Example: " + _QWEN_TOOL_BLOCK
+    if case == "trailing": output += "\nThis was only an example."
+    if case == "partial": output = output.replace("</function>", "")
+    if case == "unknown": output = output.replace("get_weather", "unavailable_tool")
+    if case == "length": finish_reason = "length"
+    if case == "matched_stop": matched_stop = "STOP"
+    if case == "none": req = chat_request(stream=stream, tool_choice="none")
+    if case == "long_quote": output = "Example:\n" + _QWEN_TOOL_BLOCK.replace("Paris", "Paris"*300) + "\n</think>Done."
+    chunks = [output[i:i+7] for i in range(0, len(output), 7)]
+    replies = [UserReply(uid=42, incremental_output=c, finished=i==len(chunks)-1,
+                         finish_reason=finish_reason if i==len(chunks)-1 else None,
+                         matched_stop=matched_stop if i==len(chunks)-1 else None)
+               for i,c in enumerate(chunks)]
+    state = FakeState(replies, tool_call_parser="qwen3_coder", reasoning_parser="qwen3")
+    if stream:
+        events = parse_sse(run(_collect(stream_chat_completion_chunks(42, req, state))))
+        choices = [c for e in events if isinstance(e, dict) for c in e.get("choices", [])]
+        assert not any(c["delta"].get("tool_calls") for c in choices)
+        assert choices[-1]["finish_reason"] == finish_reason
+    else:
+        choice = run(handle_chat_completion(req, request=None, state=state, model_sampling={}))["choices"][0]
+        assert not choice["message"].get("tool_calls")
+        assert choice["finish_reason"] == finish_reason
+
+
+@pytest.mark.parametrize("variant", ["json", "two_calls", "quoted_then_real", "split_marker"])
+def test_qwen_missing_closer_variants_agree_between_stream_and_full(variant):
+    body = _QWEN_TOOL_BLOCK
+    prefix = "Inspect next.\n"
+    expected = 1
+    if variant == "json": body = '<tool_call>{"name":"get_weather","arguments":{"city":"Paris"}}</tool_call>'
+    if variant == "two_calls": body += "\n" + _QWEN_TOOL_BLOCK; expected = 2
+    if variant == "quoted_then_real": prefix = "Example:\n```xml\n" + _QWEN_TOOL_BLOCK + "\n```\nNow call it.\n"
+    output = prefix + body
+    summaries = []
+    for stream in [False, True]:
+        chunks = list(output) if variant == "split_marker" else [output[i:i+7] for i in range(0,len(output),7)]
+        replies = [UserReply(uid=42, incremental_output=c, finished=i==len(chunks)-1,
+                             finish_reason="stop" if i==len(chunks)-1 else None) for i,c in enumerate(chunks)]
+        state = FakeState(replies, tool_call_parser="qwen3_coder", reasoning_parser="qwen3")
+        req = chat_request(stream=stream)
+        if stream:
+            events = parse_sse(run(_collect(stream_chat_completion_chunks(42, req, state))))
+            calls = {}
+            for e in events:
+                if not isinstance(e, dict): continue
+                for c in e.get("choices", []):
+                    for tc in c["delta"].get("tool_calls", []):
+                        current = calls.setdefault(tc["index"], {"name":"", "arguments":""})
+                        current["name"] += tc.get("function", {}).get("name", "")
+                        current["arguments"] += tc.get("function", {}).get("arguments", "")
+            summaries.append([(c["name"],json.loads(c["arguments"])) for c in calls.values()])
+        else:
+            choice=run(handle_chat_completion(req,request=None,state=state,model_sampling={}))["choices"][0]
+            summaries.append([(c["function"]["name"],json.loads(c["function"]["arguments"])) for c in choice["message"].get("tool_calls",[])])
+    assert summaries[0] == summaries[1] == [("get_weather",{"city":"Paris"})]*expected
+
+
+def test_qwen_recovery_storage_is_bounded():
+    from freetoken.server.reasoning_parser import ReasoningParser, QwenReasoningParser
+    parser = ReasoningParser("qwen3", force_reasoning=True, tool_call_validator=lambda _: True)
+    text = "x" * (QwenReasoningParser.MAX_RECOVERY_CHARS+1) + "\n" + _QWEN_TOOL_BLOCK
+    reasoning, content = "", ""
+    for start in range(0,len(text),1000):
+        r,c=parser.parse_stream_chunk(text[start:start+1000]); reasoning+=r;content+=c
+    r,c=parser.flush();reasoning+=r;content+=c
+    assert reasoning == text and not content
+    assert parser.detector._raw_chunks == []

@@ -976,3 +976,28 @@ def test_image_only_tool_result_keeps_an_empty_tool_message():
         "role": "user",
         "content": [{"type": "image", "freetoken_ref": {"kind": "b64", "data": "aGk="}}],
     }
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_qwen_missing_think_closer_reaches_anthropic_tool_use(stream):
+    text = 'Inspect.\n<tool_call>\n<function=inspect>\n<parameter=path>\nfile.txt\n</parameter>\n</function>\n</tool_call>'
+    fake = FakeState([(text, True, 5, 20)])
+    fake.config.reasoning_parser = "qwen3"
+    fake.config.tool_call_parser = "qwen3_coder"
+    response = _client(fake).post('/v1/messages', json={
+        'model':'qwen', 'max_tokens':100, 'messages':[{'role':'user','content':'Inspect file.txt'}],
+        'stream':stream, 'tools':[{'name':'inspect','input_schema':{'type':'object','properties':{'path':{'type':'string'}},'required':['path']}}],
+    })
+    assert response.status_code == 200
+    if stream:
+        events=[json.loads(line[6:]) for line in response.text.splitlines() if line.startswith('data: {')]
+        calls=[e['content_block'] for e in events if e['type']=='content_block_start' and e['content_block']['type']=='tool_use']
+        assert len(calls)==1 and calls[0]['name']=='inspect'
+        assert any(e['type']=='message_delta' and e['delta']['stop_reason']=='tool_use' for e in events)
+        args=''.join(e['delta']['partial_json'] for e in events if e['type']=='content_block_delta' and e['delta']['type']=='input_json_delta')
+        assert json.loads(args)=={'path':'file.txt'}
+    else:
+        body=response.json()
+        calls=[c for c in body['content'] if c['type']=='tool_use']
+        assert len(calls)==1 and calls[0]['name']=='inspect' and calls[0]['input']=={'path':'file.txt'}
+        assert body['stop_reason']=='tool_use'
