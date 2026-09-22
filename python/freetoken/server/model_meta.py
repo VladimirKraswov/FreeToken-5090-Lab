@@ -96,17 +96,31 @@ def effort_toggle_kwargs(
     thinking_type: str | None = None,
 ) -> dict:
     """Fold a protocol-level reasoning-effort request into the template kwargs.
-    An explicit thinking-related key wins wholesale; unrelated extras ride along.
+    Explicit template controls take precedence. An enabled toggle can inherit a
+    separately supplied effort; it must not silently replace Medium with the
+    checkpoint's default. Unrelated extras ride along.
     Effort "none"/"off" (case-insensitive) disables thinking; any other or absent
     effort enables it, forwarded for templates that grade it (quantized against
     the checkpoint's probed vocabulary at render time). ``thinking_type`` is the
     DeepSeek-wire ``thinking: {"type": ...}`` toggle; when present it decides
     the on/off direction outright, "disabled" winning over any effort."""
-    ctk = dict(chat_template_kwargs or {})
-    if any(key in ctk for key in _THINKING_KWARG_KEYS):
-        return ctk
     if isinstance(effort, str):
         effort = effort.strip().lower()
+    ctk = dict(chat_template_kwargs or {})
+    if any(key in ctk for key in _THINKING_KWARG_KEYS):
+        enabled = (
+            ctk.get("enable_thinking") is True or ctk.get("thinking") is True
+            or ctk.get("thinking_mode") in ("enabled", "thinking")
+        )
+        disabled = (
+            ctk.get("enable_thinking") is False or ctk.get("thinking") is False
+            or ctk.get("thinking_mode") in ("disabled", "chat")
+        )
+        if (enabled and not disabled and ctk.get("thinking_mode") != "adaptive"
+                and "reasoning_effort" not in ctk
+                and effort and effort not in _DISABLE_EFFORTS):
+            ctk["reasoning_effort"] = effort
+        return ctk
     disabled = effort in _DISABLE_EFFORTS
     if thinking_type == "disabled":
         disabled = True

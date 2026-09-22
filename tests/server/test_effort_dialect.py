@@ -11,6 +11,8 @@ import asyncio
 import json
 from types import SimpleNamespace
 
+import pytest
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.testclient import TestClient
@@ -95,9 +97,46 @@ def test_thinking_enabled_alone_turns_thinking_on():
     assert ctk == ON
 
 
-def test_explicit_template_kwargs_still_win_wholesale():
+def test_explicit_template_off_still_wins_over_protocol_controls():
     ctk = effort_toggle_kwargs("high", {"enable_thinking": False}, thinking_type="enabled")
     assert ctk == {"enable_thinking": False}
+
+
+@pytest.mark.parametrize("toggle", [
+    {"enable_thinking": True}, {"thinking": True},
+    {"thinking_mode": "enabled"}, {"thinking_mode": "thinking"},
+])
+def test_enabled_template_toggle_inherits_protocol_effort(toggle):
+    original = {**toggle, "preserve_thinking": True}
+    assert effort_toggle_kwargs(" Medium ", original) == {
+        **original, "reasoning_effort": "medium",
+    }
+    assert "reasoning_effort" not in original
+
+
+@pytest.mark.parametrize("explicit", [
+    {"enable_thinking": False}, {"thinking": False},
+    {"thinking_mode": "disabled"}, {"thinking_mode": "chat"},
+    {"enable_thinking": True, "thinking_mode": "disabled"},
+    {"enable_thinking": True, "reasoning_effort": "low"},
+    {"thinking_mode": "adaptive"},
+    {"enable_thinking": True, "thinking_mode": "adaptive"},
+])
+def test_effort_inheritance_preserves_explicit_off_effort_and_adaptive(explicit):
+    assert effort_toggle_kwargs("high", explicit) == explicit
+
+
+def test_opencode_effort_reaches_tokenizer_with_enabled_thinking():
+    state = FakeState(reasoning_parser="qwen3")
+    response = run(handle_chat_completion(chat_request(
+        reasoning_effort="medium",
+        chat_template_kwargs={"enable_thinking": True, "preserve_thinking": True},
+    ), None, state, {}))
+    assert not isinstance(response, JSONResponse)
+    assert state.sent.chat_template_kwargs == {
+        "enable_thinking": True, "preserve_thinking": True,
+        "reasoning_effort": "medium",
+    }
 
 
 # --------------------------------------------------------------------------- #
