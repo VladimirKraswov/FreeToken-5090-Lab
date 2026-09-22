@@ -1,0 +1,343 @@
+diff --git a/cache.py b/cache.py
+index 6d5ecdc..99c1f9c 100644
+--- a/cache.py
++++ b/cache.py
+@@ -1,28 +1,98 @@
+ import asyncio
+ import time
+ 
++_MISSING = object()
++
++
++class _Load:
++    """State shared by all waiters of one load for one key/generation."""
++
++    __slots__ = ("generation", "result", "error", "settled", "waiters")
++
++    def __init__(self, generation):
++        self.generation = generation
++        self.result = None
++        self.error = None
++        self.settled = False
++        self.waiters = set()
++
++    def settle(self, result=None, error=None):
++        self.settled = True
++        self.result = result
++        self.error = error
++        for fut in tuple(self.waiters):
++            self.waiters.discard(fut)
++            if fut.done():
++                continue
++            if error is None:
++                fut.set_result(result)
++            else:
++                fut.set_exception(error)
++
++
+ class AsyncCache:
++    """Single-event-loop async cache with TTL and in-flight coalescing.
++
++    - Concurrent callers for one key share exactly one loader run.
++    - A waiter's cancellation never cancels the shared loader.
++    - TTL starts at successful completion; entry expires when clock >= expiry.
++    - None is a cacheable value; loader failures are never cached.
++    - clear() invalidates stored values and in-flight ownership: loads from a
++      previous generation may still return to their own waiters, but can
++      neither write nor remove anything belonging to a newer generation.
++    """
++
+     def __init__(self, ttl, clock=time.monotonic):
+         self.ttl = ttl
+         self.clock = clock
+         self.values = {}
+         self.pending = {}
++        self._generation = 0
+ 
+     async def get(self, key, loader):
+-        value, expiry = self.values.get(key, (None, 0))
+-        if value is not None and self.clock() < expiry:
+-            return value
+-        if key not in self.pending:
+-            async def load():
+-                expiry = self.clock() + self.ttl
+-                try:
+-                    value = await loader()
+-                    self.values[key] = (value, expiry)
+-                    return value
+-                finally:
+-                    self.pending.pop(key, None)
+-            self.pending[key] = asyncio.create_task(load())
+-        return await self.pending[key]
++        cached = self.values.get(key, _MISSING)
++        if cached is not _MISSING:
++            value, expiry = cached
++            if self.clock() < expiry:
++                return value
++            del self.values[key]
++
++        load = self.pending.get(key)
++        if load is None or load.generation != self._generation:
++            load = _Load(self._generation)
++            self.pending[key] = load
++            asyncio.ensure_future(self._run(key, load, loader))
++
++        if load.settled:  # defensive; normally unreachable before first await
++            if load.error is not None:
++                raise load.error
++            return load.result
++
++        fut = asyncio.get_running_loop().create_future()
++        load.waiters.add(fut)
++        try:
++            return await fut
++        finally:
++            load.waiters.discard(fut)
++
++    async def _run(self, key, load, loader):
++        try:
++            value = await loader()
++        except BaseException as exc:  # noqa: BLE001 - propagate to waiters
++            error = exc
++        else:
++            error = None
++            if load.generation == self._generation:
++                self.values[key] = (value, self.clock() + self.ttl)
++        if self.pending.get(key) is load:
++            del self.pending[key]
++        if error is None:
++            load.settle(result=value)
++        else:
++            load.settle(error=error)
++            if isinstance(error, asyncio.CancelledError):
++                raise error
+ 
+     def clear(self):
++        self._generation += 1
+         self.values.clear()
+diff --git a/tests/test_cache_bugs.py b/tests/test_cache_bugs.py
+new file mode 100644
+index 0000000..319ebf1
+--- /dev/null
++++ b/tests/test_cache_bugs.py
+@@ -0,0 +1,220 @@
++"""Regression tests for the bugs fixed in cache.py (see README.md)."""
++import asyncio
++import unittest
++
++from cache import AsyncCache
++
++
++class FakeClock:
++    def __init__(self, now=0.0):
++        self.now = now
++
++    def __call__(self):
++        return self.now
++
++
++async def _wait_pending(pending, timeout=1.0):
++    """Yield until the event loop has run ready callbacks."""
++    for _ in range(int(timeout * 1000)):
++        await asyncio.sleep(0)
++
++
++class Gate:
++    """Manual loader with controlled completion."""
++
++    def __init__(self, result=None, error=None):
++        self.result = result
++        self.error = error
++        self.started = asyncio.Event()
++        self._release = asyncio.Event()
++        self.start_count = 0
++
++    async def __call__(self):
++        self.start_count += 1
++        self.started.set()
++        await self._release.wait()
++        if self.error is not None:
++            raise self.error
++        return self.result
++
++    def release(self):
++        self._release.set()
++
++
++class BugRegression(unittest.IsolatedAsyncioTestCase):
++    async def test_none_value_is_cached(self):
++        gate = Gate(result=None)
++
++        async def loader():
++            gate.start_count += 1
++            return None
++
++        cache = AsyncCache(10)
++        self.assertIsNone(await cache.get("k", loader))
++        self.assertIsNone(await cache.get("k", loader))
++        self.assertEqual(gate.start_count, 1)
++
++    async def test_concurrent_callers_share_one_load(self):
++        gate = Gate(result="v")
++        cache = AsyncCache(10)
++        t1 = asyncio.create_task(cache.get("k", gate))
++        await gate.started.wait()
++        t2 = asyncio.create_task(cache.get("k", gate))
++        await _wait_pending(1)
++        gate.release()
++        self.assertEqual(await asyncio.gather(t1, t2), ["v", "v"])
++        self.assertEqual(gate.start_count, 1)
++
++    async def test_cancel_one_waiter_does_not_cancel_shared_loader(self):
++        # Bug: cancelling one HTTP request cancelled the shared load, so the
++        # other waiter for the same key also failed.
++        gate = Gate(result="v")
++        cache = AsyncCache(10)
++        t1 = asyncio.create_task(cache.get("k", gate))
++        await gate.started.wait()
++        t2 = asyncio.create_task(cache.get("k", gate))
++        await _wait_pending(1)
++        t1.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await t1
++        self.assertFalse(t2.done())  # loader must still be running
++        gate.release()
++        self.assertEqual(await t2, "v")
++        self.assertEqual(gate.start_count, 1)
++
++    async def test_cancel_last_waiter_keeps_load_and_caches_result(self):
++        gate = Gate(result="v")
++        cache = AsyncCache(10)
++        t1 = asyncio.create_task(cache.get("k", gate))
++        await gate.started.wait()
++        t1.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await t1
++        gate.release()
++        await _wait_pending(1)
++        self.assertNotIn("k", cache.pending)  # cleanup still happened
++        self.assertEqual(cache.values["k"][0], "v")  # result still cached
++
++        async def never():
++            raise AssertionError("should hit cache")
++
++        self.assertEqual(await cache.get("k", never), "v")
++
++    async def test_clear_during_load_no_stale_resurrection(self):
++        # Bug: an in-flight load finishing after clear() resurrected a value
++        # that callers after the clear should not see.
++        clock = FakeClock()
++        gate = Gate(result="old")
++        cache = AsyncCache(10, clock=clock)
++        t1 = asyncio.create_task(cache.get("k", gate))
++        await gate.started.wait()
++
++        cache.clear()
++
++        fresh = Gate(result="new")
++        t2 = asyncio.create_task(cache.get("k", fresh))
++        await fresh.started.wait()
++
++        gate.release()
++        self.assertEqual(await t1, "old")  # old callers may get old result
++        await _wait_pending(1)
++        self.assertNotIn("k", cache.values)  # old load must not write back
++
++        fresh.release()
++        self.assertEqual(await t2, "new")
++        self.assertEqual(await cache.get("k", gate), "new")
++        self.assertEqual(gate.start_count, 1)  # not re-run as a "resurrected" load
++
++    async def test_old_load_does_not_remove_new_generation_pending(self):
++        # The old load's cleanup must not evict the new generation's pending
++        # entry (which would start a third redundant load).
++        gate1 = Gate(result="old")
++        cache = AsyncCache(10)
++        t1 = asyncio.create_task(cache.get("k", gate1))
++        await gate1.started.wait()
++        cache.clear()
++        gate2 = Gate(result="new")
++        t2 = asyncio.create_task(cache.get("k", gate2))
++        await gate2.started.wait()
++        t3 = asyncio.create_task(cache.get("k", gate2))  # joins generation 2
++        await _wait_pending(1)
++
++        gate1.release()
++        self.assertEqual(await t1, "old")
++        await _wait_pending(1)
++        self.assertIn("k", cache.pending)  # generation-2 load survives
++        self.assertFalse(t2.done() or t3.done())
++
++        gate2.release()
++        self.assertEqual(await asyncio.gather(t2, t3), ["new", "new"])
++        self.assertEqual(gate2.start_count, 1)
++
++    async def test_slow_load_does_not_expire_before_completion(self):
++        # Bug: TTL was computed at load start, so a slow load could be born
++        # already expired. TTL must start at successful completion.
++        clock = FakeClock(0.0)
++        calls = []
++
++        async def slow():
++            calls.append(1)
++            clock.now += 100  # slow load outlives the TTL
++            return "v"
++
++        cache = AsyncCache(ttl=10, clock=clock)
++        self.assertEqual(await cache.get("k", slow), "v")
++
++        async def boom():
++            raise AssertionError("must use cached value")
++
++        self.assertEqual(await cache.get("k", boom), "v")  # fresh at once
++        clock.now = 100 + 10 - 1
++        self.assertEqual(await cache.get("k", boom), "v")
++        clock.now = 100 + 10  # expires exactly at clock >= expiry
++        self.assertEqual(await cache.get("k", slow), "v")
++        self.assertEqual(len(calls), 2)
++
++    async def test_loader_failure_is_not_cached_and_reaches_all_waiters(self):
++        err = RuntimeError("boom")
++        gate = Gate(error=err)
++        cache = AsyncCache(10)
++        t1 = asyncio.create_task(cache.get("k", gate))
++        await gate.started.wait()
++        t2 = asyncio.create_task(cache.get("k", gate))
++        await _wait_pending(1)
++        gate.release()
++        for t in (t1, t2):
++            with self.assertRaises(RuntimeError):
++                await t
++        self.assertNotIn("k", cache.values)
++        self.assertNotIn("k", cache.pending)
++
++        self.assertEqual(await cache.get("k", Gate(result="ok")), "ok")  # retried
++
++    async def test_different_keys_do_not_block_each_other(self):
++        slow = Gate(result="slow")
++        cache = AsyncCache(10)
++        slow_task = asyncio.create_task(cache.get("a", slow))
++        await slow.started.wait()
++
++        async def fast():
++            return "fast"
++
++        self.assertEqual(await asyncio.wait_for(cache.get("b", fast), 1), "fast")
++        slow.release()
++        self.assertEqual(await slow_task, "slow")
++
++    async def test_clear_invalidates_cached_values(self):
++        calls = []
++
++        async def loader():
++            calls.append(1)
++            return len(calls)
++
++        cache = AsyncCache(10)
++        self.assertEqual(await cache.get("k", loader), 1)
++        cache.clear()
++        self.assertEqual(await cache.get("k", loader), 2)
++
++
++if __name__ == "__main__":
++    unittest.main()

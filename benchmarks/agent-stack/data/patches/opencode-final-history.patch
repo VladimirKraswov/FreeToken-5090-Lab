@@ -1,0 +1,16 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index b355adc..6a7bacc 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,8 +1,9 @@
+ Work only in this repository. Read README.md and inspect Git before editing.
+ Fix the requested behavior and add meaningful regression tests. Do not change or
+ remove existing tests, user-notes.txt, or this file. Do not install dependencies,
+-use the network, delegate to other agents, or inspect directories outside this
+-repository. Use the existing standard-library test runner. Review your diff and
++use the network, delegate to other agents, or inspect unrelated directories outside this
++repository. You may load the installed qwen-verify-change skill through the native
++skill tool and use the read-only repo_inspect tool. Use the existing standard-library test runner. Review your diff and
+ report the actual checks you ran. A short useful tool action should precede long
+ speculation. Preserve user changes. Do not commit. Do not ask follow-up questions;
+ all requirements are in README.md. Finish when the implementation and tests pass.

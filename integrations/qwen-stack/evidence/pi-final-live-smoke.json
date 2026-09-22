@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-09-22T12:53:33.487Z",
+  "model": "qwen38-flash-next",
+  "thinking": "medium",
+  "maxTokens": 16384,
+  "extensionCount": 3,
+  "toolCalls": 1,
+  "wordsBeforeFirstTool": 10,
+  "stopReason": "stop",
+  "output": "\n\nREADY",
+  "elapsed_s": 14.616,
+  "errors": [],
+  "passed": true
+}

@@ -1,4 +1,4 @@
-"""Check deployed-source identity and public configuration/evidence hygiene."""
+"""Check published-source identity and public configuration/evidence hygiene."""
 import hashlib
 import json
 import re
@@ -13,7 +13,7 @@ assert model['baseUrl'] == 'http://<inference-host>:1919/v1'
 assert model['apiKey'] == 'local'
 assert model['models'][0]['maxTokens'] == 16384
 assert model['models'][0]['contextWindow'] == 131072
-assert json.loads((root / 'examples/settings.merge.json').read_text())['defaultThinkingLevel'] == 'low'
+assert json.loads((root / 'examples/settings.merge.json').read_text())['defaultThinkingLevel'] == 'medium'
 private = re.compile(r'192\.168\.\d+\.\d+|/Users/|/opt/homebrew/|/home/vladimir|BEGIN (?:OPENSSH|RSA|EC) PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{20,}')
 for path in root.rglob('*'):
     if not path.is_file() or 'node_modules' in path.parts or '__pycache__' in path.parts:
@@ -21,4 +21,4 @@ for path in root.rglob('*'):
     if path == Path(__file__).resolve() or path.name == 'live-smoke.json' and path.parent == root:
         continue
     assert private.search(path.read_text()) is None, f'Private machine value in {path}'
-print('Deployed source hashes, portable examples and publication hygiene verified.')
+print('Published source hashes, portable examples and publication hygiene verified.')

@@ -1,0 +1,352 @@
+diff --git a/cache.py b/cache.py
+index 6d5ecdc..d517555 100644
+--- a/cache.py
++++ b/cache.py
+@@ -1,28 +1,52 @@
+ import asyncio
+ import time
+ 
++_MISSING = object()
++
++
+ class AsyncCache:
+     def __init__(self, ttl, clock=time.monotonic):
+         self.ttl = ttl
+         self.clock = clock
+         self.values = {}
+         self.pending = {}
++        self._generation = 0
+ 
+     async def get(self, key, loader):
+-        value, expiry = self.values.get(key, (None, 0))
+-        if value is not None and self.clock() < expiry:
+-            return value
+-        if key not in self.pending:
+-            async def load():
+-                expiry = self.clock() + self.ttl
+-                try:
+-                    value = await loader()
+-                    self.values[key] = (value, expiry)
+-                    return value
+-                finally:
+-                    self.pending.pop(key, None)
+-            self.pending[key] = asyncio.create_task(load())
+-        return await self.pending[key]
++        stored = self.values.get(key, _MISSING)
++        if stored is not _MISSING:
++            value, expiry = stored
++            if self.clock() < expiry:
++                return value
++            self.values.pop(key, None)
++        task = self.pending.get(key)
++        if task is None:
++            task = asyncio.ensure_future(self._load(key, loader, self._generation))
++            self.pending[key] = task
++        ok, result = await asyncio.shield(task)
++        if ok:
++            return result
++        raise result
++
++    async def _load(self, key, loader, generation):
++        try:
++            value = await loader()
++        except asyncio.CancelledError:
++            self._forget_pending(key)
++            raise
++        except BaseException as exc:
++            self._forget_pending(key)
++            return False, exc
++        if self._generation == generation and self.pending.get(key) is asyncio.current_task():
++            self.values[key] = (value, self.clock() + self.ttl)
++        self._forget_pending(key)
++        return True, value
++
++    def _forget_pending(self, key):
++        if self.pending.get(key) is asyncio.current_task():
++            del self.pending[key]
+ 
+     def clear(self):
++        self._generation += 1
+         self.values.clear()
++        self.pending.clear()
+diff --git a/tests/test_regression.py b/tests/test_regression.py
+new file mode 100644
+index 0000000..0da458a
+--- /dev/null
++++ b/tests/test_regression.py
+@@ -0,0 +1,275 @@
++import asyncio
++import unittest
++
++from cache import AsyncCache
++
++
++class FakeClock:
++    def __init__(self, start=0.0):
++        self.t = start
++
++    def __call__(self):
++        return self.t
++
++
++class Regression(unittest.IsolatedAsyncioTestCase):
++    async def test_none_value_is_cached(self):
++        calls = []
++
++        async def load():
++            calls.append(1)
++            return None
++
++        cache = AsyncCache(10)
++        self.assertIsNone(await cache.get("a", load))
++        self.assertIsNone(await cache.get("a", load))
++        self.assertEqual(len(calls), 1)
++
++    async def test_concurrent_callers_share_one_load(self):
++        calls = []
++        started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def load():
++            calls.append(1)
++            started.set()
++            await release.wait()
++            return "v"
++
++        cache = AsyncCache(10)
++        tasks = [asyncio.create_task(cache.get("k", load)) for _ in range(5)]
++        await started.wait()
++        await asyncio.sleep(0)
++        release.set()
++        results = await asyncio.gather(*tasks)
++        self.assertEqual(results, ["v"] * 5)
++        self.assertEqual(len(calls), 1)
++
++    async def test_cancelling_waiter_does_not_cancel_shared_load(self):
++        calls = []
++        started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def load():
++            calls.append(1)
++            started.set()
++            await release.wait()
++            return "v"
++
++        cache = AsyncCache(10)
++        waiter1 = asyncio.create_task(cache.get("k", load))
++        waiter2 = asyncio.create_task(cache.get("k", load))
++        await started.wait()
++        waiter1.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await waiter1
++        release.set()
++        self.assertEqual(await waiter2, "v")
++        self.assertEqual(len(calls), 1)
++
++    async def test_cancelling_last_waiter_keeps_loader_running_and_caches(self):
++        calls = []
++        started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def load():
++            calls.append(1)
++            started.set()
++            await release.wait()
++            return "late"
++
++        cache = AsyncCache(10)
++        waiter = asyncio.create_task(cache.get("k", load))
++        await started.wait()
++        waiter.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await waiter
++        release.set()
++        await asyncio.sleep(0)
++        await asyncio.sleep(0)
++        self.assertEqual(len(calls), 1)
++
++        async def second_loader():
++            calls.append(2)
++            return "second"
++
++        self.assertEqual(await cache.get("k", second_loader), "late")
++        self.assertEqual(calls, [1])
++
++    async def test_clear_during_load_does_not_resurrect_stale_value(self):
++        clock = FakeClock()
++
++        async def slow_load():
++            await asyncio.sleep(0.02)
++            return "stale"
++
++        cache = AsyncCache(1000, clock=clock)
++        stale_task = asyncio.create_task(cache.get("k", slow_load))
++        await asyncio.sleep(0)
++
++        async def fresh_load():
++            return "fresh"
++
++        cache.clear()
++        self.assertEqual(await cache.get("k", fresh_load), "fresh")
++        self.assertEqual(await stale_task, "stale")
++        self.assertEqual(cache.values["k"][0], "fresh")
++
++        calls = []
++
++        async def counting_load():
++            calls.append(1)
++            return "never"
++
++        self.assertEqual(await cache.get("k", counting_load), "fresh")
++        self.assertEqual(calls, [])
++
++    async def test_old_load_cannot_remove_new_generation_pending(self):
++        release_old = asyncio.Event()
++        old_started = asyncio.Event()
++
++        async def old_load():
++            old_started.set()
++            await release_old.wait()
++            return "old"
++
++        cache = AsyncCache(1000)
++        old_task = asyncio.create_task(cache.get("k", old_load))
++        await old_started.wait()
++        cache.clear()
++
++        new_started = asyncio.Event()
++
++        async def new_load():
++            new_started.set()
++            await asyncio.sleep(0.01)
++            return "new"
++
++        new_task = asyncio.create_task(cache.get("k", new_load))
++        await new_started.wait()
++        release_old.set()
++        self.assertEqual(await old_task, "old")
++        self.assertEqual(await new_task, "new")
++
++        calls = []
++
++        async def later_load():
++            calls.append(1)
++            return "later"
++
++        self.assertEqual(await cache.get("k", later_load), "new")
++        self.assertEqual(calls, [])
++
++    async def test_ttl_starts_at_completion_and_expires_at_or_after_expiry(self):
++        clock = FakeClock()
++
++        async def slow_load():
++            for _ in range(8):
++                await asyncio.sleep(0)
++                clock.t += 1
++            return "v"
++
++        cache = AsyncCache(10, clock=clock)
++        self.assertEqual(await cache.get("k", slow_load), "v")
++        self.assertEqual(clock.t, 8)
++
++        calls = []
++
++        async def reload():
++            calls.append(1)
++            return "v2"
++
++        clock.t = 17
++        self.assertEqual(await cache.get("k", reload), "v")
++        self.assertEqual(calls, [])
++
++        clock.t = 18
++        self.assertEqual(await cache.get("k", reload), "v2")
++        self.assertEqual(calls, [1])
++
++    async def test_loader_failure_is_not_cached_and_shared_with_waiters(self):
++        calls = []
++        started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def failing():
++            calls.append(1)
++            started.set()
++            await release.wait()
++            raise RuntimeError("boom")
++
++        cache = AsyncCache(10)
++        w1 = asyncio.create_task(cache.get("k", failing))
++        w2 = asyncio.create_task(cache.get("k", failing))
++        await started.wait()
++        release.set()
++        for w in (w1, w2):
++            with self.assertRaises(RuntimeError):
++                await w
++        self.assertEqual(calls, [1])
++        self.assertNotIn("k", cache.pending)
++        self.assertNotIn("k", cache.values)
++
++        async def ok():
++            calls.append(2)
++            return "ok"
++
++        self.assertEqual(await cache.get("k", ok), "ok")
++        self.assertEqual(calls, [1, 2])
++
++    async def test_different_keys_do_not_block_each_other(self):
++        slow_started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def slow_load():
++            slow_started.set()
++            await release.wait()
++            return "slow"
++
++        cache = AsyncCache(10)
++        slow_task = asyncio.create_task(cache.get("slow", slow_load))
++        await slow_started.wait()
++
++        finished = False
++        async def fast_load():
++            return "fast"
++
++        fast_done = asyncio.create_task(cache.get("fast", fast_load))
++        done, _ = await asyncio.wait([fast_done], timeout=0.1)
++        self.assertIn(fast_done, done)
++        self.assertEqual(await fast_done, "fast")
++        release.set()
++        self.assertEqual(await slow_task, "slow")
++
++    async def test_clear_invalidates_cached_values(self):
++        calls = []
++
++        async def load():
++            calls.append(len(calls))
++            return f"v{len(calls)}"
++
++        cache = AsyncCache(10)
++        self.assertEqual(await cache.get("k", load), "v1")
++        cache.clear()
++        self.assertEqual(await cache.get("k", load), "v2")
++        self.assertEqual(len(calls), 2)
++
++    async def test_clear_does_not_cancel_existing_callers(self):
++        started = asyncio.Event()
++        release = asyncio.Event()
++
++        async def load():
++            started.set()
++            await release.wait()
++            return "old"
++
++        cache = AsyncCache(10)
++        caller = asyncio.create_task(cache.get("k", load))
++        await started.wait()
++        cache.clear()
++        release.set()
++        self.assertEqual(await caller, "old")
++
++
++if __name__ == "__main__":
++    unittest.main()

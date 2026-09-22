@@ -1,4 +1,4 @@
-# Qwen autonomy recovery — 2026-09-21
+# Qwen Pi integration — updated 2026-09-22
 
 Status: implemented and tested for Pi 0.85.1 and the TypeScript runtime of
 Pi Code GUI 0.2.3. Existing working projects and session JSONL files were not
@@ -25,17 +25,21 @@ bypass a stopped agent. Those behaviors were removed.
 
 ## Selected profile and documentation
 
-- Qwen Flash Next: Low thinking; custom model maxTokens=16384; context 131072.
-- Global Pi default and `modelThinkingLevels[local-qwen/qwen38-flash-next]`: Low.
-- Pi Code GUI default thinking: Low. Startup/reload and selection of this Qwen
-  apply Low once, including resumed sessions that stored Medium/High. Users
-  can still deliberately choose another level afterward.
-- V100 model definition and FreeToken server configuration are unchanged.
+- Qwen Flash Next: **Medium** for ordinary work; maxTokens=16384; context 131072.
+- The one permitted length recovery temporarily uses **Low**, then restores the
+  previous effort. Startup and model selection apply Medium, including resumed
+  sessions; a user can deliberately select another level afterward.
+- The current guardrails file is injected once on every serialized Qwen request,
+  including tool steps and continuations after compaction.
+- Foreground Pi bash calls default to 120 seconds for this model. Explicit
+  longer deadlines remain available for builds/downloads. A timeout is a failure
+  to diagnose, never a passed test. Other models are not changed.
+- Pi Code GUI uses the same global TypeScript resources as the CLI.
 
 [Pi's model configuration documentation](https://github.com/earendil-works/pi-mono/blob/main/packages/coding-agent/docs/models.md#model-configuration)
 lists 16384 as the **default** maxTokens for custom models. It is not a
-Qwen-specific quality optimum. Low is an operational recommendation for this
-observed agent loop, not a claim that Qwen mandates it.
+Qwen-specific quality optimum. Medium follows the ordinary coding profile; Low
+is a bounded recovery choice, not a claim that Qwen mandates it.
 
 [The Qwen model card](https://huggingface.co/Qwen/Qwen3.8-Flash-Next#best-practices)
 supports low/medium/xhigh. Its very large separate reasoning/answer budgets are
@@ -49,7 +53,8 @@ Only `local-qwen/qwen38-flash-next` is eligible. No project opt-in marker is
 required. The extension waits for `agent_settled`, after Pi's own queued work
 and built-in recovery finish, and then evaluates the latest assistant message.
 
-1. Only a `length` stop can trigger one short continuation. It instructs the
+1. Only a `length` stop can trigger one short continuation at Low effort, restoring
+   the previous effort when it settles. It instructs the
    model to read `.pi/TASK.md`, inspect Git status/diff, and use a tool within
    the first 300 words. Normal stop/toolUse/error/aborted do not trigger it.
 2. At usage>=60000, compact first and continue only on success. Cache-read and
@@ -72,13 +77,15 @@ possible prompt is now guaranteed to finish autonomously.
 
 ## Validation
 
-**33 tests passed:** 27 event/state regressions, 3 integration tests through the
-installed Pi SDK and a local scripted OpenAI server, and 3 wrapper exit tests.
-Integration tests verify Low and max_tokens=16384 on the actual outgoing
-payload, `length -> read + git status`, `compact -> continue -> tools`, and
-`length -> length -> stop`. Discovery plus explicit registration loads once.
+The current portable suite has **39 Node tests and 3 Python tests**. It covers
+event/state regressions, the real Pi SDK
+against a scripted OpenAI endpoint, combined guardrails/recovery hooks, native
+bash timeout behavior and wrapper exit codes. It checks Medium on ordinary
+requests, Low only during recovery, restoration to Medium, no duplicate guardrail
+injection, `length -> tools`, `compact -> continue`, and `length -> length -> stop`.
+See `evidence/portable-tests.txt` for the exact current count.
 
-A separate read-only test against the real Qwen endpoint passed: Low,
+The historical 2026-09-21 read-only endpoint test passed: Low,
 maxTokens 16384, one tool call after 12 words (including thinking), checkpoint
 and Git inspection, final READY with stopReason=stop. Elapsed 28.2s includes
 request/queue overhead and is not a throughput benchmark.
@@ -87,11 +94,12 @@ request/queue overhead and is not a throughput benchmark.
 cd integrations/pi
 npm ci --ignore-scripts
 npm test
+python3 -m unittest discover -s tests -p "test_*.py"
 ```
 
 See [evidence/](evidence/) for the recorded local test log, live smoke result
-and sanitized incident metadata. Source hashes verify that the published
-extension, worker contract and bounded wrapper match the deployed files.
+and sanitized incident metadata. Source hashes in the manifest protect the current published artifacts.
+The guardrail runtime resolves its source relative to its own installation.
 The portable test copies resolve the pinned SDK dependency without machine paths.
 
 ## Activation in VS Code
@@ -128,8 +136,10 @@ for relative in extensions/autonomous-recovery.ts bin/pi-local-autonomous operat
 done
 
 mkdir -p "$agent_dir/extensions" "$agent_dir/operations"
-install -m644 integrations/pi/extensions/autonomous-recovery.ts "$agent_dir/extensions/"
-install -m644 integrations/pi/operations/AUTONOMOUS_WORKER.md "$agent_dir/operations/"
+install -m644 integrations/pi/extensions/*.ts "$agent_dir/extensions/"
+install -m644 integrations/pi/operations/*.md "$agent_dir/operations/"
+mkdir -p "$agent_dir/operations/qwen-guardrails"
+install -m644 integrations/pi/operations/qwen-guardrails/runtime.mjs "$agent_dir/operations/qwen-guardrails/"
 ```
 
 Merge the following fragments into existing files, preserving other models,
@@ -140,7 +150,7 @@ configuration replacements:
   Set the actual `baseUrl`, including `/v1`, and the endpoint's credential if required.
   `local` is a placeholder for an endpoint without authentication.
 - [examples/settings.merge.json](examples/settings.merge.json) -> `~/.pi/agent/settings.json`.
-  Append the extension path to the existing list once. Keep the provider/model
+  Append each extension path to the existing list once. Keep the provider/model
   IDs `local-qwen/qwen38-flash-next`, or deliberately adjust the extension's
   `isTarget` predicate if deploying a different alias.
 - [examples/vscode-settings.merge.json](examples/vscode-settings.merge.json) -> VS Code
@@ -157,11 +167,15 @@ if [ ! -e "$agent_dir/bin/pi-local" ]; then
 fi
 ```
 
-The supplied `pi-local` simply invokes `pi` from PATH. Existing custom launchers
+The supplied `pi-local` checks only the selected provider/model with `/v1/models`,
+then invokes `pi` from PATH. It does not probe an idle GPU or start inference.
+Install `operations/qwen-stack-20260922/check_endpoint.py` at the matching path
+under the agent directory when using this launcher. Existing custom launchers
 are preserved. `pi-local-autonomous` makes one process invocation, preserves its
-exit status and never restarts automatically. It passes the recovery extension
-explicitly while suppressing other extensions, matching the tested wrapper's
-behavior. Ordinary Pi Code GUI sessions retain their other configured resources.
+exit status and never restarts automatically. It explicitly loads recovery and guardrails without disabling other configured
+extensions, skills or packages. Ordinary Pi Code GUI sessions use the same
+global resources. The launcher clears inherited NODE_PATH to avoid unrelated
+project modules affecting the agent runtime.
 
 For a read-only check against a real inference server (not run by CI):
 

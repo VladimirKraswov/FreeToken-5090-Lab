@@ -1,0 +1,11 @@
+{
+  "agent": "opencode-configured",
+  "task": "history",
+  "elapsed_s": 247.549,
+  "exit": 0,
+  "timeout": false,
+  "acceptance_exit": 0,
+  "public_tests_exit": 0,
+  "protected_files_intact": true,
+  "passed": true
+}

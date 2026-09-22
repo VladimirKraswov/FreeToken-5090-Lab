@@ -9,7 +9,16 @@
         "supportsReasoningEffort": true,
         "maxTokensField": "max_tokens",
         "requiresReasoningContentOnAssistantMessages": true,
-        "thinkingFormat": "openai"
+        "thinkingFormat": "chat-template",
+        "chatTemplateKwargs": {
+          "enable_thinking": {
+            "$var": "thinking.enabled"
+          },
+          "preserve_thinking": true,
+          "reasoning_effort": {
+            "$var": "thinking.effort"
+          }
+        }
       },
       "models": [
         {

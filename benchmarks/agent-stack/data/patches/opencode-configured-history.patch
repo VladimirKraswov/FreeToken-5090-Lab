@@ -1,0 +1,251 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index b355adc..6a7bacc 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,8 +1,9 @@
+ Work only in this repository. Read README.md and inspect Git before editing.
+ Fix the requested behavior and add meaningful regression tests. Do not change or
+ remove existing tests, user-notes.txt, or this file. Do not install dependencies,
+-use the network, delegate to other agents, or inspect directories outside this
+-repository. Use the existing standard-library test runner. Review your diff and
++use the network, delegate to other agents, or inspect unrelated directories outside this
++repository. You may load the installed qwen-verify-change skill through the native
++skill tool and use the read-only repo_inspect tool. Use the existing standard-library test runner. Review your diff and
+ report the actual checks you ran. A short useful tool action should precede long
+ speculation. Preserve user changes. Do not commit. Do not ask follow-up questions;
+ all requirements are in README.md. Finish when the implementation and tests pass.
+diff --git a/history.mjs b/history.mjs
+index a5890fe..4eb36c4 100644
+--- a/history.mjs
++++ b/history.mjs
+@@ -1,13 +1,75 @@
++const isObject = (v) => v !== null && typeof v === 'object';
++
++const deepClone = (v) => {
++  if (Array.isArray(v)) return v.map(deepClone);
++  if (isObject(v)) {
++    const out = {};
++    for (const key of Object.keys(v)) out[key] = deepClone(v[key]);
++    return out;
++  }
++  return v;
++};
++
++// Structural equality: ignores object key order, respects array order,
++// distinguishes a missing key from an explicit null.
++const deepEqual = (a, b) => {
++  if (a === b) return true;
++  if (!isObject(a) || !isObject(b)) return Object.is(a, b);
++  if (Array.isArray(a) !== Array.isArray(b)) return false;
++  const keysA = Object.keys(a);
++  const keysB = Object.keys(b);
++  if (keysA.length !== keysB.length) return false;
++  for (const key of keysA) {
++    if (!Object.prototype.hasOwnProperty.call(b, key)) return false;
++    if (!deepEqual(a[key], b[key])) return false;
++  }
++  return true;
++};
++
+ export class GestureHistory {
+-  constructor(initial) { this.current = initial; this.past = []; this.future = []; this.active = null; }
+-  get state() { return this.current; }
+-  begin(pointerId) { this.active = { pointerId, start: this.current }; return true; }
+-  update(pointerId, next) { if (!this.active) return false; this.current = next; return true; }
++  constructor(initial) {
++    this.current = deepClone(initial);
++    this.past = [];
++    this.future = [];
++    this.active = null;
++  }
++  get state() { return deepClone(this.current); }
++  begin(pointerId) {
++    if (this.active) return false;
++    this.active = { pointerId, start: deepClone(this.current) };
++    return true;
++  }
++  update(pointerId, next) {
++    if (!this.active || pointerId !== this.active.pointerId) return false;
++    this.current = deepClone(next);
++    return true;
++  }
+   commit(pointerId) {
+-    if (!this.active) return false;
+-    this.past.push(this.active.start); this.future = []; this.active = null; return true;
++    if (!this.active || pointerId !== this.active.pointerId) return false;
++    const { start } = this.active;
++    this.active = null;
++    if (!deepEqual(start, this.current)) {
++      this.past.push(start);
++      this.future = [];
++    }
++    return true;
++  }
++  cancel(pointerId) {
++    if (!this.active || pointerId !== this.active.pointerId) return false;
++    this.current = this.active.start;
++    this.active = null;
++    return true;
++  }
++  undo() {
++    if (this.active || !this.past.length) return false;
++    this.future.push(this.current);
++    this.current = this.past.pop();
++    return true;
++  }
++  redo() {
++    if (this.active || !this.future.length) return false;
++    this.past.push(this.current);
++    this.current = this.future.pop();
++    return true;
+   }
+-  cancel(pointerId) { if (!this.active) return false; this.current = this.active.start; this.active = null; return true; }
+-  undo() { if (!this.past.length) return false; this.future.push(this.current); this.current = this.past.pop(); return true; }
+-  redo() { if (!this.future.length) return false; this.past.push(this.current); this.current = this.future.pop(); return true; }
+ }
+diff --git a/tests/regression.test.mjs b/tests/regression.test.mjs
+new file mode 100644
+index 0000000..f0f14e3
+--- /dev/null
++++ b/tests/regression.test.mjs
+@@ -0,0 +1,140 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { GestureHistory } from '../history.mjs';
++
++test('begin is rejected while any gesture is active', () => {
++  const h = new GestureHistory({ x: 0 });
++  assert.equal(h.begin(1), true);
++  assert.equal(h.begin(2), false);
++  assert.equal(h.begin(1), false);
++  assert.equal(h.commit(1), true);
++  assert.equal(h.begin(2), true);
++});
++
++test('foreign pointers cannot update, commit or cancel an active gesture', () => {
++  const h = new GestureHistory({ x: 0 });
++  h.begin(1);
++  assert.equal(h.update(2, { x: 9 }), false);
++  assert.deepEqual(h.state, { x: 0 });
++  assert.equal(h.commit(2), false);
++  assert.equal(h.cancel(2), false);
++  // Gesture must still be owned by pointer 1 and behave normally.
++  assert.equal(h.update(1, { x: 4 }), true);
++  assert.deepEqual(h.state, { x: 4 });
++  assert.equal(h.commit(1), true);
++  assert.deepEqual(h.state, { x: 4 });
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { x: 0 });
++});
++
++test('idle update/commit/cancel return false', () => {
++  const h = new GestureHistory({ x: 0 });
++  assert.equal(h.update(1, { x: 5 }), false);
++  assert.equal(h.commit(1), false);
++  assert.equal(h.cancel(1), false);
++  assert.deepEqual(h.state, { x: 0 });
++});
++
++test('whole changed gesture saves exactly one undo step', () => {
++  const h = new GestureHistory({ n: 0 });
++  h.begin(7);
++  h.update(7, { n: 1 });
++  h.update(7, { n: 2 });
++  h.update(7, { n: 3 });
++  h.commit(7);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { n: 0 });
++  assert.equal(h.undo(), false);
++});
++
++test('unchanged commit returns true, saves no step and preserves redo', () => {
++  const h = new GestureHistory({ a: 1, b: [1, 2] });
++  h.begin(1); h.update(1, { a: 2 }); h.commit(1);
++  h.undo(); // redo stack now holds {a:2}
++  h.begin(1);
++  h.update(1, { b: [1, 2], a: 1 }); // same document, different key order
++  assert.equal(h.commit(1), true);
++  assert.equal(h.redo(), true); // redo survived the unchanged commit
++  assert.deepEqual(h.state, { a: 2 });
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { a: 1, b: [1, 2] });
++  assert.equal(h.undo(), false); // unchanged commit pushed no extra step
++});
++
++test('changed commit clears the redo stack', () => {
++  const h = new GestureHistory({ v: 'a' });
++  h.begin(1); h.update(1, { v: 'b' }); h.commit(1);
++  h.undo();
++  h.begin(1); h.update(1, { v: 'c' }); h.commit(1);
++  assert.equal(h.redo(), false);
++  assert.deepEqual(h.state, { v: 'c' });
++});
++
++test('cancel restores the starting state and preserves redo', () => {
++  const h = new GestureHistory({ s: 0 });
++  h.begin(1); h.update(1, { s: 1 }); h.commit(1);
++  h.undo(); // future: [{s:1}]
++  h.begin(1);
++  h.update(1, { s: 99 });
++  assert.deepEqual(h.state, { s: 99 });
++  assert.equal(h.cancel(1), true);
++  assert.deepEqual(h.state, { s: 0 });
++  assert.equal(h.redo(), true); // cancel preserved the redo stack
++  assert.deepEqual(h.state, { s: 1 });
++  assert.equal(h.cancel(1), false); // gesture already ended
++});
++
++test('undo/redo while dragging are refused and leave the live gesture intact', () => {
++  const h = new GestureHistory({ z: 0 });
++  h.begin(1); h.update(1, { z: 1 });
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++  assert.deepEqual(h.state, { z: 1 }); // live preview untouched
++  assert.equal(h.commit(1), true);
++  assert.deepEqual(h.state, { z: 1 });
++});
++
++test('no-op undo/redo return false', () => {
++  const h = new GestureHistory({});
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++});
++
++test('inputs and returned state are deep-copied defensively', () => {
++  const initial = { pts: [{ x: 1 }], meta: { tag: 't' } };
++  const h = new GestureHistory(initial);
++  initial.pts[0].x = 99;
++  initial.meta.tag = 'mutated';
++  assert.deepEqual(h.state, { pts: [{ x: 1 }], meta: { tag: 't' } });
++
++  const snapshot = h.state;
++  snapshot.pts[0].x = 7;
++  snapshot.newKey = 'evil';
++  assert.deepEqual(h.state, { pts: [{ x: 1 }], meta: { tag: 't' } });
++
++  const next = { pts: [{ x: 2 }] };
++  h.begin(1);
++  assert.equal(h.update(1, next), true);
++  next.pts[0].x = 8;
++  assert.deepEqual(h.state, { pts: [{ x: 2 }] });
++  h.commit(1);
++  // History-internal documents must not leak references either.
++  h.undo();
++  assert.deepEqual(h.state, { pts: [{ x: 1 }], meta: { tag: 't' } });
++  h.state.pts[0].x = 55;
++  assert.deepEqual(h.state, { pts: [{ x: 1 }], meta: { tag: 't' } });
++});
++
++test('structural equality respects array order and null vs missing key', () => {
++  const h = new GestureHistory({ list: [1, 2] });
++  h.begin(1); h.update(1, { list: [2, 1] }); h.commit(1); // order matters: changed
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { list: [1, 2] });
++  assert.equal(h.redo(), true);
++
++  const g = new GestureHistory({ a: null });
++  g.begin(1); g.update(1, {}); // missing key vs null: changed
++  g.commit(1);
++  assert.equal(g.undo(), true);
++  assert.deepEqual(g.state, { a: null });
++});

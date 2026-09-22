@@ -1,0 +1,379 @@
+diff --git a/cache.py b/cache.py
+index 6d5ecdc..100d82d 100644
+--- a/cache.py
++++ b/cache.py
+@@ -1,28 +1,76 @@
+ import asyncio
+ import time
+ 
++_MISSING = object()
++
++
+ class AsyncCache:
++    """Single-event-loop TTL cache with per-key load coalescing.
++
++    Public API: ``AsyncCache(ttl, clock=time.monotonic)``,
++    ``await get(key, loader)``, ``clear()``.
++
++    Guarantees (see README):
++    - Values, including ``None``, are cached; a hit requires ``clock() < expiry``
++      (the entry expires once ``clock() >= expiry``).
++    - TTL is measured from *successful completion* of the loader.
++    - Loader failures are reported to every waiter and never cached.
++    - Concurrent callers for one key share exactly one load; different keys
++      never wait on each other. No locks are held across awaits.
++    - A waiter is shielded from the shared task, so cancelling a caller (even
++      the last one) never cancels the in-flight loader.
++    - ``clear()`` drops stored values *and* in-flight ownership: existing
++      waiters keep their shielded task and may still receive the old result,
++      but later callers start a fresh load and a detached (old-generation)
++      load can neither overwrite nor remove newer cache state.
++    """
++
+     def __init__(self, ttl, clock=time.monotonic):
+         self.ttl = ttl
+         self.clock = clock
+-        self.values = {}
+-        self.pending = {}
++        self.values = {}    # key -> (value, expiry)
++        self.pending = {}   # key -> loader task still owned by the cache
+ 
+     async def get(self, key, loader):
+-        value, expiry = self.values.get(key, (None, 0))
+-        if value is not None and self.clock() < expiry:
+-            return value
+-        if key not in self.pending:
+-            async def load():
+-                expiry = self.clock() + self.ttl
+-                try:
+-                    value = await loader()
+-                    self.values[key] = (value, expiry)
+-                    return value
+-                finally:
+-                    self.pending.pop(key, None)
+-            self.pending[key] = asyncio.create_task(load())
+-        return await self.pending[key]
++        cached = self.values.get(key, _MISSING)
++        if cached is not _MISSING:
++            value, expiry = cached
++            if self.clock() < expiry:
++                return value
++        task = self.pending.get(key)
++        if task is None:
++            task = asyncio.create_task(self._load(key, loader))
++            self.pending[key] = task
++        # shield(): cancelling *this* waiter cancels only the shield wrapper,
++        # never the shared loader task other callers depend on.
++        ok, payload = await asyncio.shield(task)
++        if ok:
++            return payload
++        raise payload
++
++    async def _load(self, key, loader):
++        task = asyncio.current_task()
++        try:
++            value = await loader()
++        except asyncio.CancelledError:
++            self._detach(key, task)
++            raise
++        except BaseException as exc:  # failures are never cached
++            self._detach(key, task)
++            return (False, exc)
++        expiry = self.clock() + self.ttl  # TTL starts at successful completion
++        if self.pending.get(key) is task:
++            # Still cache-owned: publish under the current generation. A load
++            # detached by clear() (or superseded by a newer one) never touches
++            # values nor removes a newer pending task.
++            self.pending.pop(key, None)
++            self.values[key] = (value, expiry)
++        return (True, value)
++
++    def _detach(self, key, task):
++        if self.pending.get(key) is task:
++            del self.pending[key]
+ 
+     def clear(self):
+         self.values.clear()
++        self.pending.clear()
+diff --git a/tests/test_regressions.py b/tests/test_regressions.py
+new file mode 100644
+index 0000000..549056e
+--- /dev/null
++++ b/tests/test_regressions.py
+@@ -0,0 +1,276 @@
++"""Regression tests for the bugs listed in README.md.
++
++Each test targets one reported defect; all were red against the fixture
++baseline (values-resurrection via ``value is not None``, TTL from load start,
++unshielded shared task, ``clear()`` keeping in-flight ownership).
++"""
++import asyncio
++import unittest
++
++from cache import AsyncCache
++
++
++async def _settle(n=50):
++    """Let detached loader tasks run to completion."""
++    for _ in range(n):
++        await asyncio.sleep(0.001)
++
++
++class TestWaiterCancellation(unittest.IsolatedAsyncioTestCase):
++    async def test_cancelling_one_waiter_keeps_shared_loader(self):
++        gate = asyncio.Event()
++        loader_cancelled = False
++        calls = []
++
++        async def loader():
++            nonlocal loader_cancelled
++            calls.append(1)
++            try:
++                await gate.wait()
++            except asyncio.CancelledError:
++                loader_cancelled = True
++                raise
++            return "value"
++
++        cache = AsyncCache(10)
++        w1 = asyncio.create_task(cache.get("k", loader))
++        w2 = asyncio.create_task(cache.get("k", loader))
++        await _settle(2)  # let both reach the shared in-flight load
++
++        w1.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await w1
++        gate.set()
++        # wait_for(): on the buggy baseline the shared task dies with the
++        # cancelled waiter, so a timeout must surface as a failure, not a hang.
++        self.assertEqual(await asyncio.wait_for(w2, timeout=1), "value")
++        self.assertFalse(loader_cancelled, "cancelling one waiter cancelled the loader")
++        self.assertEqual(len(calls), 1)
++        # The load still completed and populated the cache.
++        async def should_not_run():
++            calls.append(1)
++            return "other"
++        self.assertEqual(await cache.get("k", should_not_run), "value")
++        self.assertEqual(len(calls), 1)
++
++    async def test_cancelling_last_waiter_still_completes_and_caches(self):
++        gate = asyncio.Event()
++        loader_cancelled = False
++        calls = []
++
++        async def loader():
++            nonlocal loader_cancelled
++            calls.append(1)
++            try:
++                await gate.wait()
++            except asyncio.CancelledError:
++                loader_cancelled = True
++                raise
++            return "value"
++
++        cache = AsyncCache(10)
++        waiter = asyncio.create_task(cache.get("k", loader))
++        await _settle(2)
++        waiter.cancel()
++        with self.assertRaises(asyncio.CancelledError):
++            await waiter
++        gate.set()
++        await _settle()
++        self.assertFalse(loader_cancelled)
++        async def should_not_run():
++            calls.append(1)
++            return "other"
++        self.assertEqual(await cache.get("k", should_not_run), "value")
++        self.assertEqual(len(calls), 1)
++
++
++class TestClear(unittest.IsolatedAsyncioTestCase):
++    async def test_clear_midload_does_not_resurrect_stale_value(self):
++        gate = asyncio.Event()
++
++        async def slow():
++            await gate.wait()
++            return "old"
++
++        async def fast():
++            return "new"
++
++        cache = AsyncCache(10)
++        stale_waiter = asyncio.create_task(cache.get("k", slow))
++        await _settle(2)  # slow load is in flight and cache-owned
++
++        cache.clear()
++
++        # A caller after clear must get a *new* load, not the in-flight old one
++        # (the buggy baseline joins the stale load and never returns here).
++        self.assertEqual(await asyncio.wait_for(cache.get("k", fast), timeout=1), "new")
++
++        gate.set()
++        # Existing waiters may keep receiving the old result...
++        self.assertEqual(await asyncio.wait_for(stale_waiter, timeout=1), "old")
++        await _settle()
++        # ...but the detached old load must not overwrite the new value.
++        async def should_not_run():
++            raise AssertionError("stale load resurrected; cache was not populated")
++        self.assertEqual(await cache.get("k", should_not_run), "new")
++
++    async def test_old_load_cannot_remove_or_overwrite_new_generation(self):
++        gate1 = asyncio.Event()
++        gate2 = asyncio.Event()
++
++        async def load1():
++            await gate1.wait()
++            return "old"
++
++        async def load2():
++            await gate2.wait()
++            return "newer"
++
++        cache = AsyncCache(10)
++        w1 = asyncio.create_task(cache.get("k", load1))
++        await _settle(2)
++        cache.clear()
++        w2 = asyncio.create_task(cache.get("k", load2))
++        await _settle(2)  # load2 is now the cache-owned pending task
++
++        gate1.set()
++        self.assertEqual(await asyncio.wait_for(w1, timeout=1), "old")  # waiter keeps its result
++        await _settle()
++        # The finished old load must not have removed or replaced load2.
++        gate2.set()
++        self.assertEqual(await asyncio.wait_for(w2, timeout=1), "newer")
++        await _settle()
++        async def should_not_run():
++            raise AssertionError("old generation overwrote the new value")
++        self.assertEqual(await cache.get("k", should_not_run), "newer")
++
++
++class TestExpiry(unittest.IsolatedAsyncioTestCase):
++    async def test_ttl_starts_at_successful_completion(self):
++        now = [0.0]
++        cache = AsyncCache(10, clock=lambda: now[0])
++
++        async def slow():
++            now[0] = 15  # slow load outlives one TTL window
++            return "value"
++
++        self.assertEqual(await cache.get("k", slow), "value")
++        # expiry must be 15+10=25, so at t=20 the entry is still fresh.
++        now[0] = 20
++
++        async def should_not_run():
++            raise AssertionError("entry expired before the slow load's TTL elapsed")
++        self.assertEqual(await cache.get("k", should_not_run), "value")
++
++    async def test_entry_expires_exactly_at_expiry(self):
++        now = [0.0]
++        cache = AsyncCache(10, clock=lambda: now[0])
++        calls = []
++
++        async def loader():
++            calls.append(1)
++            return "value"
++
++        self.assertEqual(await cache.get("k", loader), "value")  # expiry = 10
++        now[0] = 9.999
++        self.assertEqual(await cache.get("k", loader), "value")
++        self.assertEqual(len(calls), 1)
++        now[0] = 10.0  # clock >= expiry means the entry is expired
++        self.assertEqual(await cache.get("k", loader), "value")
++        self.assertEqual(len(calls), 2)
++
++
++class TestValues(unittest.IsolatedAsyncioTestCase):
++    async def test_none_value_is_cached(self):
++        calls = []
++
++        async def loader():
++            calls.append(1)
++            return None
++
++        cache = AsyncCache(10)
++        self.assertIsNone(await cache.get("k", loader))
++        self.assertIsNone(await cache.get("k", loader))
++        self.assertEqual(len(calls), 1)
++
++    async def test_loader_failure_is_not_cached_and_pending_is_released(self):
++        boom_calls = []
++
++        async def boom():
++            boom_calls.append(1)
++            raise RuntimeError("loader failed")
++
++        cache = AsyncCache(10)
++        with self.assertRaises(RuntimeError):
++            await cache.get("k", boom)
++        self.assertEqual(cache.pending, {})
++
++        async def good():
++            return "value"
++
++        self.assertEqual(await cache.get("k", good), "value")
++        self.assertEqual(len(boom_calls), 1)
++
++    async def test_all_concurrent_waiters_see_loader_failure(self):
++        gate = asyncio.Event()
++        calls = []
++
++        async def boom():
++            calls.append(1)
++            await gate.wait()
++            raise RuntimeError("loader failed")
++
++        cache = AsyncCache(10)
++        w1 = asyncio.create_task(cache.get("k", boom))
++        w2 = asyncio.create_task(cache.get("k", boom))
++        await _settle(2)
++        gate.set()
++        for w in (w1, w2):
++            with self.assertRaises(RuntimeError):
++                await w
++        self.assertEqual(len(calls), 1)  # one shared load, shared failure
++        self.assertEqual(cache.pending, {})  # failure must not stay cached
++        async def good():
++            return "value"
++        self.assertEqual(await cache.get("k", good), "value")
++
++
++class TestCoalescing(unittest.IsolatedAsyncioTestCase):
++    async def test_concurrent_callers_share_one_load(self):
++        gate = asyncio.Event()
++        calls = []
++
++        async def loader():
++            calls.append(1)
++            await gate.wait()
++            return "value"
++
++        cache = AsyncCache(10)
++        waiters = [asyncio.create_task(cache.get("k", loader)) for _ in range(5)]
++        await _settle(2)
++        gate.set()
++        results = await asyncio.gather(*waiters)
++        self.assertEqual(results, ["value"] * 5)
++        self.assertEqual(len(calls), 1)
++
++    async def test_different_keys_do_not_block_each_other(self):
++        gate = asyncio.Event()
++
++        async def slow():
++            await gate.wait()
++            return "A"
++
++        async def fast():
++            return "B"
++
++        cache = AsyncCache(10)
++        blocked = asyncio.create_task(cache.get("a", slow))
++        await _settle(2)
++        # Key "b" must complete while key "a"'s load is still in flight.
++        self.assertEqual(await asyncio.wait_for(cache.get("b", fast), timeout=1), "B")
++        gate.set()
++        self.assertEqual(await asyncio.wait_for(blocked, timeout=1), "A")
++
++
++if __name__ == "__main__":
++    unittest.main()

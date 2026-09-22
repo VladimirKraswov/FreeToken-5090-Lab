@@ -1,0 +1,20 @@
+✔ commit can be undone and redone (1.653958ms)
+✔ begin is rejected while any gesture is active (2.203792ms)
+✔ foreign pointers cannot update, commit or cancel an active gesture (1.119ms)
+✔ idle update/commit/cancel return false (0.114834ms)
+✔ whole changed gesture saves exactly one undo step (0.091292ms)
+✔ unchanged commit returns true, saves no step and preserves redo (0.142583ms)
+✔ changed commit clears the redo stack (0.085666ms)
+✔ cancel restores the starting state and preserves redo (0.108542ms)
+✔ undo/redo while dragging are refused and leave the live gesture intact (0.096833ms)
+✔ no-op undo/redo return false (0.096334ms)
+✔ inputs and returned state are deep-copied defensively (0.262083ms)
+✔ structural equality respects array order and null vs missing key (0.104ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.040167

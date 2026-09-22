@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-22",
+  "model": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
+  "model_revision": "7b719225242aacd3dbd3f9407468c2ee9a9d2594",
+  "baseline_engine_commit": "d57d880b9f1f729ac23471bb96dbf9417ec0140b",
+  "final_engine_commit": "acc0acb8bade406b3cf033dbcfec40d18844956d",
+  "context": 131072,
+  "response_budget": 16384,
+  "effort": "medium",
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 20,
+  "mtp": 3,
+  "vision": true,
+  "agents": {
+    "pi": "0.85.1",
+    "opencode": "1.18.18",
+    "dsh": "0.1.1-rc.2",
+    "qwen": "0.24.3"
+  },
+  "node": "26.7.0",
+  "python": "3.14.6",
+  "note": "One stochastic trial per agent/task; baseline and production-profile validation are separate. Native Pi/Qwen 600s; outer cap 630s. No cloud-model benchmark."
+}

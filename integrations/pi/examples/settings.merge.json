@@ -1,9 +1,12 @@
 {
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "medium",
   "modelThinkingLevels": {
-    "local-qwen/qwen38-flash-next": "low"
+    "local-qwen/qwen38-flash-next": "medium"
   },
   "extensions": [
-    "~/.pi/agent/extensions/autonomous-recovery.ts"
+    "~/.pi/agent/extensions/autonomous-recovery.ts",
+    "~/.pi/agent/extensions/qwen-flash-guardrails.ts",
+    "~/.pi/agent/extensions/qwen-tool-deadlines.ts",
+    "~/.pi/agent/extensions/repo-inspect.ts"
   ]
 }

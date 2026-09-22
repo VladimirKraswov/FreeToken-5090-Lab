@@ -1,0 +1,31 @@
+✔ commit can be undone and redone (0.920333ms)
+✔ begin is refused while any gesture is active (0.713375ms)
+✔ update and commit/cancel while idle return false (0.43425ms)
+✔ foreign pointers never steal ownership of an active gesture (0.084125ms)
+✔ a whole changed gesture costs exactly one undo step (0.133625ms)
+✔ an unchanged commit still ends the gesture but stores no undo step (0.096791ms)
+✔ cancel restores the starting state and stores no undo step (0.090125ms)
+✔ a changed commit clears the redo stack (0.086084ms)
+✔ an unchanged commit preserves the redo stack (0.07525ms)
+✔ a cancel preserves the redo stack (0.082041ms)
+✔ undo and redo are refused while dragging and leave the gesture live (0.121417ms)
+✔ no-op undo and redo return false (0.074875ms)
+✔ the constructor input document is defensively copied (0.093166ms)
+✔ the state getter hands out copies that cannot mutate history (0.07375ms)
+✔ update and undo/redo outputs are defensively copied (0.602291ms)
+✔ a start snapshot survives mutation of the live preview (0.121417ms)
+✔ structural equality ignores object key order (0.086125ms)
+✔ structural equality respects array order and nesting (0.062542ms)
+✔ structural equality distinguishes a missing key from null (0.06775ms)
+✔ an array is never structurally equal to an object of the same shape (0.055333ms)
+✔ a root-level array document is copied and undoable (0.072625ms)
+✔ a root-level primitive document round-trips through a gesture (0.050125ms)
+✔ the returned state stays JSON-serializable and stable (0.083041ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.196

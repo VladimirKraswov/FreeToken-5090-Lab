@@ -1,0 +1,34 @@
+{
+  "exit": 0,
+  "requests": [
+    {
+      "roles": [
+        "system",
+        "user",
+        "user"
+      ],
+      "system_count": 1,
+      "reasoning_effort": "medium",
+      "chat_template_kwargs": {
+        "enable_thinking": true,
+        "preserve_thinking": true
+      },
+      "main": false,
+      "guard_blocks": 1
+    },
+    {
+      "roles": [
+        "system",
+        "user"
+      ],
+      "system_count": 1,
+      "reasoning_effort": "medium",
+      "chat_template_kwargs": {
+        "enable_thinking": true,
+        "preserve_thinking": true
+      },
+      "main": true,
+      "guard_blocks": 1
+    }
+  ]
+}

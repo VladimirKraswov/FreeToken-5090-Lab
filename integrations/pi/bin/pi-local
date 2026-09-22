@@ -1,3 +1,5 @@
 #!/bin/zsh
 set -eu
-exec pi "$@"
+agent_dir="${0:A:h:h}"
+/usr/bin/env python3 "$agent_dir/operations/qwen-stack-20260922/check_endpoint.py" "$@"
+exec /usr/bin/env -u NODE_PATH pi "$@"

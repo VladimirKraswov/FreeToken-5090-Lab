@@ -49,7 +49,7 @@ for(const scenario of ['length-tools','compact-tools','length-again'])test(`Pi S
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const port=server.address().port;
  writeFileSync(join(agentDir,'models.json'),JSON.stringify({providers:{'local-qwen':{api:'openai-completions',baseUrl:`http://127.0.0.1:${port}/v1`,apiKey:'local',compat:{supportsDeveloperRole:false,supportsReasoningEffort:true,maxTokensField:'max_tokens',requiresReasoningContentOnAssistantMessages:true},models:[{id:'qwen38-flash-next',name:'Test Qwen',reasoning:true,thinkingLevelMap:{low:'low',medium:'medium',high:'xhigh'},input:['text'],contextWindow:131072,maxTokens:16384,cost:{input:0,output:0,cacheRead:0,cacheWrite:0}}]}}}));
- const settings=SettingsManager.inMemory({defaultProvider:'local-qwen',defaultModel:'qwen38-flash-next',defaultThinkingLevel:'low',packages:[],extensions:[extension],compaction:{enabled:false,keepRecentTokens:100,reserveTokens:16384},retry:{enabled:false},defaultProjectTrust:'trust'});
+ const settings=SettingsManager.inMemory({defaultProvider:'local-qwen',defaultModel:'qwen38-flash-next',defaultThinkingLevel:'medium',packages:[],extensions:[extension],compaction:{enabled:false,keepRecentTokens:100,reserveTokens:16384},retry:{enabled:false},defaultProjectTrust:'trust'});
  const loader=new DefaultResourceLoader({cwd,agentDir,settingsManager:settings,noSkills:true,noPromptTemplates:true,noThemes:true,noContextFiles:true});
  await loader.reload();
  const manager=SessionManager.inMemory(cwd);
@@ -76,7 +76,9 @@ for(const scenario of ['length-tools','compact-tools','length-again'])test(`Pi S
  assert.equal(branch.filter(e=>e.type==='custom'&&e.customType===STATE_TYPE&&e.data.status==='reserved').length,1);
  assert.equal(requests.length,scenario==='length-again'?2:scenario==='compact-tools'?4:3);
  const ordinary=requests.filter(p=>p.tools?.length);
- assert.ok(ordinary.every(p=>p.reasoning_effort==='low'));
+ assert.equal(ordinary[0].reasoning_effort,'medium');
+ assert.ok(ordinary.slice(1).every(p=>p.reasoning_effort==='low'));
+ assert.equal(session.thinkingLevel,'medium');
  assert.ok(ordinary.every(p=>p.max_tokens===16384),JSON.stringify(ordinary.map(p=>p.max_tokens)));
  if(scenario!=='length-again')assert.deepEqual(toolCalls,['read','bash']);
  if(scenario==='compact-tools')assert.equal(branch.filter(e=>e.type==='compaction').length,1);

@@ -1,0 +1,29 @@
+✔ commit can be undone and redone (0.923375ms)
+✔ idle update, commit and cancel return false and leave state alone (1.043542ms)
+✔ begin while a gesture is active returns false and keeps the original start (0.167959ms)
+✔ foreign pointers never steal ownership or the live preview (0.093542ms)
+✔ falsy pointer ids are real owners (0.077667ms)
+✔ a changed gesture is exactly one undo step however many updates it had (0.100584ms)
+✔ an unchanged commit still ends the gesture but saves no step and keeps redo (0.165458ms)
+✔ a changed commit clears the redo stack (0.122ms)
+✔ cancel restores the starting state, keeps redo and saves no step (0.085958ms)
+✔ cancel can be repeated after the gesture is over and history resumes (0.214083ms)
+✔ undo and redo while dragging return false and leave the live gesture intact (0.189583ms)
+✔ no-op undo and redo return false (0.100583ms)
+✔ structural equality ignores object key order and nesting (0.146833ms)
+✔ array order is part of the document structure (0.092875ms)
+✔ a missing key differs from a key holding null (0.069667ms)
+✔ an unchanged commit after an equal preview keeps the redo stack (0.198167ms)
+✔ the constructor input document is deeply copied (0.089791ms)
+✔ mutating the returned state cannot reach history internals (0.66175ms)
+✔ update and commit copy the input document so later mutation is inert (0.089708ms)
+✔ undo and redo hand out copies, so the stacks survive mutation (0.067ms)
+✔ primitive documents are supported end to end (0.050041ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 72.028584

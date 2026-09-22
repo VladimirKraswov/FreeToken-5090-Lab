@@ -1,0 +1,11 @@
+agent,task,complete_pass,acceptance_passed,acceptance_total,public_tests_exit,protected_files_intact,elapsed_s,process_exit,timeout,api_calls,input_tokens_sum,output_tokens_sum,first_input_tokens,median_ttft_s,http_errors,length_stops,main_length_stops
+dsh,cache,True,8,8,0,True,625.297,0,False,15,297132,18963,8660,5.004,0,1,0
+dsh,history,True,8,8,0,True,580.939,0,False,18,340596,20464,8660,4.983,0,1,0
+opencode,cache,True,8,8,0,True,372.208,0,False,14,171041,7387,7596,4.964,0,0,0
+opencode-configured,history,True,8,8,0,True,247.549,0,False,14,185535,6903,8636,4.971,0,0,0
+opencode-final,history,False,4,8,0,True,5.812,1,False,2,0,0,,,2,0,0
+opencode,history,True,8,8,0,True,193.326,0,False,12,134006,5866,7596,4.955,0,0,0
+pi,cache,False,8,8,124,True,599.996,0,True,9,61959,8566,3046,4.936,0,0,0
+pi,history,True,8,8,0,True,180.17,0,False,10,69507,5236,3046,4.929,0,0,0
+qwen,cache,False,2,8,124,True,602.327,55,True,6,147765,22075,15618,5.018,0,0,0
+qwen,history,True,8,8,0,True,353.667,0,False,11,266455,12583,15621,4.996,0,0,0

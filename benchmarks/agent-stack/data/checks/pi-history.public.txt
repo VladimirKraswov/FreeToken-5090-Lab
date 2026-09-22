@@ -1,0 +1,22 @@
+✔ commit can be undone and redone (0.948709ms)
+✔ begin while a gesture is active returns false and keeps ownership (1.425166ms)
+✔ idle update/commit/cancel return false (0.099542ms)
+✔ owner update changes live preview and returns true (0.069666ms)
+✔ changed commit records exactly one undo step and clears redo (0.140959ms)
+✔ unchanged commit succeeds but records no undo step and keeps redo (0.094708ms)
+✔ cancel restores starting state and preserves redo stack (0.080083ms)
+✔ undo/redo while dragging are rejected and leave gesture intact (0.087584ms)
+✔ no-op undo/redo return false (0.064041ms)
+✔ state is defensively copied at every boundary (0.179916ms)
+✔ after commit, mutating a previously returned state does not affect history (0.134166ms)
+✔ structural equality: key order ignored, array order matters, missing != null (0.109625ms)
+✔ changed commit after failed redo clears redo stack (0.057375ms)
+✔ foreign begin cannot overwrite an active gesture after cancel (0.057625ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 60.731459

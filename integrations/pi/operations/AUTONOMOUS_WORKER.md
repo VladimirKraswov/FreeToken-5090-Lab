@@ -4,7 +4,8 @@ The TypeScript extension `autonomous-recovery.ts` is loaded by Pi CLI and
 Pi Code GUI through the global resource loader. It applies to
 `local-qwen/qwen38-flash-next`; no `.pi/AUTONOMOUS` marker is required.
 
-- Use Low thinking for short, verifiable coding steps. Start recovery by reading
+- Use Medium thinking for ordinary development; the single recovery temporarily
+  uses Low and restores the previous effort when it ends. Start recovery by reading
   `.pi/TASK.md` and inspecting Git status/diff. Call a tool within the first
   300 words; do not repeat the truncated reasoning or reconstruct the whole plan.
 - Preserve existing work. After a verified increment, update the task checkpoint

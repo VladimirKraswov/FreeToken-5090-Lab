@@ -1,0 +1,115 @@
+test_clear_during_load_new_finishes_first (__main__.Acceptance.test_clear_during_load_new_finishes_first) ... FAIL
+test_coalescing_and_waiter_cancellation (__main__.Acceptance.test_coalescing_and_waiter_cancellation) ... ERROR
+test_completion_based_ttl (__main__.Acceptance.test_completion_based_ttl) ... FAIL
+test_failure_not_cached (__main__.Acceptance.test_failure_not_cached) ... ok
+test_keys_do_not_serialize (__main__.Acceptance.test_keys_do_not_serialize) ... ok
+test_last_waiter_cancel_does_not_cancel_loader (__main__.Acceptance.test_last_waiter_cancel_does_not_cancel_loader) ... FAIL
+test_none_is_a_value_and_exact_expiry (__main__.Acceptance.test_none_is_a_value_and_exact_expiry) ... FAIL
+test_old_completion_does_not_remove_new_pending (__main__.Acceptance.test_old_completion_does_not_remove_new_pending) ... FAIL
+
+======================================================================
+ERROR: test_coalescing_and_waiter_cancellation (__main__.Acceptance.test_coalescing_and_waiter_cancellation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 43, in test_coalescing_and_waiter_cancellation
+    self.assertEqual(await asyncio.wait_for(b, 1), 'ok')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/tasks.py", line 488, in wait_for
+    return await fut
+           ^^^^^^^^^
+  File "<fixture>/cache.py", line 25, in get
+    return await self.pending[key]
+           ^^^^^^^^^^^^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+======================================================================
+FAIL: test_clear_during_load_new_finishes_first (__main__.Acceptance.test_clear_during_load_new_finishes_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 79, in test_clear_during_load_new_finishes_first
+    self.assertEqual(await asyncio.wait_for(b, 1), 'new')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'old' != 'new'
+- old
++ new
+
+
+======================================================================
+FAIL: test_completion_based_ttl (__main__.Acceptance.test_completion_based_ttl)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 31, in test_completion_based_ttl
+    self.assertEqual(len(calls), 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_last_waiter_cancel_does_not_cancel_loader (__main__.Acceptance.test_last_waiter_cancel_does_not_cancel_loader)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 52, in test_last_waiter_cancel_does_not_cancel_loader
+    self.assertEqual(await c.get('a', load), 3); self.assertEqual(len(calls), 1)
+                                                 ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_none_is_a_value_and_exact_expiry (__main__.Acceptance.test_none_is_a_value_and_exact_expiry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 22, in test_none_is_a_value_and_exact_expiry
+    self.assertEqual(len(calls), 1)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: 2 != 1
+
+======================================================================
+FAIL: test_old_completion_does_not_remove_new_pending (__main__.Acceptance.test_old_completion_does_not_remove_new_pending)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "<runtime>/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "<harness>/accept_cache.py", line 90, in test_old_completion_does_not_remove_new_pending
+    self.assertEqual(await b, 'new'); self.assertEqual(await d, 'new')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: 'old' != 'new'
+- old
++ new
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.020s
+
+FAILED (failures=5, errors=1)

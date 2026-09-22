@@ -8,7 +8,8 @@ if [[ -e .pi/DONE || -e .pi/NEEDS_INPUT ]]; then
   exit 0
 fi
 exec "$agent_dir/bin/pi-local" \
-  --no-extensions --extension "$agent_dir/extensions/autonomous-recovery.ts" \
+  --extension "$agent_dir/extensions/autonomous-recovery.ts" \
+  --extension "$agent_dir/extensions/qwen-flash-guardrails.ts" \
   --append-system-prompt "$agent_dir/operations/AUTONOMOUS_WORKER.md" \
-  --thinking low \
+  --thinking medium \
   "$@"

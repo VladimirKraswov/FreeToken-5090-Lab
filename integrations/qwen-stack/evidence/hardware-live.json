@@ -1,0 +1,18 @@
+{
+  "observed_at": "2026-09-22T12:53:09.589907+00:00",
+  "gpu": "NVIDIA GeForce RTX 5090",
+  "driver": "595.91.07",
+  "power_limit_w": 500,
+  "sample_power_draw_w": 379.76,
+  "memory_used_mib": 31830,
+  "memory_total_mib": 32607,
+  "gpu_utilization_percent": 100,
+  "pcie_gen": 3,
+  "pcie_width": 16,
+  "service_active": true,
+  "service_restarts": 0,
+  "vm5200": "running",
+  "vm5090": "stopped",
+  "matching_gpu_pcie_errors_in_last_15_minutes": 0,
+  "note": "Single sample during live validation; not a new throughput or peak-power benchmark."
+}

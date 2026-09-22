@@ -13,8 +13,8 @@ function harness(t, {tokens=57553, stop='length', text='', entries}={}) {
     {type:'message',id:'human1',message:{role:'user',content:'Complete the task'}},
     {type:'message',id:'assistant1',message:{role:'assistant',provider:'local-qwen',model:'qwen38-flash-next',stopReason:stop,usage:usage(),content:text?[{type:'text',text}]:[{type:'thinking',thinking:'x'.repeat(110943)}]}}
   ];
-  const state={compactCalls:0,compactOptions:null,pending:false,idle:true,signal:undefined,tokens,throwCompact:false,thinking:undefined};
-  const pi={setThinkingLevel:level=>{state.thinking=level;},on:(event,fn)=>handlers.set(event,fn),appendEntry:(customType,data)=>branch.push({type:'custom',id:`custom${branch.length}`,customType,data}),sendUserMessage:(content,options)=>sent.push({content,options})};
+  const state={compactCalls:0,compactOptions:null,pending:false,idle:true,signal:undefined,tokens,throwCompact:false,thinking:"medium"};
+  const pi={getThinkingLevel:()=>state.thinking,setThinkingLevel:level=>{state.thinking=level;},on:(event,fn)=>handlers.set(event,fn),appendEntry:(customType,data)=>branch.push({type:'custom',id:`custom${branch.length}`,customType,data}),sendUserMessage:(content,options)=>sent.push({content,options})};
   const ctx={cwd,model:{provider:'local-qwen',id:'qwen38-flash-next'},sessionManager:{getBranch:()=>branch,getSessionId:()=> 'session1'},isIdle:()=>state.idle,hasPendingMessages:()=>state.pending,getContextUsage:()=>({tokens:state.tokens}),get signal(){return state.signal;},compact:options=>{state.compactCalls++;state.compactOptions=options;if(state.throwCompact)throw Error('failed');},ui:{notify:(...args)=>notices.push(args)}};
   function load(){handlers.clear();recovery(pi);}
   async function emit(event,data={}){return handlers.get(event)?.(data,ctx);}
@@ -110,11 +110,11 @@ test('unrelated model and later user message do not revive old length',async t=>
 });
 
 test('Qwen resume resets old thinking once, unrelated models are untouched',async t=>{
- const h=harness(t);await h.emit('session_start');assert.equal(h.state.thinking,'low');
+ const h=harness(t);await h.emit('session_start');assert.equal(h.state.thinking,'medium');
  h.state.thinking='high';h.ctx.model.id='another';await h.emit('session_start');assert.equal(h.state.thinking,'high');
 });
 
-test('switching to Qwen selects Low, without forcing it on each ordinary turn',async t=>{
- const h=harness(t);h.state.thinking='high';await h.emit('model_select');assert.equal(h.state.thinking,'low');
+test('switching to Qwen selects Medium, without forcing it on each ordinary turn',async t=>{
+ const h=harness(t);h.state.thinking='high';await h.emit('model_select');assert.equal(h.state.thinking,'medium');
  h.state.thinking='high';await h.emit('input',{source:'interactive',text:'Use a deliberately chosen level'});assert.equal(h.state.thinking,'high');
 });

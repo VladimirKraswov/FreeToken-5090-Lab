@@ -1,0 +1,108 @@
+✖ pointer ownership and nested begin (0.981625ms)
+✔ one undo step per gesture; previews and cancel (2.2295ms)
+✖ cancel and no-op preserve redo including key order (0.208ms)
+✔ changed commit invalidates redo (0.084416ms)
+✖ undo and redo cannot interrupt drag (0.118167ms)
+✖ deep isolation at all document boundaries (0.395292ms)
+✔ arrays ordered and absent distinct from null (0.1025ms)
+✔ idle operations are harmless and false (0.07675ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 4
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.710625
+
+✖ failing tests:
+
+test at work/qwen-agent-eval/accept_history.mjs:6:1
+✖ pointer ownership and nested begin (0.981625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file://<harness>/accept_history.mjs:7:67)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.start (node:internal/test_runner/test:1257:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at work/qwen-agent-eval/accept_history.mjs:16:1
+✖ cancel and no-op preserve redo including key order (0.208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  false !== true
+
+      at TestContext.<anonymous> (file://<harness>/accept_history.mjs:19:43)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at work/qwen-agent-eval/accept_history.mjs:26:1
+✖ undo and redo cannot interrupt drag (0.118167ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file://<harness>/accept_history.mjs:28:44)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at work/qwen-agent-eval/accept_history.mjs:32:1
+✖ deep isolation at all document boundaries (0.395292ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+
+    {
+      nested: [
+        {
+  +       x: 50
+  -       x: 0
+        }
+      ]
+    }
+
+      at TestContext.<anonymous> (file://<harness>/accept_history.mjs:34:10)
+      at Test.runInAsyncScope (node:async_hooks:226:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { nested: [ [Object] ] },
+    expected: { nested: [ [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,13 @@
+test_clear_during_load_new_finishes_first (__main__.Acceptance.test_clear_during_load_new_finishes_first) ... ok
+test_coalescing_and_waiter_cancellation (__main__.Acceptance.test_coalescing_and_waiter_cancellation) ... ok
+test_completion_based_ttl (__main__.Acceptance.test_completion_based_ttl) ... ok
+test_failure_not_cached (__main__.Acceptance.test_failure_not_cached) ... ok
+test_keys_do_not_serialize (__main__.Acceptance.test_keys_do_not_serialize) ... ok
+test_last_waiter_cancel_does_not_cancel_loader (__main__.Acceptance.test_last_waiter_cancel_does_not_cancel_loader) ... ok
+test_none_is_a_value_and_exact_expiry (__main__.Acceptance.test_none_is_a_value_and_exact_expiry) ... ok
+test_old_completion_does_not_remove_new_pending (__main__.Acceptance.test_old_completion_does_not_remove_new_pending) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.019s
+
+OK

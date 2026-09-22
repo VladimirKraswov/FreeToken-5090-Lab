@@ -1,0 +1,32 @@
+[
+  {
+    "requested": "low",
+    "template": {
+      "enable_thinking": true,
+      "preserve_thinking": true,
+      "reasoning_effort": "low"
+    },
+    "xhigh_instruction": false,
+    "low_instruction": true
+  },
+  {
+    "requested": "medium",
+    "template": {
+      "enable_thinking": true,
+      "preserve_thinking": true,
+      "reasoning_effort": "medium"
+    },
+    "xhigh_instruction": false,
+    "low_instruction": false
+  },
+  {
+    "requested": "xhigh",
+    "template": {
+      "enable_thinking": true,
+      "preserve_thinking": true,
+      "reasoning_effort": "xhigh"
+    },
+    "xhigh_instruction": true,
+    "low_instruction": false
+  }
+]

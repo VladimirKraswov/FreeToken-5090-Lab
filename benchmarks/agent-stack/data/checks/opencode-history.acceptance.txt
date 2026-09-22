@@ -1,0 +1,16 @@
+✔ pointer ownership and nested begin (1.01525ms)
+✔ one undo step per gesture; previews and cancel (0.4835ms)
+✔ cancel and no-op preserve redo including key order (0.141958ms)
+✔ changed commit invalidates redo (0.087459ms)
+✔ undo and redo cannot interrupt drag (0.092583ms)
+✔ deep isolation at all document boundaries (0.132583ms)
+✔ arrays ordered and absent distinct from null (0.078792ms)
+✔ idle operations are harmless and false (0.067083ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64.051

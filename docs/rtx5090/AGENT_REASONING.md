@@ -31,9 +31,9 @@ context limits, sampling defaults or MTP acceptance rules changed.
 ## Validation
 
 - The two minimal regression cases failed against deployed commit `d57d880`.
-- The patched full server suite plus those two cases passed: **667 tests**.
-- After adding the combined enabled/adaptive edge case, the focused suite
-  passed **29 tests**. Explicit-off behavior and the older protocol tests remain.
+- The final full server suite plus those two cases passed: **668 tests**
+  (28.57 seconds; two dependency deprecation warnings). The enabled/adaptive
+  edge case, explicit-off behavior and the older protocol tests remain covered.
 - The real checkpoint tokenizer was rendered locally for Low, Medium and xhigh.
   Medium no longer contained the xhigh instruction; Low and xhigh still contained
   their respective native instructions.
@@ -47,3 +47,7 @@ preserve exit codes and diagnose timeouts instead of reporting successful tests.
 
 The original context window remains 131072, with Vision and MTP=3. This change is
 about honoring the selected profile; it is not a new tokens-per-second claim.
+
+A targeted search of upstream and Kai issues for `reasoning_effort
+chat_template_kwargs` and `Qwen tool thinking` found no exact matching report on
+2026-09-22. This is a narrow search, not proof that no related work exists.

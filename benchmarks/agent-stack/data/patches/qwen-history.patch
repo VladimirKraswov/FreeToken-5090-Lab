@@ -1,0 +1,393 @@
+diff --git a/history.mjs b/history.mjs
+index a5890fe..a15a850 100644
+--- a/history.mjs
++++ b/history.mjs
+@@ -1,13 +1,88 @@
++const has = Object.prototype.hasOwnProperty;
++
++function copy(value) {
++  if (Array.isArray(value)) return value.map(copy);
++  if (value !== null && typeof value === 'object') {
++    const out = {};
++    for (const key of Object.keys(value)) out[key] = copy(value[key]);
++    return out;
++  }
++  return value;
++}
++
++// Structural equality for JSON documents: key order is irrelevant, array order
++// is not, and a missing key is not the same as a key holding null.
++function same(a, b) {
++  if (a === b) return true;
++  const aArray = Array.isArray(a);
++  if (aArray !== Array.isArray(b)) return false;
++  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
++  if (aArray) {
++    if (a.length !== b.length) return false;
++    for (let i = 0; i < a.length; i++) if (!same(a[i], b[i])) return false;
++    return true;
++  }
++  const keys = Object.keys(a);
++  if (keys.length !== Object.keys(b).length) return false;
++  for (const key of keys) {
++    if (!has.call(b, key)) return false;
++    if (!same(a[key], b[key])) return false;
++  }
++  return true;
++}
++
+ export class GestureHistory {
+-  constructor(initial) { this.current = initial; this.past = []; this.future = []; this.active = null; }
+-  get state() { return this.current; }
+-  begin(pointerId) { this.active = { pointerId, start: this.current }; return true; }
+-  update(pointerId, next) { if (!this.active) return false; this.current = next; return true; }
++  constructor(initial) {
++    this.current = copy(initial);
++    this.past = [];
++    this.future = [];
++    this.active = null;
++  }
++
++  get state() {
++    return copy(this.current);
++  }
++
++  begin(pointerId) {
++    if (this.active !== null) return false;
++    this.active = { pointerId, start: copy(this.current) };
++    return true;
++  }
++
++  update(pointerId, next) {
++    if (this.active === null || this.active.pointerId !== pointerId) return false;
++    this.current = copy(next);
++    return true;
++  }
++
+   commit(pointerId) {
+-    if (!this.active) return false;
+-    this.past.push(this.active.start); this.future = []; this.active = null; return true;
++    if (this.active === null || this.active.pointerId !== pointerId) return false;
++    const start = this.active.start;
++    this.active = null;
++    if (same(start, this.current)) return true;
++    this.past.push(start);
++    this.future = [];
++    return true;
++  }
++
++  cancel(pointerId) {
++    if (this.active === null || this.active.pointerId !== pointerId) return false;
++    this.current = copy(this.active.start);
++    this.active = null;
++    return true;
++  }
++
++  undo() {
++    if (this.active !== null || this.past.length === 0) return false;
++    this.future.push(copy(this.current));
++    this.current = this.past.pop();
++    return true;
++  }
++
++  redo() {
++    if (this.active !== null || this.future.length === 0) return false;
++    this.past.push(copy(this.current));
++    this.current = this.future.pop();
++    return true;
+   }
+-  cancel(pointerId) { if (!this.active) return false; this.current = this.active.start; this.active = null; return true; }
+-  undo() { if (!this.past.length) return false; this.future.push(this.current); this.current = this.past.pop(); return true; }
+-  redo() { if (!this.future.length) return false; this.past.push(this.current); this.current = this.future.pop(); return true; }
+ }
+diff --git a/tests/gesture-history.test.mjs b/tests/gesture-history.test.mjs
+new file mode 100644
+index 0000000..3da86b5
+--- /dev/null
++++ b/tests/gesture-history.test.mjs
+@@ -0,0 +1,285 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { GestureHistory } from '../history.mjs';
++
++// Drives a full gesture and returns the history in the idle state it leaves.
++function gesture(h, pointerId, updates) {
++  assert.equal(h.begin(pointerId), true);
++  for (const next of updates) h.update(pointerId, next);
++  return h;
++}
++
++test('begin is refused while any gesture is active', () => {
++  const h = new GestureHistory({ n: 1 });
++  assert.equal(h.begin(1), true);
++  assert.equal(h.begin(1), false);
++  assert.equal(h.begin(2), false);
++  h.update(1, { n: 2 });
++  assert.equal(h.commit(1), true);
++  assert.equal(h.begin(2), true);
++});
++
++test('update and commit/cancel while idle return false', () => {
++  const h = new GestureHistory({ n: 1 });
++  assert.equal(h.update(1, { n: 9 }), false);
++  assert.equal(h.commit(1), false);
++  assert.equal(h.cancel(1), false);
++  assert.deepEqual(h.state, { n: 1 });
++});
++
++test('foreign pointers never steal ownership of an active gesture', () => {
++  const h = new GestureHistory({ n: 1 });
++  h.begin(1);
++  assert.equal(h.update(2, { n: 99 }), false);
++  assert.deepEqual(h.state, { n: 1 });
++  assert.equal(h.commit(2), false);
++  assert.equal(h.cancel(2), false);
++  // ownership still belongs to pointer 1
++  assert.equal(h.update(1, { n: 5 }), true);
++  assert.deepEqual(h.state, { n: 5 });
++  assert.equal(h.commit(1), true);
++  assert.deepEqual(h.state, { n: 5 });
++});
++
++test('a whole changed gesture costs exactly one undo step', () => {
++  const h = new GestureHistory({ pts: [0] });
++  gesture(h, 7, [{ pts: [0, 1] }, { pts: [0, 1, 2] }, { pts: [0, 1, 2, 3] }]);
++  assert.equal(h.commit(7), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { pts: [0] });
++  assert.equal(h.redo(), true);
++  assert.deepEqual(h.state, { pts: [0, 1, 2, 3] });
++  assert.equal(h.undo(), true);
++  assert.equal(h.undo(), false);
++});
++
++test('an unchanged commit still ends the gesture but stores no undo step', () => {
++  const h = new GestureHistory({ n: 4 });
++  h.begin(3);
++  assert.equal(h.update(3, { n: 5 }), true);
++  assert.equal(h.update(3, { n: 4 }), true);
++  assert.equal(h.commit(3), true);
++  assert.equal(h.begin(3), true);
++  assert.equal(h.commit(3), true);
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++});
++
++test('cancel restores the starting state and stores no undo step', () => {
++  const h = new GestureHistory({ n: 1, deep: { a: [1] } });
++  h.begin(1);
++  h.update(1, { n: 2, deep: { a: [1, 2] } });
++  assert.equal(h.cancel(1), true);
++  assert.deepEqual(h.state, { n: 1, deep: { a: [1] } });
++  assert.equal(h.undo(), false);
++  assert.equal(h.cancel(1), false);
++});
++
++test('a changed commit clears the redo stack', () => {
++  const h = new GestureHistory({ n: 0 });
++  gesture(h, 1, [{ n: 1 }]);
++  h.commit(1);
++  gesture(h, 1, [{ n: 2 }]);
++  h.commit(1);
++  assert.equal(h.undo(), true);
++  assert.equal(h.redo(), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { n: 1 });
++  gesture(h, 1, [{ n: 9 }]);
++  assert.equal(h.commit(1), true);
++  assert.equal(h.redo(), false);
++});
++
++test('an unchanged commit preserves the redo stack', () => {
++  const h = new GestureHistory({ n: 0 });
++  gesture(h, 1, [{ n: 1 }]);
++  h.commit(1);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { n: 0 });
++  h.begin(1);
++  h.update(1, { n: 7 });
++  assert.equal(h.cancel(1), true);
++  assert.equal(h.redo(), true);
++  assert.deepEqual(h.state, { n: 1 });
++});
++
++test('a cancel preserves the redo stack', () => {
++  const h = new GestureHistory({ n: 0 });
++  gesture(h, 1, [{ n: 1 }]);
++  h.commit(1);
++  assert.equal(h.undo(), true);
++  h.begin(1);
++  h.update(1, { n: 42 });
++  assert.equal(h.cancel(1), true);
++  assert.deepEqual(h.state, { n: 0 });
++  assert.equal(h.redo(), true);
++  assert.deepEqual(h.state, { n: 1 });
++});
++
++test('undo and redo are refused while dragging and leave the gesture live', () => {
++  const h = new GestureHistory({ n: 0 });
++  gesture(h, 1, [{ n: 1 }]);
++  h.commit(1);
++  h.begin(2);
++  h.update(2, { n: 5 });
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++  assert.deepEqual(h.state, { n: 5 });
++  // stacks untouched: the drag can still be committed and undone normally
++  assert.equal(h.commit(2), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { n: 1 });
++  assert.equal(h.redo(), true);
++  assert.deepEqual(h.state, { n: 5 });
++});
++
++test('no-op undo and redo return false', () => {
++  const h = new GestureHistory({ n: 0 });
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++  gesture(h, 1, [{ n: 1 }]);
++  h.commit(1);
++  assert.equal(h.redo(), false);
++  assert.equal(h.undo(), true);
++  assert.equal(h.undo(), false);
++});
++
++test('the constructor input document is defensively copied', () => {
++  const initial = { shape: { pts: [{ x: 1 }] }, n: 1 };
++  const h = new GestureHistory(initial);
++  initial.n = 99;
++  initial.shape.pts[0].x = 99;
++  initial.shape.extra = 'late';
++  assert.deepEqual(h.state, { shape: { pts: [{ x: 1 }] }, n: 1 });
++  const s = h.state;
++  assert.notEqual(s.shape, initial.shape);
++  assert.notEqual(s.shape.pts, initial.shape.pts);
++});
++
++test('the state getter hands out copies that cannot mutate history', () => {
++  const h = new GestureHistory({ tags: ['a'], meta: { k: 1 } });
++  h.begin(1);
++  const preview = h.state;
++  preview.tags.push('b');
++  preview.meta.k = 2;
++  preview.added = true;
++  assert.deepEqual(h.state, { tags: ['a'], meta: { k: 1 } });
++  h.update(1, h.state);
++  assert.equal(h.commit(1), true);
++  assert.deepEqual(h.state, { tags: ['a'], meta: { k: 1 } });
++  assert.equal(h.undo(), false);
++});
++
++test('update and undo/redo outputs are defensively copied', () => {
++  const h = new GestureHistory({ n: 0 });
++  const next = { list: [{ v: 1 }] };
++  h.begin(1);
++  assert.equal(h.update(1, next), true);
++  next.list[0].v = 2;
++  next.list.push({ v: 3 });
++  assert.deepEqual(h.state, { list: [{ v: 1 }] });
++  assert.equal(h.commit(1), true);
++  const committed = h.state;
++  committed.list[0].v = 77;
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { n: 0 });
++  assert.equal(h.redo(), true);
++  assert.deepEqual(h.state, { list: [{ v: 1 }] });
++});
++
++test('a start snapshot survives mutation of the live preview', () => {
++  const h = new GestureHistory({ pts: [1, 2] });
++  h.begin(1);
++  h.update(1, h.state);
++  const live = h.state;
++  live.pts.push(3);
++  assert.deepEqual(h.state, { pts: [1, 2] });
++  h.update(1, { pts: [1, 2, 4] });
++  assert.equal(h.cancel(1), true);
++  assert.deepEqual(h.state, { pts: [1, 2] });
++});
++
++test('structural equality ignores object key order', () => {
++  const h = new GestureHistory({ a: 1, b: { c: 2, d: [3, 4] } });
++  h.begin(1);
++  h.update(1, { b: { d: [3, 4], c: 2 }, a: 1 });
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), false);
++  assert.equal(h.redo(), false);
++});
++
++test('structural equality respects array order and nesting', () => {
++  const h = new GestureHistory({ pts: [{ x: 1 }, { x: 2 }] });
++  h.begin(1);
++  h.update(1, { pts: [{ x: 2 }, { x: 1 }] });
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { pts: [{ x: 1 }, { x: 2 }] });
++});
++
++test('structural equality distinguishes a missing key from null', () => {
++  const dropped = new GestureHistory({ a: 1, b: null });
++  dropped.begin(1);
++  dropped.update(1, { a: 1 });
++  assert.equal(dropped.commit(1), true);
++  assert.equal(dropped.undo(), true);
++  assert.deepEqual(dropped.state, { a: 1, b: null });
++
++  const added = new GestureHistory({ a: 1 });
++  added.begin(1);
++  added.update(1, { a: 1, b: null });
++  assert.equal(added.commit(1), true);
++  assert.equal(added.undo(), true);
++  assert.deepEqual(added.state, { a: 1 });
++});
++
++test('an array is never structurally equal to an object of the same shape', () => {
++  const h = new GestureHistory({ v: [1, 2] });
++  h.begin(1);
++  h.update(1, { v: { 0: 1, 1: 2 } });
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { v: [1, 2] });
++});
++
++test('a root-level array document is copied and undoable', () => {
++  const initial = [{ x: 1 }, { x: 2 }];
++  const h = new GestureHistory(initial);
++  initial[0].x = 9;
++  initial.push({ x: 3 });
++  h.begin(1);
++  h.update(1, [{ x: 1 }, { x: 2 }, { x: 3 }]);
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, [{ x: 1 }, { x: 2 }]);
++  const out = h.state;
++  assert.notEqual(out, h.state);
++  out.pop();
++  assert.deepEqual(h.state, [{ x: 1 }, { x: 2 }]);
++});
++
++test('a root-level primitive document round-trips through a gesture', () => {
++  const h = new GestureHistory(5);
++  assert.equal(h.state, 5);
++  h.begin(1);
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), false);
++  h.begin(1);
++  h.update(1, 'six');
++  assert.equal(h.commit(1), true);
++  assert.equal(h.undo(), true);
++  assert.equal(h.state, 5);
++  assert.equal(h.redo(), true);
++  assert.equal(h.state, 'six');
++});
++
++test('the returned state stays JSON-serializable and stable', () => {
++  const h = new GestureHistory({ a: [1, { b: 'x' }], c: null });
++  h.begin(1);
++  h.update(1, { a: [], c: 'y' });
++  assert.equal(JSON.stringify(h.state), JSON.stringify({ a: [], c: 'y' }));
++  assert.equal(h.commit(1), true);
++  assert.equal(JSON.parse(JSON.stringify(h.state)).c, 'y');
++  assert.equal(h.undo(), true);
++  assert.deepEqual(h.state, { a: [1, { b: 'x' }], c: null });
++});

@@ -1,0 +1,20 @@
+✔ commit can be undone and redone (0.909333ms)
+✔ begin while any gesture is active returns false, even for same pointer (1.051042ms)
+✔ foreign update, commit and cancel return false and never steal ownership (0.513792ms)
+✔ unchanged commit returns true, adds no undo step and preserves redo (0.100375ms)
+✔ changed commit saves exactly one undo step and clears redo (0.087208ms)
+✔ cancel restores starting state, preserves redo and requires matching pointer (0.090708ms)
+✔ undo and redo while dragging return false and leave the live gesture intact (0.081292ms)
+✔ no-op undo and redo return false (0.053458ms)
+✔ inputs and returned state are defensively copied including nested structures (0.129167ms)
+✔ structural equality ignores object key order (0.09275ms)
+✔ structural equality respects array order and nested changes (0.128916ms)
+✔ structural equality distinguishes missing keys from null (0.068334ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65.310416

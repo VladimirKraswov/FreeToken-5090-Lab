@@ -72,6 +72,7 @@ export default function autonomousRecovery(pi: ExtensionAPI) {
   let generation = 0;
   let closed = false;
   let pending: Ticket | undefined;
+  let restoreThinking: ReturnType<ExtensionAPI["getThinkingLevel"]> | undefined;
 
   function record(ticket: Ticket, status: string, error?: string): void {
     pi.appendEntry(STATE_TYPE, {
@@ -104,25 +105,32 @@ export default function autonomousRecovery(pi: ExtensionAPI) {
     }
     // Mark before dispatch: reentrant settled/callback events cannot enqueue a second turn.
     finish(ticket, ctx, "sent");
+    restoreThinking = pi.getThinkingLevel();
+    pi.setThinkingLevel("low");
     pi.sendUserMessage(RECOVERY_PROMPT, { deliverAs: "followUp" });
   }
 
   pi.on("session_start", (_event, ctx) => {
-    closed = false; generation++; pending = undefined;
-    // Resumed sessions can restore an older Medium/High entry over new defaults.
+    closed = false; generation++; pending = undefined; restoreThinking = undefined;
+    // Apply the quality profile on load; the single recovery uses Low temporarily.
     // Apply the requested Qwen worker profile once on startup/reload, not every turn.
-    if (isTarget(ctx)) pi.setThinkingLevel("low");
+    if (isTarget(ctx)) pi.setThinkingLevel("medium");
   });
   pi.on("model_select", (_event, ctx) => {
-    // Selecting Qwen from an older V100/cloud session should not carry over High.
-    if (isTarget(ctx)) pi.setThinkingLevel("low");
+    restoreThinking = undefined;
+    // Selecting Qwen should start with the quality profile.
+    if (isTarget(ctx)) pi.setThinkingLevel("medium");
   });
   pi.on("session_shutdown", () => { closed = true; generation++; });
   pi.on("input", event => {
     // User steering or another extension supersedes a pending compaction callback.
     if (event.source !== "extension" || event.text !== RECOVERY_PROMPT) generation++;
   });
-  pi.on("agent_end", event => {
+  pi.on("agent_end", (event, ctx) => {
+    if (restoreThinking !== undefined) {
+      if (isTarget(ctx) && pi.getThinkingLevel() === "low") pi.setThinkingLevel(restoreThinking);
+      restoreThinking = undefined;
+    }
     const last = [...event.messages].reverse().find(message => message.role === "assistant");
     if (last?.role === "assistant" && ["aborted", "error"].includes(last.stopReason)) generation++;
   });

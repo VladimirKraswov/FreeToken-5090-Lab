@@ -1,0 +1,17 @@
+test_reuse (test_basic.Basic.test_reuse) ... ok
+test_cancelling_last_waiter_keeps_loader_running_and_caches (test_regression.Regression.test_cancelling_last_waiter_keeps_loader_running_and_caches) ... ok
+test_cancelling_waiter_does_not_cancel_shared_load (test_regression.Regression.test_cancelling_waiter_does_not_cancel_shared_load) ... ok
+test_clear_does_not_cancel_existing_callers (test_regression.Regression.test_clear_does_not_cancel_existing_callers) ... ok
+test_clear_during_load_does_not_resurrect_stale_value (test_regression.Regression.test_clear_during_load_does_not_resurrect_stale_value) ... ok
+test_clear_invalidates_cached_values (test_regression.Regression.test_clear_invalidates_cached_values) ... ok
+test_concurrent_callers_share_one_load (test_regression.Regression.test_concurrent_callers_share_one_load) ... ok
+test_different_keys_do_not_block_each_other (test_regression.Regression.test_different_keys_do_not_block_each_other) ... ok
+test_loader_failure_is_not_cached_and_shared_with_waiters (test_regression.Regression.test_loader_failure_is_not_cached_and_shared_with_waiters) ... ok
+test_none_value_is_cached (test_regression.Regression.test_none_value_is_cached) ... ok
+test_old_load_cannot_remove_new_generation_pending (test_regression.Regression.test_old_load_cannot_remove_new_generation_pending) ... ok
+test_ttl_starts_at_completion_and_expires_at_or_after_expiry (test_regression.Regression.test_ttl_starts_at_completion_and_expires_at_or_after_expiry) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.060s
+
+OK
