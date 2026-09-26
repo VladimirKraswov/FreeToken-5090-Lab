@@ -1,0 +1,31 @@
+{
+  "label": "ctx196k",
+  "repeat": 0,
+  "padding_tokens": 160000,
+  "requested_output": 512,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-26T21:53:33Z",
+  "nonce": "run-ctx-sweep-20260927-0",
+  "base": "http://127.0.0.1:1919",
+  "elapsed_s": 32.171528325998224,
+  "first_event_s": 0.010387959016952664,
+  "ttft_s": 21.111151796998456,
+  "last_token_s": 32.17016117100138,
+  "usage": {
+    "prompt_tokens": 160078,
+    "completion_tokens": 512,
+    "total_tokens": 160590,
+    "prompt_tokens_details": {
+      "cached_tokens": 105024
+    }
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 511,
+  "end_to_end_tps": 15.914693104158383,
+  "decode_tps": 46.20667030097996,
+  "median_chunk_interval_ms": 0.561210501473397,
+  "max_chunk_interval_ms": 159.6531390096061,
+  "text_sha256": "c58f48c15fdaa903bbfc438dbe464b3f0a809a118a66867a138270536d8f2c4f",
+  "text_preview": "ead side = Most Recently Used (MRU)\n    Tail side = Least Recently Used (LRU)\n    \"\"\"\n\n    def __init__(self) -> None:\n        self.head: Node[K, V] = Node.__new__(Node)  # sentinel\n        self.tail: Node[K, V] = Node.__new__(Node)  # sentinel\n        self.head.prev = None\n        self.head.next = self.tail\n        self.tail.prev = self.head\n        self.tail.next = None\n        self._size: int = 0\n\n    @property\n    def size(self) -> int:\n        return self._size\n\n    def add_to_front(self, node: Node[K, V]) -> None:\n        \"\"\"Insert node right after the head sentinel (MRU position).\"\"\"\n        node.prev = self.head\n        node.next = self.head.next\n        self.head.next.prev = node  #"
+}

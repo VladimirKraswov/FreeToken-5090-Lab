@@ -1,0 +1,28 @@
+{
+  "label": "single-layer-profile-131k-1024",
+  "repeat": 0,
+  "padding_tokens": 131000,
+  "requested_output": 1024,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-26T21:09:59Z",
+  "nonce": "run-pair-131-20260926-0",
+  "base": "http://127.0.0.1:19282",
+  "elapsed_s": 25.62297857296653,
+  "first_event_s": 0.04531132697593421,
+  "ttft_s": 1.3578632359858602,
+  "last_token_s": 25.621697662980296,
+  "usage": {
+    "prompt_tokens": 131080,
+    "completion_tokens": 1024,
+    "total_tokens": 132104
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 1023,
+  "end_to_end_tps": 39.96412817830512,
+  "decode_tps": 42.16151421070833,
+  "median_chunk_interval_ms": 0.446048507001251,
+  "max_chunk_interval_ms": 221.5664439718239,
+  "text_sha256": "48489ac2790d809045fc9a10453ee24fe2d52e1ef5f826defe69459310ee6e1f",
+  "text_preview": "s LRUCache(Generic[K, V]):\n    \"\"\"\n    Least Recently Used (LRU) cache with a fixed capacity.\n\n    Uses a hash map for O(1) lookups and a doubly linked list for O(1)\n    eviction ordering.\n\n    Parameters\n    ----------\n    capacity : int\n        Maximum number of items the cache can hold. Must be >= 1.\n    \"\"\"\n\n    def __init__(self, capacity: int) -> None:\n        if capacity < 1:\n            raise ValueError(f\"capacity must be >= 1, got {capacity}\")\n        self._capacity: int = capacity\n        self._map: Dict[K, Node[K, V]] = {}\n        self._dll: DoublyLinkedList[K, V] = DoublyLinkedList()\n\n    @property\n    def capacity(self) -> int:\n        return self._capacity\n\n    def __len__(self"
+}

@@ -612,7 +612,9 @@ def test_track_snapshot_equals_a_prefill_stopped_at_the_boundary():
 
     stopped = torch.zeros_like(slab)
     _forward(layer, R[:CHUNK_SIZE], _meta([tokens[:CHUNK_SIZE]], [[EOS, EOS]], slots=[live]), stopped)
-    assert torch.equal(got, stopped[live])
+    # Different supported torch releases can accumulate the two CPU convolution
+    # shapes with a different FP32 reduction order (observed max 4.8e-7 on 2.9).
+    torch.testing.assert_close(got, stopped[live], rtol=0, atol=1e-6)
 
 
 def test_prefix_hit_matches_the_uncached_run():

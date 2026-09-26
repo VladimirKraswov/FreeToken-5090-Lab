@@ -34,10 +34,14 @@ def save(name, result):
     OUT.write_text(json.dumps(report, indent=2))
     print(json.dumps({name: result}), flush=True)
 
+pad_per_half = int(os.environ.get('FT_LONG_PADDING_PER_HALF', '52500'))
+if not 1 <= pad_per_half <= 120000:
+    raise ValueError('FT_LONG_PADDING_PER_HALF must be between 1 and 120000')
+
 # Different keys at the start, middle and end exercise retrieval across the prompt.
 long_prompt = ('A reference contains three labels. Read it and report their values.\n'
-               'ALPHA = HARBOR-5826\n' + ' test' * 52500 +
-               '\nBETA = ORBIT-9417\n' + ' test' * 52500 +
+               'ALPHA = HARBOR-5826\n' + ' test' * pad_per_half +
+               '\nBETA = ORBIT-9417\n' + ' test' * pad_per_half +
                '\nGAMMA = CEDAR-3072\n'
                'Return ALPHA, BETA and GAMMA with their exact values. No explanation.')
 r = call({'messages': [{'role': 'user', 'content': long_prompt}]})

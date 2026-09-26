@@ -87,9 +87,10 @@ cd /opt/freetoken/src/kai
 PYTHONPATH=python /opt/freetoken/venv/bin/python -m pytest tests/server/ -q
 ```
 
-Production settings remain context 131072, MTP=3, NVFP4 Triton, Vision enabled,
-RTX 5090 power limit 500 W. Deployment and post-restart live checks are recorded
-in `reports/qwen-tool-handoff-live.json`.
+At the time of this 2026-09-22 fix, production used context 131072, MTP=3,
+NVFP4 Triton, Vision and a 500 W RTX 5090 cap. Deployment and post-restart
+checks are in `reports/qwen-tool-handoff-live.json`. The later serving-context
+selection is in [context-tuning-20260927.md](context-tuning-20260927.md).
 
 ## Next quality work
 

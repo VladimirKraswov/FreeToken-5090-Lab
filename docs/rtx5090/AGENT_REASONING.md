@@ -45,8 +45,10 @@ guarantee a short thought or correct code. A shell command waiting forever also
 belongs to the agent runner, not to GPU inference: use bounded foreground tools,
 preserve exit codes and diagnose timeouts instead of reporting successful tests.
 
-The original context window remains 131072, with Vision and MTP=3. This change is
-about honoring the selected profile; it is not a new tokens-per-second claim.
+At the time of this fix the serving window remained 131072, with Vision and
+MTP=3. The later context change is documented in
+[context-tuning-20260927.md](context-tuning-20260927.md). This fix was about
+honoring the selected profile; it was not a new tokens-per-second claim.
 
 A targeted search of upstream and Kai issues for `reasoning_effort
 chat_template_kwargs` and `Qwen tool thinking` found no exact matching report on

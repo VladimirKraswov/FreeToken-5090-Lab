@@ -54,6 +54,14 @@ parsers all resolve automatically from the checkpoint and the GPU.
 | `--pp-layers` | even split | Layer boundaries of the `--pp-size` split, N-1 comma-separated values: `24` gives rank 0 layers [0,24) and rank 1 [24,48). For cards of different sizes |
 | `--spec-mtp` | 0 | Verify K drafts per step from the checkpoint's own MTP head. Single-request decode (`--max-running-req 1`); Qwen3.5-MoE family and Qwen3.8-Flash-Next NVFP4 checkpoints. See [pipeline.md](pipeline.md) |
 
+The serving context is a launch setting, not a compile-time constant. Changing
+it requires a server restart and enough KV capacity, but no FreeToken rebuild.
+For the RTX 5090 deployment, set `FT_CONTEXT_TOKENS` in the environment used
+by `deploy/rtx5090/serve.sh`; its KV reserve follows that value unless
+`FT_KV_RESERVE_TOKENS` is explicitly set higher. Check both `/v1/models` and a
+long request after changing it. Agent clients may also cache their own model
+limits and need their configuration refreshed separately.
+
 ### Choosing a GPU
 
 For example, a machine with an RTX 5090 and an RTX 3060 Ti:
@@ -290,4 +298,3 @@ profile that `ft serve --moe-strategy auto` and `--moe-hybrid-max-fetch -1` then
 - What to measure: `--dtype`, `--model`, `--formats`, `--isa`.
 - `--threshold` (default 2.0) sets the call: recommend hybrid when CPU bandwidth beats PCIe
   by that factor.
-

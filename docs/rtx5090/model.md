@@ -8,8 +8,10 @@
 - Architecture: `Qwen4ExpForConditionalGeneration` / `qwen4_exp`; 48 layers,
   hidden size 2560, 512 routed experts, top-10 routing, GDN plus QSA sparse
   attention, one PLE layer (layer 2), n-gram size 3, 16 PLE hash heads.
-- Checkpoint RoPE capacity: 262144. Selected **serving** context: **131072**,
-  with BF16 KV; validated prompts exceed 100000 actual model tokens.
+- Checkpoint RoPE capacity: 262144. Selected **serving** context on VM5200:
+  **262144** tokens with BF16 KV (2026-09-27). The earlier 131072-token profile
+  and its benchmarks remain historical results, not the current production
+  setting. See [context tuning](context-tuning-20260927.md).
 - `max_output_tokens=32768` is still constrained by total prompt+output capacity.
 - Native Vision enabled, encoder weights in host RAM, image embedding cache on
   CPU, image limit 4096 tokens. Final functional validation used a 2048x2048

@@ -106,22 +106,33 @@ class DecodeTimeline:
         el = torch.cuda.Event.elapsed_time
         total = el(self.begin, self.end)
         ms = dict.fromkeys(PARTS, 0.0)
+        layers: dict[str, dict[str, float]] = {}
         for layer, kind in self.kind.items():
             m = self.marks[layer]
             try:
                 if kind == "cpu":
-                    ms["cpu"] += el(m[START], m[DONE])
+                    part = {
+                        "route": 0.0,
+                        "fetch": 0.0,
+                        "gpu_experts": 0.0,
+                        "cpu": el(m[START], m[DONE]),
+                    }
                 else:
-                    ms["route"] += el(m[START], m[ROUTED])
-                    ms["fetch"] += el(m[ROUTED], m[FETCHED])
-                    ms["gpu_experts"] += el(m[FETCHED], m[COMPUTED])
-                    ms["cpu"] += el(m[COMPUTED], m[DONE])
+                    part = {
+                        "route": el(m[START], m[ROUTED]),
+                        "fetch": el(m[ROUTED], m[FETCHED]),
+                        "gpu_experts": el(m[FETCHED], m[COMPUTED]),
+                        "cpu": el(m[COMPUTED], m[DONE]),
+                    }
             except RuntimeError:  # a layer whose events this forward did not record
                 continue
+            layers[str(layer)] = part
+            for name, value in part.items():
+                ms[name] += value
         if total <= 0:
             return None
         ms["other"] = max(0.0, total - sum(ms[k] for k in PARTS if k != "other"))
-        return {"total_ms": total, "ms": ms}
+        return {"total_ms": total, "ms": ms, "layers": layers}
 
 
 class DecodeSampler:
@@ -154,11 +165,24 @@ class DecodeSampler:
         if not self.samples:
             return None
         n = len(self.samples)
+        layer_totals: dict[str, dict[str, float]] = {}
+        layer_counts: dict[str, int] = {}
+        for sample in self.samples:
+            for layer, parts in sample.get("layers", {}).items():
+                totals = layer_totals.setdefault(layer, {part: 0.0 for part in PARTS if part != "other"})
+                layer_counts[layer] = layer_counts.get(layer, 0) + 1
+                for part in totals:
+                    totals[part] += parts[part]
+        layers = {
+            layer: {part: total / layer_counts[layer] for part, total in layer_totals[layer].items()}
+            for layer in sorted(layer_totals, key=int)
+        }
         return {
             "interval_s": self.interval_s,
             "samples": n,
             "total_ms": sum(x["total_ms"] for x in self.samples) / n,
             "ms": {k: sum(x["ms"][k] for x in self.samples) / n for k in PARTS},
+            "layers": layers,
             "rows": self.samples[-1]["rows"],
             "last": self.samples[-1],
         }

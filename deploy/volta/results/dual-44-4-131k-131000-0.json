@@ -1,0 +1,28 @@
+{
+  "label": "dual-44-4-131k",
+  "repeat": 0,
+  "padding_tokens": 131000,
+  "requested_output": 256,
+  "reasoning_effort": "medium",
+  "temperature": 0,
+  "started_at": "2026-09-26T20:33:04Z",
+  "nonce": "run-pair-131-20260926-0",
+  "base": "http://127.0.0.1:19280",
+  "elapsed_s": 214.35816829500254,
+  "first_event_s": 0.9300148260081187,
+  "ttft_s": 203.14273434702773,
+  "last_token_s": 214.35610560199711,
+  "usage": {
+    "prompt_tokens": 131080,
+    "completion_tokens": 256,
+    "total_tokens": 131336
+  },
+  "finish_reason": "length",
+  "nonempty_chunks": 255,
+  "end_to_end_tps": 1.1942628640476598,
+  "decode_tps": 22.74070787471632,
+  "median_chunk_interval_ms": 0.43497097794897854,
+  "max_chunk_interval_ms": 284.5266590011306,
+  "text_sha256": "a9e363717af19723b6d91442633c5dd90ec0b95e1c1666a3839dab8813d22032",
+  "text_preview": "ith a Node class, a DoublyLinkedList class, and an LRUCache class, followed by comprehensive unit tests.\n\n\n```python\n\"\"\"\nLRU Cache Implementation using a Doubly Linked List and a Hash Map.\n\nProvides O(1) time complexity for both get and put operations.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Optional, Generic, TypeVar, Dict\n\nK = TypeVar(\"K\")\nV = TypeVar(\"V\")\n\n\nclass Node(Generic[K, V]):\n    \"\"\"A node in the doubly linked list storing a key-value pair.\"\"\"\n\n    __slots__ = (\"key\", \"value\", \"prev\", \"next\")\n\n    def __init__(self, key: K, value: V) -> None:\n        self.key: K = key\n        self.value: V = value\n        self.prev: Optional[Node[K, V]] = None\n        self.next"
+}

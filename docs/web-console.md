@@ -218,6 +218,10 @@ the first one's memory pool. `FREETOKEN_DECODE_SAMPLE_S` sets the interval (0 tu
 copy off). Where a verify window or a decode step runs without a graph (for example `--spec-mtp`
 on a card whose capture fails), the same events are recorded eagerly on the sampled step, and the
 parts then include the launch gaps.
+The `/v1/stats` `kai.decode_sample` payload also includes per-MoE-layer means
+under `layers`, using only readings in which that layer ran. This helps identify
+an expensive expert fetch on one GPU without adding events to normal decode
+steps. The console's overview still shows the summed categories.
 
 ## GPU cache size estimate
 

@@ -63,10 +63,15 @@ bash deploy/rtx5090/serve.sh
 
 The template binds to loopback; set `FT_HOST` for your existing private service
 network. API base is `http://<inference-host>:1919/v1`, model
-`qwen38-flash-next`. The launcher retains 131072 context, BF16 KV, MTP=3,
+`qwen38-flash-next`. The launcher now defaults to 262144 context (set
+`FT_CONTEXT_TOKENS` to change it without rebuilding FreeToken), BF16 KV, MTP=3,
 12 CPU expert workers, hybrid execution, pinned PLE, 14336-token prefill,
 two mixer pieces, 0.85 prefill budget, memory ratio 0.87, hit-D2D and the
 Triton NVFP4 backend. It accepts trailing option overrides for controlled trials.
+The context selection and paired measurements are in
+[context-tuning-20260927.md](context-tuning-20260927.md). Set
+`FT_KV_RESERVE_TOKENS` only if the KV floor must exceed the serving window;
+the launcher rejects a smaller floor.
 
 `deploy/rtx5090/freetoken-qwen.service.example` and `rtx5090.env.example` show
 the permanent service layout. Set the actual user, checkout, environment and

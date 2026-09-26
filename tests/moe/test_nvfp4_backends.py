@@ -386,7 +386,8 @@ def _triton_cache(device, *, cache_size=S, prefill_overlap=False):
 
 
 @cuda
-def test_triton_decode_marlin_matches_dequant_reference_after_prefill_stomp():
+@pytest.mark.parametrize("dtype", [torch.bfloat16, torch.float16])
+def test_triton_decode_marlin_matches_dequant_reference_after_prefill_stomp(dtype):
     """The production marlin-style int32 decode GEMV through the slot cache, including the
     request-B-after-request-A pattern (a layer-1 full-layer prefill between two layer-0
     decodes) that must force a miss + reload rather than serve stale slot bytes."""
@@ -395,7 +396,7 @@ def test_triton_decode_marlin_matches_dequant_reference_after_prefill_stomp():
     device = torch.device("cuda")
     cache, ref_sources = _triton_cache(device)
     torch.manual_seed(2)
-    hidden = torch.randn(1, H, dtype=torch.bfloat16, device=device) / 4
+    hidden = torch.randn(1, H, dtype=dtype, device=device) / 4
     topk_weights = torch.rand(1, TOPK, dtype=torch.float32, device=device)
 
     def decode(layer_id, experts):

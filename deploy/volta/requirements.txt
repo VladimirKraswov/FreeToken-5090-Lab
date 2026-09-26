@@ -1,0 +1,22 @@
+--extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.9.1+cu128
+torchvision==0.24.1+cu128
+triton==3.5.1
+apache-tvm-ffi==0.1.13.post3
+einops>=0.8,<1
+fastapi>=0.115,<1
+gguf>=0.19,<1
+huggingface_hub>=1.5,<2
+msgpack>=1.1,<2
+modelscope>=1.37,<2
+numpy>=2.0,<2.5
+openai>=2.0,<3
+partial-json-parser>=0.2,<1
+pillow>=10,<13
+prompt_toolkit>=3.0,<4
+pydantic>=2.9,<3
+pyzmq>=27,<28
+safetensors>=0.6,<1
+tqdm>=4.66,<5
+transformers>=5.16,<5.17
+uvicorn>=0.30,<1

@@ -15,6 +15,12 @@ with the model, tries the settings one at a time, and hands you the fastest as a
 > **Please keep questions and bug reports about this fork in this repository.** The FreeToken
 > maintainers have no part in it; do not contact them about anything you find here.
 
+The homelab deployment uses [one RTX 5090 for FreeToken Flash Next and one
+independent V100 for NInfer 27B](deploy/volta/README.md). A measured cross-VM
+pipeline was slower and is no longer part of this deployment. The V100 NVFP4
+kernel checks and a guarded standalone trial launcher remain available without
+changing the V100 production service.
+
 ## Getting started
 
 1. **Install.** Source install, same as upstream, plus Pillow for image decoding. torchvision is

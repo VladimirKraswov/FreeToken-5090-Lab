@@ -72,6 +72,22 @@ def test_snapshot_is_the_mean_of_the_kept_readings():
     assert snap["last"]["total_ms"] == 24.0
 
 
+def test_snapshot_averages_layer_parts_from_available_samples():
+    tl = _FakeTimeline(None)
+    s = ds.DecodeSampler(tl, 1.0, clock=_Clock())
+    tl.reading = {**_reading(10.0, fetch=3.0), "layers": {
+        "0": {"route": 1.0, "fetch": 2.0, "gpu_experts": 0.5, "cpu": 0.0}}}
+    s.collect(rows=1)
+    tl.reading = {**_reading(12.0, fetch=5.0), "layers": {
+        "0": {"route": 1.0, "fetch": 4.0, "gpu_experts": 0.5, "cpu": 2.0},
+        "1": {"route": 0.0, "fetch": 0.0, "gpu_experts": 0.0, "cpu": 3.0}}}
+    s.collect(rows=1)
+    snap = s.snapshot()
+    assert snap["layers"]["0"]["fetch"] == 3.0
+    assert snap["layers"]["0"]["cpu"] == 1.0
+    assert snap["layers"]["1"]["cpu"] == 3.0
+
+
 def test_run_forward_without_a_timeline_just_runs():
     ds.TIMELINE = None
     assert ds.run_forward(lambda: 7) == 7
@@ -131,3 +147,6 @@ def test_a_captured_forward_times_its_parts_on_every_replay():
     ms = r["ms"]
     assert abs(sum(ms.values()) - r["total_ms"]) < 1e-3
     assert ms["gpu_experts"] > ms["fetch"] > 0 and ms["cpu"] > 0 and ms["other"] > 0
+    assert set(r["layers"]) == {"0", "1"}
+    assert r["layers"]["0"]["gpu_experts"] > r["layers"]["0"]["fetch"] > 0
+    assert r["layers"]["1"]["cpu"] > 0

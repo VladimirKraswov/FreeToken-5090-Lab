@@ -1,5 +1,9 @@
 # Measurement protocol and historical results
 
+These are the original 131K-window measurements. The current single-RTX-5090
+serving window and comparable 196K/262K trials are documented in
+[context-tuning-20260927.md](context-tuning-20260927.md).
+
 The retained CSV/JSON includes unsuccessful profiles, warmup samples and invalid
 runs with notes. Do not select the largest number from the whole CSV and call it
 production speed. The final audit table is reported separately.
