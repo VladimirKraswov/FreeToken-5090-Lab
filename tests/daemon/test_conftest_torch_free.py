@@ -19,9 +19,9 @@ def _load_root_conftest():
     return module
 
 
-def test_reset_is_skipped_when_quantization_was_never_imported():
+def test_reset_is_skipped_when_quantization_was_never_imported(monkeypatch):
     conftest = _load_root_conftest()
-    sys.modules.pop("freetoken.layers.quantization", None)
+    monkeypatch.delitem(sys.modules, "freetoken.layers.quantization", raising=False)
 
     conftest._maybe_reset_quant_backend()
 
