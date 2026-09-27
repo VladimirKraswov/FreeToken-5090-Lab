@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import collections
 import functools
+import hmac
 import json
 import os
 import sys
@@ -202,7 +203,8 @@ def build_app(
     app.add_middleware(_WriteGuard, console=console, write_token=write_token)
 
     def require_token(x_ft_token: str | None = Header(default=None)) -> None:
-        if token is not None and x_ft_token != token:
+        # constant-time: a straight != leaks how many leading bytes matched through response timing
+        if token is not None and not hmac.compare_digest((x_ft_token or "").encode(), token.encode()):
             raise HTTPException(status_code=401, detail="invalid or missing X-FT-Token")
 
     auth = [Depends(require_token)]

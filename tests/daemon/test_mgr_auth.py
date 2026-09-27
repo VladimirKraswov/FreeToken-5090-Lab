@@ -104,6 +104,27 @@ def test_plain_daemon_is_untouched(tmp_path):
     assert c.post("/no-such-route", json={}).status_code == 404
 
 
+def _plain_daemon(tmp_path, *, token):
+    app = build_app(
+        manager=_Manager(), ring=LogRing(), probe=_Probe(), footprint_fn=lambda pid: {},
+        lifecycle_pool=ThreadPoolExecutor(1), proxy_pool=ThreadPoolExecutor(1),
+        console=False, token=token,
+    )
+    return TestClient(app, base_url="http://192.168.1.10:1900", client=("192.168.1.20", 50000))
+
+
+def test_plain_daemon_token_gates_engine_status(tmp_path):
+    c = _plain_daemon(tmp_path, token=TOKEN)
+    assert c.get("/engine/status").status_code == 401
+    assert c.get("/engine/status", headers={"X-FT-Token": "wrong"}).status_code == 401
+    assert c.get("/engine/status", headers={"X-FT-Token": TOKEN}).status_code == 200
+
+
+def test_plain_daemon_without_a_token_needs_none(tmp_path):
+    c = _plain_daemon(tmp_path, token=None)
+    assert c.get("/engine/status").status_code == 200
+
+
 def test_token_file_is_kept_and_private(tmp_path):
     first = load_or_create_token(str(tmp_path))
     assert first and load_or_create_token(str(tmp_path)) == first
