@@ -192,7 +192,7 @@ class SpecVerifyGraph:
         free_after = torch.cuda.mem_get_info(eng.device)[0]
         logger.info(
             f"--spec-mtp: captured the {rows}-row verify window as a CUDA graph "
-            f"({len(self.stash)} GDN stashes, {mem_GB(free_before - free_after)} of graph memory, "
+            f"({len(self.stash)} rollback stashes, {mem_GB(free_before - free_after)} of graph memory, "
             f"free {mem_GB(free_after)})"
         )
 

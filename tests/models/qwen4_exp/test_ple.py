@@ -686,6 +686,130 @@ def test_prefill_matches_stepwise_decode():
     assert torch.allclose(step_states, full_states, rtol=1e-4, atol=1e-5)
 
 
+@pytest.mark.parametrize("accepted", [1, 2, 3, 4])
+def test_spec_rollback_trims_the_conv_history_to_the_accepted_rows(accepted, monkeypatch):
+    """An MTP verify window rolls the conv history past every draft; after the rollback the slot
+    must hold what a prefill of only the accepted rows leaves."""
+    import freetoken.core as core
+    from freetoken.core import Context, set_global_ctx
+
+    torch.manual_seed(19)
+    config = _config()
+    args = config.qwen4_args
+    layer = _make_layer(config)
+    monkeypatch.setattr(core, "_GLOBAL_CTX", None)
+    monkeypatch.setattr(ple_module, "_SPEC_ROLLBACK", True, raising=False)
+    set_global_ctx(Context(page_size=64))
+    ctx = core.get_global_ctx()
+    prompt, window = _no_eos_tokens(12), _no_eos_tokens(4, start=12)
+    R = torch.randn(16, args.ple_state_width)
+    states = torch.zeros(2, args.ple_state_width, args.ple_conv_state_len)
+    _forward(layer, R[:12], _meta([prompt], [[EOS, EOS]], slots=[1]), states)
+    before = states.clone()
+    accepted_meta = _meta([window[:accepted]], [prompt[-2:]], slots=[1])
+    prefix_states = before.clone()
+    _forward(layer, R[12 : 12 + accepted], accepted_meta, prefix_states)
+
+    layer.forward(
+        R[12:], SimpleNamespace(spec_verify=True), meta=_meta([window], [prompt[-2:]], slots=[1]),
+        conv_states=states,
+    )
+    assert len(ctx.spec_stash) == 1
+    stash = ctx.spec_stash.pop()
+    want = before.clone()
+    short_conv_reference(stash.x[:accepted], accepted_meta, want, layer.conv1d.weight,
+                         layer.dilation)
+    if accepted < len(window):
+        assert not torch.equal(states, want)  # the history ran past the drafts
+    stash.restore(accepted)
+    torch.testing.assert_close(states, want, rtol=0, atol=0)
+    # Prefix-only and verify-window GEMMs have different row counts and can round FP32
+    # projections differently. The actual rollback of the captured inputs above is exact.
+    torch.testing.assert_close(states, prefix_states, rtol=1e-5, atol=2e-6)
+
+
+@requires_cuda
+@pytest.mark.parametrize("accepted", [1, 2, 3, 4])
+def test_spec_rollback_graph_replay_preserves_next_conv_output(accepted, monkeypatch):
+    """Captured stashes must follow new inputs and slots on every replay, including after reuse."""
+    import freetoken.core as core
+    from freetoken.core import Context, set_global_ctx
+
+    torch.manual_seed(29)
+    config = _config()
+    args = config.qwen4_args
+    layer = _make_layer(config, device="cuda", dtype=torch.bfloat16)
+    monkeypatch.setattr(core, "_GLOBAL_CTX", None)
+    monkeypatch.setattr(ple_module, "_SPEC_ROLLBACK", True, raising=False)
+    set_global_ctx(Context(page_size=64))
+    ctx = core.get_global_ctx()
+    width, history = args.ple_state_width, args.ple_conv_state_len
+    states = torch.randn(4, width, history, device="cuda", dtype=torch.bfloat16)
+    initial = states.clone()
+    R = torch.randn(4, width, device="cuda", dtype=torch.bfloat16)
+    meta = _meta([_no_eos_tokens(4)], [[21, 22]], device="cuda", slots=[1])
+    batch = SimpleNamespace(spec_verify=True)
+
+    def verify():
+        return layer.forward(R, batch, meta=meta, conv_states=states)
+
+    warmup = torch.cuda.Stream()
+    warmup.wait_stream(torch.cuda.current_stream())
+    with torch.cuda.stream(warmup):
+        for _ in range(3):
+            states.copy_(initial)
+            ctx.spec_stash = []
+            verify()
+    torch.cuda.current_stream().wait_stream(warmup)
+    states.copy_(initial)
+    ctx.spec_stash = []
+    graph = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(graph):
+        verify()
+    assert len(ctx.spec_stash) == 1
+    stash = ctx.spec_stash[0]
+    ctx.spec_stash = []
+
+    previous_x = None
+    for replay, slot in enumerate((1, 3, 1)):
+        window = _no_eos_tokens(4, start=37 + 13 * replay)
+        context = _no_eos_tokens(2, start=35 + 13 * replay)
+        meta.input_ids.copy_(torch.tensor(window, device="cuda"))
+        meta.ngram_context.copy_(torch.tensor([context], device="cuda"))
+        meta.state_slots.fill_(slot)
+        R.normal_()
+        states.normal_()
+        before = states.clone()
+        graph.replay()
+
+        # Replay runs device operations, not Python: the original capture's stash is reused.
+        assert ctx.spec_stash == []
+        torch.testing.assert_close(stash.prev, before[slot], rtol=0, atol=0)
+        if previous_x is not None:
+            assert not torch.equal(stash.x, previous_x)
+        previous_x = stash.x.clone()
+        want = before.clone()
+        accepted_meta = _meta(
+            [window[:accepted]], [context], device="cuda", slots=[slot]
+        )
+        short_conv_reference(stash.x[:accepted], accepted_meta, want, layer.conv1d.weight,
+                             layer.dilation)
+        if accepted < len(window):
+            assert not torch.equal(states[slot], want[slot])
+        stash.restore(accepted)
+        # Exact BF16 state equality also checks that all unrelated slots remain unchanged.
+        torch.testing.assert_close(states, want, rtol=0, atol=0)
+
+        next_x = torch.randn(1, width, device="cuda", dtype=torch.bfloat16)
+        next_meta = _meta([[201]], [(context + window[:accepted])[-2:]],
+                          device="cuda", slots=[slot], decode=True)
+        got = layer._short_conv(next_x, next_meta, states)
+        expected = short_conv_reference(next_x, next_meta, want, layer.conv1d.weight,
+                                        layer.dilation)
+        torch.testing.assert_close(got, expected, rtol=1e-2, atol=1e-3)
+        torch.testing.assert_close(states, want, rtol=0, atol=0)
+
+
 # --------------------------------------------------------------------------------------
 # full layer vs HF
 # --------------------------------------------------------------------------------------

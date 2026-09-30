@@ -491,8 +491,8 @@ class Qwen4ExpForCausalLM(BaseLLMModel):
 
     def spec_rollback(self, batch: Batch, accepted: int, ctx) -> None:
         """Roll this rank's per-request state back to the first ``accepted`` rows of the verify
-        window: GDN recurrent + conv states (from the layers' stashes) and the PLE n-gram
-        context (from the host-side ids)."""
+        window: GDN recurrent + conv states and the PLE conv history (from the layers' stashes)
+        and the PLE n-gram context (from the host-side ids)."""
         for stash in ctx.spec_stash:
             stash.restore(accepted)
         ctx.spec_stash = []

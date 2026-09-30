@@ -47,6 +47,8 @@ _PLE_LAYER_PRIME = 10007
 # Distinct (is_decode, shape, device) keys the n-gram row-id token index is memoized for.
 _TOKEN_INDEX_CACHE_SIZE = 64
 _FUSED_HASH_ENV = "FREETOKEN_PLE_FUSED_HASH"
+# FT_SPEC_PLE_ROLLBACK=0 restores the old behaviour (conv history kept past rejected drafts) for A/B
+_SPEC_ROLLBACK = os.environ.get("FT_SPEC_PLE_ROLLBACK", "1") != "0"
 
 
 def _fused_row_ids_enabled() -> bool:
@@ -637,6 +639,23 @@ def short_conv_reference(
     return F.silu(torch.cat(outs, dim=0))
 
 
+@dataclass
+class SpecPleStash:
+    """One MTP verify window's PLE conv leftovers: the history before the window and the
+    window's conv inputs; ``restore`` keeps the accepted rows only (see ``SpecGdnStash``)."""
+
+    states: torch.Tensor  # the ple_conv slab [num_slots, width, state_len]
+    slot: torch.Tensor    # [1] state slot of the verified request
+    prev: torch.Tensor    # [width, state_len] history the window started from
+    x: torch.Tensor       # [T, width] the window's conv inputs
+
+    def restore(self, accepted: int) -> None:
+        from freetoken.engine.spec import rebuild_conv_state
+
+        state = rebuild_conv_state(self.prev, self.x, accepted)
+        self.states.index_copy_(0, self.slot.long(), state.unsqueeze(0).to(self.states.dtype))
+
+
 class PLELayer(BaseOP):
     """PLE block: hashed n-gram value gated by the residual streams, then a dilated depthwise conv.
 
@@ -730,6 +749,11 @@ class PLELayer(BaseOP):
         fla = getattr(batch, "fla_metadata", None)
         if fla is not None and fla.track_boundary_row is not None:
             self._write_track_snapshot(states, x, fla)
+        if _SPEC_ROLLBACK and getattr(batch, "spec_verify", False):
+            # the window's conv rolls the history past every draft; spec_rollback trims it back
+            get_global_ctx().spec_stash.append(
+                SpecPleStash(states, meta.state_slots, self._read_state(meta, states, x.dtype)[0], x)
+            )
         return gated + self._short_conv(x, meta, states)
 
     def _write_track_snapshot(self, states: torch.Tensor, x: torch.Tensor, fla) -> None:
