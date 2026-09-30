@@ -3,6 +3,25 @@
 Base: FreeToken-Kai `c206a6dfc614e983c57f71da391ff4ee76289ed2`, incorporating
 FlashML FreeToken `cc1f5c2c91855f2cc7787ad6b909f7e46a5d5825`.
 
+## PLE state correctness, 2026-10-01
+
+The speculative verify pass advanced PLE convolution history through rejected
+draft tokens. Rollback already restored GDN state and PLE n-gram context, but
+omitted this convolution history. `SpecPleStash` now saves the pre-window state
+and convolution inputs and restores only the accepted prefix. The default is
+enabled; `FT_SPEC_PLE_ROLLBACK=0` is only an A/B diagnostic for the old behavior.
+
+CPU regressions fail on the original main and pass with the fix. CUDA graph tests
+cover accepted lengths 1-4, new replay inputs, slot changes and the next
+convolution output. A separate test-fixture fix prevents host-embedding CPU RoPE
+caches from leaking into GPU cases. The selected release suite has 181 passes,
+48 skips and 2 deselections; skips are not claimed as passes.
+
+Prompt lookup and reuse-aware fetch prototypes were tested separately and are
+not included in main. Their throughput observations must not be attributed to
+this correctness-only release. See the [validation report](MTP_VALIDATION_20260930.md)
+for matched measurements, serving checks and their limits.
+
 ## Our initial engine changes
 
 ### Bounded PLE rollback work

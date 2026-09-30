@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "status": "ple_only_validation_and_deployment_verified",
+  "verified_at": "2026-09-30T22:07:01.474752+00:00",
+  "evidence_root": "outputs/freetoken-mtp-validation-20260930",
+  "tested_source_commit": "f56cf78cefbb931079f114de5368e2596034ab3b",
+  "ple_runtime_fix_commit": "7d296eced5bd3f388ebf325c3300172383318b34",
+  "test_fixture_isolation_commit": "f56cf78cefbb931079f114de5368e2596034ab3b",
+  "source_path": "/opt/freetoken/src/main-ple-20261001",
+  "scope": "Original main plus PLE rollback, regression checks and test-only RoPE cache isolation; lookup/reuse runtime prototypes are absent.",
+  "documentation_descendant_note": "The recorded runtime was verified at f56cf78. A later main commit may add documentation/evidence only; that is not a new inference measurement or a different validated runtime.",
+  "git_publication_status": "selected_runtime_f56cf78_pushed_and_remote_verified",
+  "test_suite_results": [
+    {
+      "source_commit": "94bd875ed2622df2e3b78948a5c8a502c47985de",
+      "failed": 14,
+      "passed": 167,
+      "skipped": 48,
+      "deselected": 2,
+      "elapsed_s": 125.16,
+      "raw_record": "logs/ple-only-tests-first.log",
+      "raw_record_sha256": "0b4aad2dc8fefce2cda46cc17d29bf5e0050dac60e8246a2a77957633fd0a6c8"
+    },
+    {
+      "source_commit": "9ef483c47d805e267d7926c2f1ca9eb439cbaf64",
+      "failed": 14,
+      "passed": 159,
+      "skipped": 48,
+      "deselected": 2,
+      "elapsed_s": 41.2,
+      "raw_record": "logs/baseline-suite.log",
+      "raw_record_sha256": "85edd5297517f221ea43d987432f227a30397c2abcde9bb1136bcc49eae3b978"
+    },
+    {
+      "source_commit": "f56cf78cefbb931079f114de5368e2596034ab3b",
+      "failed": 0,
+      "passed": 181,
+      "skipped": 48,
+      "deselected": 2,
+      "elapsed_s": 52.82,
+      "raw_record": "logs/tests-fixed.log",
+      "raw_record_sha256": "489b173a0de98bf42d1983da728cce008494264d04543d8c55e47f4c8d3f738b"
+    }
+  ],
+  "semantic_suite": {
+    "passed": true,
+    "elapsed_s": 54.939,
+    "cases_passed": 9,
+    "cases_total": 9,
+    "cases": [
+      {
+        "name": "copy_edit_repeated_blocks",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 19.361,
+        "finish_reason": "stop",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "natural_stop": true,
+          "exact_json_answer": true
+        },
+        "usage": {
+          "prompt_tokens": 301,
+          "completion_tokens": 574,
+          "total_tokens": 875
+        }
+      },
+      {
+        "name": "integer_reasoning_json",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 14.328,
+        "finish_reason": "stop",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "natural_stop": true,
+          "exact_json_answer": true
+        },
+        "usage": {
+          "prompt_tokens": 112,
+          "completion_tokens": 369,
+          "total_tokens": 481
+        }
+      },
+      {
+        "name": "filter_sort_deduplicate",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 8.725,
+        "finish_reason": "stop",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "natural_stop": true,
+          "exact_json_answer": true
+        },
+        "usage": {
+          "prompt_tokens": 61,
+          "completion_tokens": 238,
+          "total_tokens": 299
+        }
+      },
+      {
+        "name": "completion_budget_1",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 1.169,
+        "finish_reason": "length",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "exact_budget_consumed": true,
+          "length_termination": true
+        },
+        "usage": {
+          "prompt_tokens": 22,
+          "completion_tokens": 1,
+          "total_tokens": 23
+        }
+      },
+      {
+        "name": "completion_budget_2",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 1.362,
+        "finish_reason": "length",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "exact_budget_consumed": true,
+          "length_termination": true
+        },
+        "usage": {
+          "prompt_tokens": 22,
+          "completion_tokens": 2,
+          "total_tokens": 24
+        }
+      },
+      {
+        "name": "completion_budget_3",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 1.428,
+        "finish_reason": "length",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "exact_budget_consumed": true,
+          "length_termination": true
+        },
+        "usage": {
+          "prompt_tokens": 22,
+          "completion_tokens": 3,
+          "total_tokens": 25
+        }
+      },
+      {
+        "name": "completion_budget_4",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 1.403,
+        "finish_reason": "length",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "exact_budget_consumed": true,
+          "length_termination": true
+        },
+        "usage": {
+          "prompt_tokens": 22,
+          "completion_tokens": 4,
+          "total_tokens": 26
+        }
+      },
+      {
+        "name": "natural_eos_first",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 5.496,
+        "finish_reason": "stop",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "natural_stop": true,
+          "exact_json_answer": true
+        },
+        "usage": {
+          "prompt_tokens": 348,
+          "completion_tokens": 12,
+          "total_tokens": 360
+        }
+      },
+      {
+        "name": "natural_eos_repeated_prefix",
+        "passed": true,
+        "http_status": 200,
+        "elapsed_s": 1.659,
+        "finish_reason": "stop",
+        "checks": {
+          "completion_count_in_budget": true,
+          "no_unrequested_tools": true,
+          "natural_stop": true,
+          "exact_json_answer": true
+        },
+        "usage": {
+          "prompt_tokens": 348,
+          "completion_tokens": 12,
+          "total_tokens": 360,
+          "prompt_tokens_details": {
+            "cached_tokens": 320
+          }
+        }
+      }
+    ]
+  },
+  "extended_api_validation": {
+    "passed": true,
+    "cases_passed": 4,
+    "cases_total": 4,
+    "cases": [
+      {
+        "name": "long_context_retrieval",
+        "passed": true,
+        "elapsed_s": 97.46459683799185,
+        "usage": {
+          "prompt_tokens": 240077,
+          "completion_tokens": 102,
+          "total_tokens": 240179
+        },
+        "finish_reason": "stop"
+      },
+      {
+        "name": "vision",
+        "passed": true,
+        "elapsed_s": 8.500529024051502,
+        "usage": {
+          "prompt_tokens": 2328,
+          "completion_tokens": 72,
+          "total_tokens": 2400
+        },
+        "finish_reason": "stop",
+        "image_size_px": [
+          1536,
+          1536
+        ]
+      },
+      {
+        "name": "tools",
+        "passed": true,
+        "elapsed_s": 6.707825182005763,
+        "usage": {
+          "prompt_tokens": 279,
+          "completion_tokens": 54,
+          "total_tokens": 333
+        },
+        "finish_reason": "tool_calls"
+      },
+      {
+        "name": "responses_api",
+        "passed": true,
+        "elapsed_s": 2.2447020009858534,
+        "usage": {
+          "input_tokens": 15,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 39,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 54
+        }
+      }
+    ]
+  },
+  "deployment": {
+    "verified_at": "2026-09-30T22:07:01.474752+00:00",
+    "service": {
+      "MainPID": "288258",
+      "NRestarts": "0",
+      "ActiveState": "active",
+      "SubState": "running"
+    },
+    "source": "/opt/freetoken/src/main-ple-20261001",
+    "commit": "f56cf78cefbb931079f114de5368e2596034ab3b",
+    "git_clean": true,
+    "runtime_matches_tested_f56cf78": true,
+    "pythonpath_verified": true,
+    "temporary_override_absent": true,
+    "experimental_flags": {
+      "FT_SPEC_LOOKUP": "unset",
+      "FREETOKEN_HYBRID_FETCH_REUSE": "unset",
+      "FT_SPEC_PLE_ROLLBACK": "unset"
+    },
+    "launcher_sha256": "fd7cbbf624bf76a817612883147b6ca278604d66bf86ddce913c32790ccfaebc",
+    "launcher_unchanged": true,
+    "persistent_source_override_verified": true,
+    "service_enabled": "enabled",
+    "warmup_status": "warm",
+    "health_instance_id": "4f9cc8f8-8852-4eed-9bd6-2ec0df6deb0b",
+    "warmup_instance_id": "4f9cc8f8-8852-4eed-9bd6-2ec0df6deb0b",
+    "model_ids": [
+      "qwen38-flash-next"
+    ],
+    "selected_ple_main": true,
+    "lookup_reuse_promoted": false
+  },
+  "warmup": {
+    "status": "warm",
+    "timestamp": "2026-09-30T22:03:08Z",
+    "instance_id": "4f9cc8f8-8852-4eed-9bd6-2ec0df6deb0b",
+    "cases": [
+      {
+        "name": "greedy",
+        "elapsed_s": 8.608896684017964,
+        "usage": {
+          "prompt_tokens": 23,
+          "completion_tokens": 256,
+          "total_tokens": 279
+        }
+      },
+      {
+        "name": "sampling",
+        "elapsed_s": 5.697319903061725,
+        "usage": {
+          "prompt_tokens": 24,
+          "completion_tokens": 128,
+          "total_tokens": 152
+        }
+      },
+      {
+        "name": "prefill",
+        "elapsed_s": 15.397734711994417,
+        "usage": {
+          "prompt_tokens": 16019,
+          "completion_tokens": 64,
+          "total_tokens": 16083
+        }
+      },
+      {
+        "name": "vision",
+        "elapsed_s": 6.491257120040245,
+        "usage": {
+          "prompt_tokens": 82,
+          "completion_tokens": 64,
+          "total_tokens": 146
+        }
+      }
+    ]
+  },
+  "health": {
+    "status": "ok",
+    "instance_id": "4f9cc8f8-8852-4eed-9bd6-2ec0df6deb0b",
+    "uptime_s": 39
+  },
+  "extensions": [
+    {
+      "file": "_cpu_moe.cpython-312-x86_64-linux-gnu.so",
+      "sha256": "1a927d8a456dc71d859bcafc5e27e7362d51470c264878f648c4b3bd68a09110"
+    },
+    {
+      "file": "_pinned_tensor.cpython-312-x86_64-linux-gnu.so",
+      "sha256": "65daa1a9a632ef28aa56a67491296a698a8b0a5a7589241ad7e439b97958f769"
+    },
+    {
+      "file": "_ple_store.cpython-312-x86_64-linux-gnu.so",
+      "sha256": "5f1c86a4becae49552812c3f1b99235badc695a4c9aea9a02d993871502c6bd8"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "ple-only/deployment.json",
+      "sha256": "5fffac88025949b9c2b210a105e4034262f75ba59fd4b45fe03873c0f95a97d4"
+    },
+    {
+      "path": "ple-only/quality.json",
+      "sha256": "37f9858a9c7af55656a5f45ddde04cd4d0ca052421b617d947835b462fe5323a"
+    },
+    {
+      "path": "ple-only/validation-240k.json",
+      "sha256": "67a623b22d6daa68499fa2dfdc7382a955ea8d1774b588faba5b45adad13cded"
+    },
+    {
+      "path": "ple-only/warmup.json",
+      "sha256": "96fb8692aa7b296c040eaa6231a4b5d6b59d38827f65bcaf2f9dd6a681bb3e67"
+    },
+    {
+      "path": "ple-only/health.json",
+      "sha256": "be3a18d4b207d93f34c25a029c1cd40bdd40c4b0af0cc8f70b03824e12ba0534"
+    },
+    {
+      "path": "ple-only/extensions.json",
+      "sha256": "e8e2d1006bf3b954890231935568d3026c10cc1f06a75ba699669a76b50e9a31"
+    },
+    {
+      "path": "ple-only/status.json",
+      "sha256": "e607752bae60fd3974dacd1762ba01672ff68a5840577bfa10db5fa3aba1c44d"
+    }
+  ],
+  "notes": [
+    "The PLE flag is unset but defaults to enabled in the selected runtime; this is not a disabled correctness fix.",
+    "Nine semantic cases and four API checks are bounded functional validations, not broad quality parity proof or a new throughput benchmark.",
+    "No response text, raw payloads, image data, credentials or SSE deltas are included."
+  ]
+}
