@@ -15,6 +15,20 @@ import torch
 from .common import parsed_config, requires_cuda
 
 
+@pytest.fixture(autouse=True)
+def _isolate_rope_cache():
+    from freetoken.layers import rotary
+
+    saved_device = rotary._ROPE_DEVICE
+    # Meta-only model construction caches CPU RoPE objects under device-free keys.
+    rotary.get_rope.cache_clear()
+    try:
+        yield
+    finally:
+        rotary.set_rope_device(saved_device)
+        rotary.get_rope.cache_clear()
+
+
 def _build(**overrides):
     from freetoken.layers import set_rope_device
     from freetoken.models.qwen4_exp.model import Qwen4ExpForCausalLM
