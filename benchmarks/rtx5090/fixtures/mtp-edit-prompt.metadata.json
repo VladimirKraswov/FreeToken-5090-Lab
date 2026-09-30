@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "fixture_id": "mtp-edit-disk-probe-hex-v1",
+  "purpose": "Copy/edit throughput scenario for prompt-lookup drafting, distinct from free-form reasoning",
+  "source": {
+    "repository": "FreeToken-5090-Lab",
+    "revision": "3de1055641e872e8d894c067288fabd79006d86e",
+    "files": [
+      {
+        "path": "python/freetoken/moe/disk_probe.py",
+        "sha256": "8797ed88f99183e55b65524f0262b6410df95911afe037608b1b2e3d80e431bb",
+        "bytes": 40602,
+        "lines": 938
+      }
+    ],
+    "selection": "Entire committed module without omissions or synthetic padding"
+  },
+  "prompt": {
+    "path": "benchmarks/rtx5090/fixtures/mtp-edit-prompt.txt",
+    "sha256": "aed154956d8e3f47b0f1498afd0cb92e76ef73043f79dfe7d6b35db564f92b4f",
+    "bytes": 41731,
+    "characters": 41731,
+    "rough_input_token_range": [
+      10433,
+      13910
+    ],
+    "token_count_status": "Character-based estimate only; obtain actual prompt_tokens from the serving model",
+    "source_start_marker": "BEGIN_SOURCE_MODULE",
+    "source_end_marker": "END_SOURCE_MODULE"
+  },
+  "expected_edit": {
+    "function": "_read_int",
+    "source_line": 48,
+    "old": "return int(text, 0) if text.startswith(\"0x\") else int(text)",
+    "new": "return int(text, 0) if text.startswith((\"0x\", \"0X\")) else int(text)",
+    "occurrences": 1,
+    "semantics": "Recognize both 0x and 0X hexadecimal prefixes; all other module behavior remains unchanged"
+  },
+  "expected_output": {
+    "sha256": "ccbaf88b1db4ee826c4ab9f752a8ad33e211f88d8e7d41fb922ee30097b44ef9",
+    "bytes": 40610,
+    "construction": "Extract the bytes strictly between source markers and perform the unique expected_edit replacement once",
+    "format": "Raw Python source; no Markdown wrapper or explanation"
+  },
+  "evaluation": {
+    "full_text": "Compare raw UTF-8 output with expected_output; optionally report a separate normalized comparison allowing only final-newline differences",
+    "full_ast": "Parse generated and expected modules with ast.parse, compare ast.dump(include_attributes=False), and separately require the exact one-line edit. Never execute or import the generated module",
+    "truncated_text": "For a fixed output-token cap, require nonempty raw output to be an exact character prefix of expected output. Do not call ast.parse on truncated output. Separately record whether the changed expression is already present",
+    "partial_semantics": "A truncated prefix without the modified expression is incomplete evidence, not an edit-quality pass",
+    "reasoning": "Measure final content separately from reasoning_content; do not parse reasoning as Python source",
+    "throughput": "Use identical prompt hash, max_tokens, reasoning settings, temperature, cache state and engine settings in A/B. A 1024-token output will probably truncate the full module; record finish_reason and token counts",
+    "scope": "A narrow copy/edit workload may benefit from lookup even when free explanation does not; neither result establishes general speedup or broad quality parity"
+  }
+}
