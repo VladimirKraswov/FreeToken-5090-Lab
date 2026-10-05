@@ -8,7 +8,7 @@ version inventory is in `benchmarks/rtx5090/data/runtime-versions.json`.
 ## Obtain the code and checkpoint
 
 ```bash
-git clone --branch rtx5090 https://github.com/VladimirKraswov/FreeToken-5090-Lab.git
+git clone --branch main https://github.com/VladimirKraswov/FreeToken-5090-Lab.git
 cd FreeToken-5090-Lab
 # For exact reproduction, checkout the commit recorded with the benchmark run.
 uv venv --python 3.12 .venv

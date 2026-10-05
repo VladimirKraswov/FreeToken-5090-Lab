@@ -13,6 +13,7 @@
 - `data/pre-audit-bounded-round.json`: paired real-code tuning round and selection.
 - `data/model-manifest.json`: pinned checkpoint filenames, sizes and Hugging Face metadata.
 - `data/runtime-versions.json`: measured Python package inventory.
+- `data/strata-results-20261005.json`: controlled Strata-inspired trials, exclusions and restoration evidence.
 - `data/research-index.json`: dated branch/issue discovery references.
 - `data/tests/`: regression failures before fixes and passing CPU/GPU test results.
 
@@ -23,3 +24,5 @@ Audit and final-production results are added alongside the historical campaign.
 ```bash
 python benchmarks/rtx5090/verify_artifacts.py
 ```
+
+The [Strata trial report](../../docs/rtx5090/STRATA_VALIDATION_20261005.md) records rejected prototypes as well as the production decision.

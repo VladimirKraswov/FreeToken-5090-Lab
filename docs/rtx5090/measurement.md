@@ -1,5 +1,10 @@
 # Measurement protocol and historical results
 
+The latest [Strata-inspired trials](STRATA_VALIDATION_20261005.md) use the
+262144 serving window and preserve NVFP4 weights and BF16 KV. They report
+fresh-process paired medians, exclusions and rejected prototypes separately
+from these historical tuning rounds.
+
 These are the original 131K-window measurements. The current single-RTX-5090
 serving window and comparable 196K/262K trials are documented in
 [context-tuning-20260927.md](context-tuning-20260927.md).

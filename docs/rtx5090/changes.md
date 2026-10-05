@@ -3,6 +3,16 @@
 Base: FreeToken-Kai `c206a6dfc614e983c57f71da391ff4ee76289ed2`, incorporating
 FlashML FreeToken `cc1f5c2c91855f2cc7787ad6b909f7e46a5d5825`.
 
+## Strata experiment review, 2026-10-05
+
+Controlled trials did not select a new runtime optimization: clustered QSA,
+fixed MTP2/4, elapsed-time MTP policies and shared graph pools each failed the
+performance or correctness gate. Production retains fixed MTP3, BF16 KV and
+262144 context. Main gains broader PLE rollback tests for verify windows of
+3/4/5 rows, a measured report and checked benchmark artifacts. Serving code and
+native extensions are unchanged. See the [Strata report](STRATA_VALIDATION_20261005.md)
+for complete positive and negative results rather than a best-case speed claim.
+
 ## PLE state correctness, 2026-10-01
 
 The speculative verify pass advanced PLE convolution history through rejected

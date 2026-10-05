@@ -2,7 +2,7 @@
   "date": "2026-09-22",
   "engine_base": "378ec16",
   "branch": "fix/qwen-tool-handoff",
-  "endpoint": "http://192.168.31.71:1919/v1",
+  "endpoint": "http://<inference-host>:1919/v1",
   "pi_sdk": {
     "timestamp": "2026-09-22T11:26:37.100Z",
     "model": "qwen38-flash-next",
