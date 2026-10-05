@@ -686,8 +686,10 @@ def test_prefill_matches_stepwise_decode():
     assert torch.allclose(step_states, full_states, rtol=1e-4, atol=1e-5)
 
 
-@pytest.mark.parametrize("accepted", [1, 2, 3, 4])
-def test_spec_rollback_trims_the_conv_history_to_the_accepted_rows(accepted, monkeypatch):
+@pytest.mark.parametrize(
+    "window_rows,accepted", [(rows, accepted) for rows in (3, 4, 5) for accepted in range(1, rows + 1)]
+)
+def test_spec_rollback_trims_the_conv_history_to_the_accepted_rows(accepted, window_rows, monkeypatch):
     """An MTP verify window rolls the conv history past every draft; after the rollback the slot
     must hold what a prefill of only the accepted rows leaves."""
     import freetoken.core as core
@@ -701,8 +703,8 @@ def test_spec_rollback_trims_the_conv_history_to_the_accepted_rows(accepted, mon
     monkeypatch.setattr(ple_module, "_SPEC_ROLLBACK", True, raising=False)
     set_global_ctx(Context(page_size=64))
     ctx = core.get_global_ctx()
-    prompt, window = _no_eos_tokens(12), _no_eos_tokens(4, start=12)
-    R = torch.randn(16, args.ple_state_width)
+    prompt, window = _no_eos_tokens(12), _no_eos_tokens(window_rows, start=12)
+    R = torch.randn(12 + window_rows, args.ple_state_width)
     states = torch.zeros(2, args.ple_state_width, args.ple_conv_state_len)
     _forward(layer, R[:12], _meta([prompt], [[EOS, EOS]], slots=[1]), states)
     before = states.clone()
@@ -729,8 +731,10 @@ def test_spec_rollback_trims_the_conv_history_to_the_accepted_rows(accepted, mon
 
 
 @requires_cuda
-@pytest.mark.parametrize("accepted", [1, 2, 3, 4])
-def test_spec_rollback_graph_replay_preserves_next_conv_output(accepted, monkeypatch):
+@pytest.mark.parametrize(
+    "window_rows,accepted", [(rows, accepted) for rows in (3, 4, 5) for accepted in range(1, rows + 1)]
+)
+def test_spec_rollback_graph_replay_preserves_next_conv_output(accepted, window_rows, monkeypatch):
     """Captured stashes must follow new inputs and slots on every replay, including after reuse."""
     import freetoken.core as core
     from freetoken.core import Context, set_global_ctx
@@ -746,8 +750,8 @@ def test_spec_rollback_graph_replay_preserves_next_conv_output(accepted, monkeyp
     width, history = args.ple_state_width, args.ple_conv_state_len
     states = torch.randn(4, width, history, device="cuda", dtype=torch.bfloat16)
     initial = states.clone()
-    R = torch.randn(4, width, device="cuda", dtype=torch.bfloat16)
-    meta = _meta([_no_eos_tokens(4)], [[21, 22]], device="cuda", slots=[1])
+    R = torch.randn(window_rows, width, device="cuda", dtype=torch.bfloat16)
+    meta = _meta([_no_eos_tokens(window_rows)], [[21, 22]], device="cuda", slots=[1])
     batch = SimpleNamespace(spec_verify=True)
 
     def verify():
@@ -772,7 +776,7 @@ def test_spec_rollback_graph_replay_preserves_next_conv_output(accepted, monkeyp
 
     previous_x = None
     for replay, slot in enumerate((1, 3, 1)):
-        window = _no_eos_tokens(4, start=37 + 13 * replay)
+        window = _no_eos_tokens(window_rows, start=37 + 13 * replay)
         context = _no_eos_tokens(2, start=35 + 13 * replay)
         meta.input_ids.copy_(torch.tensor(window, device="cuda"))
         meta.ngram_context.copy_(torch.tensor([context], device="cuda"))
