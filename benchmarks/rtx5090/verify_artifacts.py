@@ -100,6 +100,12 @@ if concurrency_file.exists():
                 record['concurrency'] == group['concurrency'] and 'steady_generation' in record]
         assert len(rows) == group['repeats']
         assert math.isclose(group['aggregate_tps'], statistics.median(row['steady_generation']['aggregate_tps'] for row in rows), rel_tol=1e-10)
+    for group in concurrency['stats_poll_groups']:
+        polls = [value for record in concurrency['records'] if record['profile'] == group['profile']
+                 for value in record.get('stats_poll_latencies_s', [])]
+        assert len(polls) == group['polls'] and all(value >= 0 for value in polls)
+        assert math.isclose(group['median_ms'], 1000 * statistics.median(polls), rel_tol=1e-10)
+        assert math.isclose(group['max_ms'], 1000 * max(polls), rel_tol=1e-10)
     for group in concurrency['fixed_groups']:
         rows = [record for record in concurrency['records'] if record['kind'] == 'fixed' and
                 all(record[key] == group[key] for key in ('profile', 'padding_requested', 'concurrency', 'corpus_id'))]

@@ -40,8 +40,10 @@ The final post-validation NVML reading was 31850 MiB used and 262 MiB free
 (earlier pre-audit: 31814 MiB used and 298 MiB free). This includes
 PyTorch allocator reservations and is not all active model tensors. Memory ratio
 0.87 is a planner input, not a promise of 13% free memory after graphs and JIT.
-This profile deliberately runs close to capacity; higher concurrent request
-counts or larger image limits were not validated.
+This historical profile deliberately runs close to capacity. The later
+[concurrency campaign](CONCURRENCY.md) validates a three-active-request budget
+with the same 262144-token shared KV reserve; four clients exercise queuing,
+not four active decode slots. Larger image limits remain outside these checks.
 
 ## Bandwidth calibration
 

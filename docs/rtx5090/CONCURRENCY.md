@@ -8,23 +8,36 @@ streaming pauses or allocate an independent context pool to each session.
 
 ## Configuration
 
-The scheduler default remains `prefill-first`. A controlled three-stream
-trial can use the existing launcher's trailing overrides:
+The engine scheduler default remains `prefill-first`. The measured deployment
+launcher now uses three active requests and graph ceiling 3, capturing
+`[1, 2, 3]`. See the [dated result report](CONCURRENCY_RESULTS_20261006.md) for
+throughput, distributions and quality checks. Set `FT_MAX_RUNNING_REQUESTS`,
+`FT_CUDA_GRAPH_MAX_BS` and `FT_SCHEDULER_POLICY` in the deployment environment
+or use trailing CLI overrides. A single-request limit also changes memory
+budgets and needs its own performance comparison.
+
+For the separately screened fair profile, set both the policy and graph ceiling
+explicitly to reproduce the measured 500 ms/graph-4 configuration:
 
 ```bash
 bash deploy/rtx5090/serve.sh \
   --max-running-requests 3 --cuda-graph-max-bs 4 \
   --scheduler-policy fair \
-  --scheduler-decode-burst-ms 200 \
-  --scheduler-decode-burst-steps 8
+  --scheduler-decode-burst-ms 500 \
+  --scheduler-decode-burst-steps 64
 ```
 
+The corresponding environment controls are `FT_SCHEDULER_DECODE_BURST_MS`
+and `FT_SCHEDULER_DECODE_BURST_STEPS`. These burst controls are inactive under
+`prefill-first`. The engine's generic fair defaults are 200 ms/eight batches;
+the deployment wrapper supplies 500 ms/64. The 500 ms/graph-3 combination is
+configurable but has no separate hardware performance claim in this campaign.
+Select fair when shorter pauses in established streams matter more than
+maximizing completed-request throughput; it remains opt-in.
+
 Set `MODEL_DIR` and the existing deployment environment as in
-[reproduce.md](reproduce.md). These are experiment settings, not a claim that
-the deployed service uses them. For a matched scheduling control, retain all
-other options and select `--scheduler-policy prefill-first`. Compare a
-four-stream limit separately; it changes the state-pool and expert-cache
-budgets even when only one request is running.
+[reproduce.md](reproduce.md). Compare a four-active-stream limit separately;
+it changes the state-pool and expert-cache budgets even with one request.
 
 Keep the checkpoint, NVFP4 experts, BF16 KV, FP32 recurrent state, MTP depth,
 context/KV reserve, host placement and sampling settings fixed when comparing
@@ -66,6 +79,23 @@ the active batch size still permits eager decode. Explicit internal graph-size
 lists and `--disable-cuda-graph` retain their meanings. Verify the startup
 `Start capturing CUDA graphs with sizes:` line for the actual configuration.
 Graph 4 does not admit a fourth request when the active limit is 3.
+
+## Control-plane polling
+
+`/v1/stats` keeps request counters fresh and reports host-memory samples with
+`host_sample_age_s` and `host_refreshing`. Process-tree PSS reads can take
+seconds for a large CPU-offload process. The API now runs that read in a thread
+with one shared refresh and a ten-second cache, so frequent dashboard polls do
+not block SSE delivery or start one scan per client. The first poll can wait
+for the initial sample while other HTTP requests and streams continue. Warm
+polls return the last sample immediately during refresh. A disconnected poller
+cannot cancel a refresh needed by another client; a failed refresh retains the
+last sample with its original age and retries no faster than the cache period.
+
+This changes observability and delivery overhead, not model weights, kernels
+or the KV/GDN/expert-memory budgets. Slow poll response times also widen the
+uncertainty of counter-derived benchmark intervals, which is why sustained
+probe records retain HTTP start/end times and rate bounds.
 
 ## Admission and memory
 

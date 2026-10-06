@@ -25,7 +25,9 @@ def _launch(
         "CAPTURE": str(capture),
         "FT_REPO_ROOT": str(LAUNCHER.parents[2]),
     }
-    for name in ("FT_CONTEXT_TOKENS", "FT_KV_RESERVE_TOKENS"):
+    for name in ("FT_CONTEXT_TOKENS", "FT_KV_RESERVE_TOKENS",
+                 "FT_MAX_RUNNING_REQUESTS", "FT_CUDA_GRAPH_MAX_BS", "FT_SCHEDULER_POLICY",
+                 "FT_SCHEDULER_DECODE_BURST_MS", "FT_SCHEDULER_DECODE_BURST_STEPS"):
         env.pop(name, None)
     env.update(overrides)
     result = subprocess.run(["bash", str(launcher)], env=env, capture_output=True, text=True)
@@ -41,6 +43,43 @@ def test_default_context_and_kv_reserve_match(tmp_path: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert _value(args, "--max-seq-len-override") == "262144"
     assert _value(args, "--kv-reserve-tokens") == "262144"
+    assert _value(args, "--max-running-requests") == "3"
+    assert _value(args, "--cuda-graph-max-bs") == "3"
+    assert _value(args, "--scheduler-policy") == "prefill-first"
+    assert _value(args, "--scheduler-decode-burst-ms") == "500"
+    assert _value(args, "--scheduler-decode-burst-steps") == "64"
+
+
+def test_single_request_control_is_configurable(tmp_path: Path) -> None:
+    result, args = _launch(tmp_path, FT_MAX_RUNNING_REQUESTS="1", FT_CUDA_GRAPH_MAX_BS="1",
+                         FT_SCHEDULER_POLICY="prefill-first")
+    assert result.returncode == 0, result.stderr
+    assert _value(args, "--max-running-requests") == "1"
+    assert _value(args, "--cuda-graph-max-bs") == "1"
+    assert _value(args, "--scheduler-policy") == "prefill-first"
+
+
+def test_fair_budget_is_configurable(tmp_path: Path) -> None:
+    result, args = _launch(tmp_path, FT_SCHEDULER_POLICY="fair",
+                         FT_SCHEDULER_DECODE_BURST_MS="1500", FT_SCHEDULER_DECODE_BURST_STEPS="32")
+    assert result.returncode == 0, result.stderr
+    assert _value(args, "--scheduler-policy") == "fair"
+    assert _value(args, "--scheduler-decode-burst-ms") == "1500"
+    assert _value(args, "--scheduler-decode-burst-steps") == "32"
+
+
+def test_invalid_request_limit_fails_before_start(tmp_path: Path) -> None:
+    result, args = _launch(tmp_path, FT_MAX_RUNNING_REQUESTS="0")
+    assert result.returncode == 2
+    assert "FT_MAX_RUNNING_REQUESTS must be a positive integer" in result.stderr
+    assert not args
+
+
+def test_invalid_graph_limit_fails_before_start(tmp_path: Path) -> None:
+    result, args = _launch(tmp_path, FT_CUDA_GRAPH_MAX_BS="0")
+    assert result.returncode == 2
+    assert "FT_CUDA_GRAPH_MAX_BS must be a positive integer" in result.stderr
+    assert not args
 
 
 def test_context_can_change_without_rebuilding(tmp_path: Path) -> None:
