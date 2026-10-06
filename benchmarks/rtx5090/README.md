@@ -26,3 +26,129 @@ python benchmarks/rtx5090/verify_artifacts.py
 ```
 
 The [Strata trial report](../../docs/rtx5090/STRATA_VALIDATION_20261005.md) records rejected prototypes as well as the production decision.
+
+## Concurrent-session probes
+
+The scripts below use Python's standard library and make real streaming API
+requests. Run them sequentially against a dedicated, warmed server with
+`--enable-cache-report`. They reject existing active work and verify completion
+accounting, but do not lock the server against another client arriving later.
+Record the revision, exact launch command, captured graph sizes and resolved
+KV/GDN/expert-cache geometry separately for every profile.
+
+The [concurrency guide](../../docs/rtx5090/CONCURRENCY.md) describes the controls.
+For a scheduler-only comparison, keep the graph ceiling, active-request limit,
+prefill chunk and memory geometry identical. Change only
+`--scheduler-policy prefill-first` to `--scheduler-policy fair` and its two burst
+budgets. For example, `--scheduler-decode-burst-ms 1500
+--scheduler-decode-burst-steps 64` is an experimental profile, not a production
+recommendation. The fair policy serves one prefill batch followed by a bounded
+generation burst; MTP verification counts as generation. A running prefill
+cannot be interrupted, and the burst time budget is checked after each complete
+batch. It is not a bound on SSE gaps or request cancellation latency.
+
+### Fixed work and JSON isolation
+
+`concurrency_fixed.py` starts requests through a barrier. Its default throughput
+case requests exactly 256 output tokens with EOS ignored. `--quality` instead
+allows natural stopping and checks an exact per-session JSON record with a
+marker, retrieval needle and arithmetic result. It targets the served model
+name `qwen38-flash-next`.
+
+```bash
+python benchmarks/rtx5090/concurrency_fixed.py \
+  --base http://127.0.0.1:1919 --profile control \
+  --corpus-seed concurrency-v1 --repeat 1 \
+  --lengths 1024,16384 --counts 1,2,3 --tokens 256 \
+  --out outputs/concurrency/control/r1/fixed
+
+python benchmarks/rtx5090/concurrency_fixed.py \
+  --base http://127.0.0.1:1919 --profile control-json \
+  --corpus-seed concurrency-v1 --repeat 1 \
+  --lengths 1024,16384 --counts 1,2,3 --quality \
+  --out outputs/concurrency/control/r1/json
+```
+
+Use the same seed, repeat, padding and concurrency on each profile after its
+restart. These determine the prompt independently of the profile label; compare
+the saved payload/prompt SHA-256 values before treating rows as matched. Change
+the repeat number for each repetition and use a separate output directory:
+filenames do not include the repeat number and otherwise overwrite prior rows.
+Do not rerun the same cold corpus against an unchanged cache and call it another
+cold repetition. `--lengths` specifies padding repetitions; use actual
+`usage.prompt_tokens` for input-token counts.
+
+The reports contain per-request timing and usage, cache hits, stream completion,
+whole-wave aggregate tokens/s and before/after counters. A zero cached-token
+field establishes a cold result only when cache reporting is enabled. Natural
+JSON responses have different output lengths from the fixed-work probe; compare
+their correctness separately from fixed-work throughput.
+
+### Delayed arrivals and conversation follow-ups
+
+`concurrency_latency.py --mode staggered` begins one short prompt, then sends
+the other long prompts only after the first stream emits nonempty content or
+reasoning. This exercises prefill arriving during established generation. The
+first request has a fixed 512-token output and the others 256 tokens each.
+`--mode warm` runs two turns per session with natural stopping, checks each
+session's JSON record, and records whether follow-ups report cached tokens.
+
+```bash
+python benchmarks/rtx5090/concurrency_latency.py \
+  --base http://127.0.0.1:1919 --profile control \
+  --mode staggered --counts 2,3 --repeats 3 \
+  --out outputs/concurrency/control/staggered
+
+python benchmarks/rtx5090/concurrency_latency.py \
+  --base http://127.0.0.1:1919 --profile control \
+  --mode warm --counts 2,3 --repeats 3 \
+  --out outputs/concurrency/control/warm
+```
+
+These two modes use a fresh timestamp marker on each run; they exercise matched
+workload shapes but do not use byte-identical prompts across profiles. Report
+TTFT and per-stream p95/p99/maximum gaps together with complete request timing.
+The events are nonempty SSE fragments, including reasoning, and can contain
+multiple tokens or be delayed by parser buffering. They measure client-visible
+delivery, not individual kernel latency. Small samples and synthetic repeated
+padding do not establish a general latency or coding-quality guarantee.
+
+### Disconnect and recovery
+
+Run `concurrency_cancel.py` on the server host against an HTTP localhost origin,
+with permission to read the service's systemd journal. It first starts a survivor
+that must return a long, exact JSON record containing 256 values. Once that
+stream produces output, it submits the long victim prompt and reads its numeric
+request UID from the initial SSE event.
+
+The probe waits for a completed partial-prefill journal entry with one running
+request and one queued request, checks that both are still active, then closes
+the victim socket. The survivor must have started streaming before the close
+and finish after it. Select the actual service unit with `--journal-unit`:
+
+```bash
+python benchmarks/rtx5090/concurrency_cancel.py \
+  --base http://127.0.0.1:1919 \
+  --journal-unit freetoken-qwen.service \
+  --out outputs/concurrency/control/cancel.json
+```
+
+The saved report requires exactly one victim-specific abort log after the
+close, exactly one completed request, and generated-token counters attributable
+only to the survivor. Both full prompts must be admitted once, the victim's
+prompt must exceed the observed chunk, and the service must return to idle with
+no active GDN slots, the same instance ID and healthy status. There is no public
+aborted-request counter, so the report retains the UID-specific journal evidence
+and accounting deltas explicitly. The output directory is created if needed.
+
+This establishes cancellation after an observed unfinished prefill and
+overlapping survivor activity. It does not claim to interrupt an executing GPU
+kernel or enforce a cancellation deadline.
+
+Retain failures and raw reports. Use repeated controls and candidates to assess
+throughput and latency together; graph changes, chunk-size changes and GDN
+memory changes require separate comparisons. Passing these probes establishes
+the observed completion, accounting and task checks only. It does not prove
+identical generated text, arbitrary tool correctness, or unchanged quality on
+all prompts. A production selection needs measured results and an explicit
+record of the chosen launch configuration.

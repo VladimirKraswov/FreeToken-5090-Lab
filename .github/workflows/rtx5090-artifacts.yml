@@ -2,7 +2,7 @@ name: RTX 5090 benchmark artifacts (CPU only)
 
 on:
   push:
-    branches: [rtx5090]
+    branches: [main, rtx5090]
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,8 @@ jobs:
         run: python benchmarks/rtx5090/verify_artifacts.py
       - name: Test streaming measurement without a GPU
         run: python benchmarks/rtx5090/test_stream_bench.py
+      - name: Test concurrent probe completion and accounting
+        run: python benchmarks/rtx5090/test_concurrency_probes.py
       - name: Check launcher syntax
         run: bash -n deploy/rtx5090/serve.sh
 

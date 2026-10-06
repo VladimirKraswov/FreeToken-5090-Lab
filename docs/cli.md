@@ -48,11 +48,14 @@ parsers all resolve automatically from the checkpoint and the GPU.
 | `--max-output-tokens` | 32768 | Default output budget for requests that omit one |
 | `--max-seq-len-override` | from checkpoint | Max sequence length, and what `/v1/models` advertises. The KV pool can hold less; the startup log's `context limit` line gives the real figure |
 | `--max-prefill-length` | 8192 | Chunked-prefill chunk size in tokens |
-| `--cuda-graph-max-bs`, `--graph` | = max running requests | Max batch size captured as CUDA graphs |
+| `--cuda-graph-max-bs`, `--graph` | = max running requests | Max batch size captured as CUDA graphs; the exact positive ceiling is included, so a ceiling of 3 captures `[1, 2, 3]` |
+| `--scheduler-policy` | prefill-first | `prefill-first` preserves strict prefill priority. `fair` alternates one prefill batch with a bounded generation burst when both have work; single rank only, using the non-overlapped scheduler loop |
+| `--scheduler-decode-burst-ms` | 200 | Completed generation service time per `fair` burst, in milliseconds; positive and finite. At least one generation batch runs, so the time budget can be exceeded by one batch |
+| `--scheduler-decode-burst-steps` | 8 | Maximum generation batches per `fair` burst; positive integer. MTP verification counts as one batch. A burst ends when either its time or batch limit is reached |
 | `--decode-log-interval` | 40 | Scheduler status line every N decode steps |
 | `--pp-size` | 1 | Layer-split (pipeline) parallelism across N GPUs, one process per card, the residual stream handed over gloo -- no NCCL and no peer access. List the cards in rank order with `--gpu`. Mutually exclusive with `--tp-size` > 1. See [pipeline.md](pipeline.md) |
 | `--pp-layers` | even split | Layer boundaries of the `--pp-size` split, N-1 comma-separated values: `24` gives rank 0 layers [0,24) and rank 1 [24,48). For cards of different sizes |
-| `--spec-mtp` | 0 | Verify K drafts per step from the checkpoint's own MTP head. Single-request decode (`--max-running-req 1`); Qwen3.5-MoE family and Qwen3.8-Flash-Next NVFP4 checkpoints. See [pipeline.md](pipeline.md) |
+| `--spec-mtp` | 0 | Verify K drafts per step from the checkpoint's own MTP head. Verification runs with one active decoding request; multiple active requests use ordinary batched decode. Qwen3.5-MoE family and Qwen3.8-Flash-Next NVFP4 checkpoints. See [pipeline.md](pipeline.md) |
 
 The serving context is a launch setting, not a compile-time constant. Changing
 it requires a server restart and enough KV capacity, but no FreeToken rebuild.
@@ -61,6 +64,13 @@ by `deploy/rtx5090/serve.sh`; its KV reserve follows that value unless
 `FT_KV_RESERVE_TOKENS` is explicitly set higher. Check both `/v1/models` and a
 long request after changing it. Agent clients may also cache their own model
 limits and need their configuration refreshed separately.
+
+`fair` cannot interrupt a prefill batch already running. Its millisecond budget
+measures completed scheduler service, including preparation and result handling,
+not an SSE latency deadline or GPU-kernel time alone. Smaller prefill chunks may
+reduce individual pauses but increase expert-bank traffic. Pending requests keep
+their existing FIFO admission and chunk-continuation order. See
+[RTX 5090 concurrency](rtx5090/CONCURRENCY.md) for configuration and validation.
 
 ### Choosing a GPU
 
@@ -100,6 +110,7 @@ See [models.md](models.md#moe-strategies) for what each strategy does.
 | `--moe-cache-size` / `--moe-cache-rate` / `--moe-cache-auto` | auto | GPU expert-cache size as slots / fraction of all experts / sized from free VRAM (mutually exclusive; auto is enabled by default for offload-family strategies) |
 | `--kv-reserve-tokens` | 8192 | KV token floor reserved before `--moe-cache-auto` fills experts. With the default a server holds about 8k tokens of context whatever the model allows; the startup log warns when the pool is below the model's limit and names this flag |
 | `--linear-state-cache-ratio` | 2.0 | Hybrid GDN models: GDN-state snapshots kept for prefix reuse, per running request (floor 4). This, not KV, bounds how many conversations stay reusable (measured: 2 → 4 conversations at ratio 8 on Ornith, 5 → 7 on Flash-Next — the rule differs per model); each slot is one GDN state of VRAM taken from the expert cache. See [prefix-reuse.md](prefix-reuse.md) |
+| `--linear-state-host-slots` | 0 | Pinned host RAM slots for unlocked hybrid GDN prefix snapshots evicted from the device tier. A hit copies the snapshot back into a GPU live slot; active recurrent state remains on the GPU. Uses the host pin budget and does not enlarge KV capacity. See [prefix-reuse.md](prefix-reuse.md#keeping-snapshots-in-ram-instead---linear-state-host-slots) |
 | `--prefix-disk-cache DIR` / `--prefix-disk-cache-size` | off / 32G | Hybrid GDN models (Qwen3.5-MoE, Qwen3.8-Flash-Next): write prefix-cache entries (a prompt's KV pages and the GDN snapshot at its end, prefixes of 1024+ tokens) to `DIR` while the server is idle, and read one back instead of prefilling again when a prompt starts with it and the in-memory cache no longer does -- including after a restart. Entries are keyed by the exact tokens and by the model, weights, code version and cache layout; nothing else is ever read. The size caps the directory, least recently used out first. Under `--pp-size` each rank keeps its own layers in its own sub-directory with an equal share of the size, and every rank restores together or none does. Refused with `--tp-size` > 1. Experimental: on an RTX 2060 an 8k-token prompt came back from disk in 1.2-1.3 s against 13-14 s to prefill it. See [prefix-reuse.md](prefix-reuse.md#keeping-prefixes-on-disk---prefix-disk-cache) |
 | `--kv-cache-dtype` | auto | Store the paged KV as block-quantized codes: `q8_0` (1.88x smaller) or `q4_0` (3.56x). Plain paged-attention models on `--attention-backend triton`, Flash-Next on its own `qsa_sparse` backend, or gpt-oss (both its full and its sliding-window layers; resolves to Triton by itself; use `q8_0`, `q4_0` breaks its answers); refused at startup otherwise. See [kv-cache-quant.md](kv-cache-quant.md); whether the freed VRAM buys you anything depends on your machine, see [vram-and-speed.md](vram-and-speed.md) |
 | `--prefill-chunk-budget` | 0.55 | Share of free VRAM one prefill chunk's transient may take. The engine measures that cost per token at startup, sizes `--max-prefill-length` to fit, and re-solves before every prefill against the VRAM free right then. 0 disables and the flag is used as given. Under `--pp-size` the chunk is agreed across the ranks at startup, checked once more after the `--spec-mtp` graphs are captured (it can only shrink), and then frozen, because it sizes a cross-rank message. On a card that only serves, raising it is the cheapest prefill win there is: on two RTX 3060s (Qwen3.8-Flash-Next, `--pp-size 2 --prefill-mixer-pieces 2`), 0.75 took the chunk from 3,584 to 5,120 tokens and a 25k-token prompt from 510 to 702 tok/s. See [prefill-chunk.md](prefill-chunk.md) |
@@ -130,6 +141,15 @@ See [models.md](models.md#moe-strategies) for what each strategy does.
 | `--tool-call-parser` | auto | Tool-call format; auto-inferred from the model family |
 | `--reasoning-parser` | auto | Splits chain-of-thought into `reasoning_content`; auto-inferred; `off` disables |
 | `--enable-cache-report` | off | Report prefix-cache hits in each response's usage block |
+
+Admission reserves page-rounded prompt plus requested output, with shared prefix
+pages accounted for once and running requests' remaining output protected.
+For ordinary full-token page pools (`naive`, `radix`, or `hybrid_radix`, without
+a paged sliding-window tier), a fresh request that exceeds the entire pool is
+rejected with `context_length_exceeded`; it cannot hold the queue indefinitely.
+Temporary KV, request-slot or GDN-slot pressure still waits in FIFO order.
+SWA/tiered pools keep their existing admission checks. The existing front-door
+context check and output-budget clamp remain in effect.
 
 ### Image input
 
