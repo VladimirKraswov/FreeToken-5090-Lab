@@ -67,6 +67,10 @@ def register_control_routes(
         return {"entries": entries, "next_cursor": next_cursor}
 
     from .stats import build_stats
+    from .host_memory_cache import HostMemoryCache
+    from freetoken.webui.hostmem import engine_root, host_memory
+
+    host_cache = HostMemoryCache(lambda: host_memory(engine_root()))
 
     @app.get("/v1/stats")
     async def stats():
@@ -84,8 +88,7 @@ def register_control_routes(
             doc["kai"] = kai_block(get_state())
         except Exception:  # noqa: BLE001 -- a malformed snapshot must not break /v1/stats
             doc["kai"] = None
-        # host RAM for the console; the engine's share is this process tree's PSS
-        from freetoken.webui.hostmem import engine_root, host_memory
-
-        doc["host"] = host_memory(engine_root())
+        # Large process-tree PSS reads must not stall streaming or launch one scan
+        # per desktop poll. Request counters remain a fresh event-loop snapshot.
+        doc["host"], doc["host_sample_age_s"], doc["host_refreshing"] = await host_cache.get()
         return doc
