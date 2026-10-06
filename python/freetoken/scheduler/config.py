@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 
 from freetoken.engine import EngineConfig
 
+from .policy import FairBatchPolicy
+
 
 def _get_pid_suffix() -> str:
     import os
@@ -14,6 +16,9 @@ def _get_pid_suffix() -> str:
 @dataclass(frozen=True)
 class SchedulerConfig(EngineConfig):
     max_extend_tokens: int = 8192
+    scheduler_policy: str = "prefill-first"
+    scheduler_decode_burst_ms: float = 200.0
+    scheduler_decode_burst_steps: int = 8
     cache_type: str = "radix"
     offline_mode: bool = False
     decode_log_interval: int = 40
@@ -26,6 +31,14 @@ class SchedulerConfig(EngineConfig):
 
     # networking config
     _unique_suffix: str = field(default_factory=_get_pid_suffix)
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.scheduler_policy not in ("prefill-first", "fair"):
+            raise ValueError("scheduler_policy must be 'prefill-first' or 'fair'")
+        if self.scheduler_policy == "fair" and self.tp_info.size != 1:
+            raise ValueError("the fair scheduler policy requires a single rank")
+        FairBatchPolicy(self.scheduler_decode_burst_ms, self.scheduler_decode_burst_steps)
 
     @property
     def zmq_backend_addr(self) -> str:

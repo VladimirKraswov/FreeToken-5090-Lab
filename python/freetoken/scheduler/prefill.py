@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, List, Tuple
 import torch
 from freetoken.core import Batch, Req
 from freetoken.env import ENV
+from freetoken.message import ErrorReplyMsg
 from freetoken.utils import align_down, div_ceil, init_logger
 
 from .mm import mm_chunk_end, mm_rows_after
@@ -423,6 +424,7 @@ class PrefillManager:
     )
     # --prefix-disk-cache (scheduler/prefix_disk.PrefixDiskCache), set by the scheduler
     prefix_disk: object | None = None
+    _rejected_requests: List[ErrorReplyMsg] = field(default_factory=list, init=False, repr=False)
 
     def add_one_req(self, req: UserMsg) -> None:
         self.pending_list.append(
@@ -435,6 +437,37 @@ class PrefillManager:
                 mrope_delta=req.mrope_delta,
             )
         )
+
+    def pop_rejected_requests(self) -> List[ErrorReplyMsg]:
+        rejected, self._rejected_requests = self._rejected_requests, []
+        return rejected
+
+    def _reject_impossible_request(self, req: PendingReq) -> bool:
+        cm = self.cache_manager
+        if (
+            req.chunked_req is not None
+            or getattr(cm, "swa_paged", True)
+            or getattr(cm, "cache_type", None) not in {"naive", "radix", "hybrid_radix"}
+        ):
+            return False
+        # A shared prefix still occupies pages while locked. Compare the whole sequence with
+        # the whole pool, never with transient free space or another request's reservation.
+        total = cm.num_pages * cm.page_size
+        needed = div_ceil(req.input_len + req.output_len, cm.page_size) * cm.page_size
+        if needed <= total:
+            return False
+        error = (
+            f"prompt is too long: {needed} tokens > {total} maximum "
+            f"(prompt {req.input_len} + max_tokens {req.output_len}, page-rounded KV budget); "
+            "shorten the prompt, lower max_tokens, or increase the KV cache budget"
+        )
+        self._rejected_requests.append(
+            ErrorReplyMsg(uid=req.uid, error=error, code="context_length_exceeded")
+        )
+        logger.warning(f"request {req.uid} rejected: {error}")
+        if self.stall.uid == req.uid:
+            self.stall.clear()
+        return True
 
     def schedule_next_batch(self, prefill_budget: int) -> Batch | None:
         if len(self.pending_list) == 0:
@@ -457,7 +490,11 @@ class PrefillManager:
         # once at admission, so continuation chunks (already-chunked reqs) contribute 0.
         log_new_tokens = 0
         log_cached_tokens = 0
+        consumed = 0
         for pending_req in self.pending_list:
+            if self._reject_impossible_request(pending_req):
+                consumed += 1
+                continue
             is_continuation = pending_req.chunked_req is not None
             if (
                 self.prefix_disk is not None
@@ -498,9 +535,13 @@ class PrefillManager:
                 log_new_tokens += req.extend_len
                 if not is_continuation:
                     log_cached_tokens += req.cache_handle.cached_len
+                consumed += 1
             else:
                 break  # We cannot add more requests
+        self.pending_list = chunked_list + self.pending_list[consumed:]
         if len(reqs) == 0:
+            if not self.pending_list:
+                return None
             # Nothing admitted: the head was refused and holds the whole queue behind it. The
             # scheduler retries every loop without blocking, so this is the only place a
             # queue that never moves again can be seen.
@@ -520,7 +561,6 @@ class PrefillManager:
             return None
         if self.stall.uid is not None:
             self._note_admitted(reqs)
-        self.pending_list = chunked_list + self.pending_list[len(reqs) :]
         batch = Batch(reqs=reqs, phase="prefill")
         batch.log_new_tokens = log_new_tokens
         batch.log_cached_tokens = log_cached_tokens

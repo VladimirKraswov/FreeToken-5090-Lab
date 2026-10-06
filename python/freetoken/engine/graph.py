@@ -118,7 +118,11 @@ def _determine_cuda_graph_bs(
         return []
 
     candidates = [1, 2, 4] + list(range(8, cuda_graph_max_bs + 1, 8))
-    return [bs for bs in candidates if bs <= cuda_graph_max_bs]
+    sizes = [bs for bs in candidates if bs <= cuda_graph_max_bs]
+    # The configured ceiling must stay on the graph path even between the usual buckets.
+    if sizes[-1] != cuda_graph_max_bs:
+        sizes.append(cuda_graph_max_bs)
+    return sizes
 
 
 def get_free_memory(device: torch.device) -> int:

@@ -454,6 +454,32 @@ def parse_args(
     )
 
     parser.add_argument(
+        "--scheduler-policy",
+        choices=("prefill-first", "fair"),
+        default=ServerArgs.scheduler_policy,
+        help=(
+            "Scheduling policy. 'fair' alternates one prefill batch with a bounded generation "
+            "burst, on one rank with overlap scheduling disabled. Prefill latency still depends "
+            "on --max-prefill-length; an executing batch cannot be interrupted."
+        ),
+    )
+    parser.add_argument(
+        "--scheduler-decode-burst-ms",
+        type=float,
+        default=ServerArgs.scheduler_decode_burst_ms,
+        help=(
+            "Completed generation service time per fair-policy burst in milliseconds. "
+            "The burst always runs at least one batch and can overshoot by that batch."
+        ),
+    )
+    parser.add_argument(
+        "--scheduler-decode-burst-steps",
+        type=_positive_int,
+        default=ServerArgs.scheduler_decode_burst_steps,
+        help="Maximum generation batches per fair-policy burst (MTP verification counts as one).",
+    )
+
+    parser.add_argument(
         "--decode-log-interval",
         type=_positive_int,
         default=ServerArgs.decode_log_interval,
@@ -1134,6 +1160,14 @@ def parse_args(
             kwargs["pp_split"] = split
     elif pp_layers:
         parser.error("--pp-layers needs --pp-size > 1")
+    if kwargs["scheduler_policy"] == "fair" and kwargs["tensor_parallel_size"] != 1:
+        parser.error("--scheduler-policy fair requires a single rank")
+    from freetoken.scheduler.policy import FairBatchPolicy
+
+    try:
+        FairBatchPolicy(kwargs["scheduler_decode_burst_ms"], kwargs["scheduler_decode_burst_steps"])
+    except ValueError as exc:
+        parser.error(str(exc))
     if kwargs["pp_send_ahead"] < 1:
         parser.error("--pp-send-ahead must be >= 1")
     if kwargs["pp_send_ahead"] > 1 and pp_size < 2:

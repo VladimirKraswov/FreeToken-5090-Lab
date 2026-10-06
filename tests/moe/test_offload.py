@@ -455,9 +455,42 @@ def test_adjust_config_converts_moe_cache_rate_to_cache_size(monkeypatch):
     assert is_offload_moe_strategy(config.moe_strategy)
 
 
-def test_graph_capture_reuses_warm_offload_cache_before_capture(monkeypatch):
+@pytest.mark.parametrize(
+    "max_bs, expected",
+    [(0, []), (-1, []), (1, [1]), (2, [1, 2]), (3, [1, 2, 3]),
+     (4, [1, 2, 4]), (7, [1, 2, 4, 7]), (8, [1, 2, 4, 8]),
+     (9, [1, 2, 4, 8, 9]), (16, [1, 2, 4, 8, 16])],
+)
+def test_auto_cuda_graph_sizes_cover_configured_ceiling(max_bs, expected):
+    from freetoken.engine.graph import _determine_cuda_graph_bs
+
+    assert _determine_cuda_graph_bs(None, max_bs, 32 << 30) == expected
+
+
+@pytest.mark.parametrize("sizes", [[], [1, 2], [1, 3]])
+def test_explicit_cuda_graph_sizes_keep_precedence(sizes):
+    from freetoken.engine.graph import _determine_cuda_graph_bs
+
+    assert _determine_cuda_graph_bs(sizes, 4, 32 << 30) == sizes
+
+
+@pytest.mark.parametrize("free_gib, ceiling", [(32, 160), (80, 160), (81, 256)])
+def test_auto_cuda_graph_default_ceilings_remain_unchanged(free_gib, ceiling):
+    from freetoken.engine.graph import _determine_cuda_graph_bs
+
+    sizes = _determine_cuda_graph_bs(None, None, free_gib << 30)
+    assert sizes == [1, 2, 4] + list(range(8, ceiling + 1, 8))
+
+
+@pytest.mark.parametrize(
+    "explicit_sizes, max_bs, expected_sizes",
+    [([1], None, [1]), (None, 3, [1, 2, 3]), (None, 4, [1, 2, 4])],
+)
+def test_graph_capture_reuses_warm_offload_cache_before_capture(
+    monkeypatch, explicit_sizes, max_bs, expected_sizes,
+):
     import freetoken.core as core
-    from freetoken.core import Context, Req, get_global_ctx
+    from freetoken.core import Batch, Context, Req, get_global_ctx
     from freetoken.engine.graph import GraphRunner
 
     events = []
@@ -507,13 +540,13 @@ def test_graph_capture_reuses_warm_offload_cache_before_capture(monkeypatch):
         sampling_params=None,
         cache_handle=None,
     )
-    GraphRunner(
+    runner = GraphRunner(
         stream=None,
         device=torch.device("cpu"),
         model=FakeModel(),
         attn_backend=FakeAttnBackend(),
-        cuda_graph_bs=[1],
-        cuda_graph_max_bs=None,
+        cuda_graph_bs=explicit_sizes,
+        cuda_graph_max_bs=max_bs,
         free_memory=1024,
         max_seq_len=1,
         vocab_size=3,
@@ -521,15 +554,24 @@ def test_graph_capture_reuses_warm_offload_cache_before_capture(monkeypatch):
         moe_offload_cache=FakeOffloadCache(),
     )
 
-    assert events == [
-        "reset",
+    assert events == ["reset"] + [
         "forward",
         "graph_enter",
         "forward",
         "graph_exit",
         "reset",
-        "reset",
-    ]
+    ] * len(expected_sizes) + ["reset"]
+    assert runner.graph_bs_list == expected_sizes
+    assert sorted(runner.graph_map) == expected_sizes
+    for size in range(1, expected_sizes[-1] + 1):
+        batch = Batch(reqs=[dummy_req] * size, phase="decode")
+        runner.pad_batch(batch)
+        assert runner.can_use_cuda_graph(batch)
+        assert batch.padded_size in runner.graph_map
+        assert size <= batch.padded_size <= expected_sizes[-1]
+    assert batch.padded_size == expected_sizes[-1]
+    oversized = Batch(reqs=[dummy_req] * (expected_sizes[-1] + 1), phase="decode")
+    assert not runner.can_use_cuda_graph(oversized)
 
 
 def test_nvfp4_materialize_keeps_bookkeeping_consistent_across_requests():

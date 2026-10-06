@@ -10,6 +10,7 @@ from freetoken.message import (
     BaseBackendMsg,
     BaseTokenizerMsg,
     DetokenizeMsg,
+    ErrorReplyMsg,
     PromptAdmittedMsg,
     UserMsg,
 )
@@ -25,6 +26,7 @@ class RequestStatus:
     uid: int
     input_ids: List[int]
     output_ids: List[int]
+    error: str | None = None
 
 
 class LLM(Scheduler):
@@ -99,6 +101,11 @@ class LLM(Scheduler):
                 # PromptAdmittedMsg feeds the online server's global accounting. Offline
                 # generation already owns its inputs and has no FrontendManager stats sink.
                 continue
+            if isinstance(msg, ErrorReplyMsg):
+                # Other requests may already own a scheduled batch. Drain them before raising
+                # at the generate boundary, so the next call cannot inherit leaked resources.
+                self.status_map[msg.uid].error = msg.error
+                continue
             assert isinstance(msg, DetokenizeMsg)
             status = self.status_map[msg.uid]
             if not (msg.finished and msg.next_token in self.eos_token_ids):
@@ -124,6 +131,10 @@ class LLM(Scheduler):
             self.run_forever()
         except RequestAllFinished:
             pass
+        errors = [f"request {uid}: {status.error}" for uid, status in self.status_map.items()
+                  if status.error is not None]
+        if errors:
+            raise ValueError("offline generation failed: " + "; ".join(errors))
         results: List[Dict[str, str | List[int]]] = []
         for i in range(len(prompts)):
             status = self.status_map[i]

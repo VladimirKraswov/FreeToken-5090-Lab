@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import time
 
+import pytest
 import torch
 
 from freetoken.core import SamplingParams
@@ -98,28 +99,160 @@ def test_stall_clock_off_at_zero():
     assert not any(s.refused(1, t) for t in (0.0, 1e3, 1e6))
 
 
-def test_request_larger_than_the_pool_is_reported_with_the_kv_numbers(monkeypatch):
+def test_impossible_request_is_rejected_and_next_request_is_admitted(monkeypatch):
     cm, tm, pm, log = _managers(monkeypatch)  # 64 pages x 16 = 1024 KV tokens
     pm.pending_list = [_pending(7, 100, 2000), _pending(8, 10, 4)]
-    assert pm.schedule_next_batch(512) is None
-    assert not log.warnings  # the first refusal only starts the clock
-    time.sleep(0.01)
+    batch = pm.schedule_next_batch(512)
+    assert [req.uid for req in batch.reqs] == [8]
+    assert pm.pending_list == [] and tm.available_size == 1
+    errors = pm.pop_rejected_requests()
+    assert len(errors) == 1 and errors[0].uid == 7
+    assert errors[0].code == "context_length_exceeded"
+    assert errors[0].error.startswith("prompt is too long: 2112 tokens > 1024 maximum")
+    assert "prompt 100 + max_tokens 2000" in errors[0].error
+    assert "page-rounded KV budget" in errors[0].error
+    assert pm.pop_rejected_requests() == []
     assert pm.schedule_next_batch(512) is None
     assert len(log.warnings) == 1
-    msg = log.warnings[0]
-    assert "request 7 (prompt 100 tokens, max_tokens 2000)" in msg
-    assert "holding 1 queued request(s)" in msg
-    assert "needs 2112 KV tokens" in msg and "1024 were available" in msg
-    assert "1024 free + 0 evictable" in msg and "of 1024 in the pool" in msg
-    assert "more than the whole pool" in msg and "It can never be admitted" in msg
-    assert "Nothing is running" not in msg  # not something a finishing request would fix
-    assert pm.schedule_next_batch(512) is None
-    assert len(log.warnings) == 1  # rate-limited
 
-    assert pm.abort_req(7) is None
-    assert log.infos and "request 7 aborted after" in log.infos[0]
-    assert pm.stall.uid is None
-    assert pm.schedule_next_batch(512) is not None  # request 8 goes
+
+def test_all_impossible_requests_leave_no_stalled_head_or_allocations(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    pm.pending_list = [_pending(7, 1000, 25), _pending(8, 16, 1024)]
+    pm.stall.refused(7, 0.0)
+    assert pm.schedule_next_batch(512) is None
+    assert [error.uid for error in pm.pop_rejected_requests()] == [7, 8]
+    assert not pm.runnable and pm.stall.uid is None
+    assert tm.available_size == 2 and len(cm.free_slots) == cm.num_pages
+    cm.check_integrity()
+
+
+def test_temporary_kv_pressure_keeps_fifo_and_does_not_reject(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    held_pages = cm._allocate(60)
+    pm.pending_list = [_pending(7, 100, 16), _pending(8, 10, 4)]
+    assert pm.schedule_next_batch(512) is None  # request 8 would fit, but cannot pass 7
+    assert [req.uid for req in pm.pending_list] == [7, 8]
+    assert pm.pop_rejected_requests() == [] and tm.available_size == 2
+    cm._free(cm._page_to_token(held_pages))
+    batch = pm.schedule_next_batch(512)
+    assert [req.uid for req in batch.reqs] == [7, 8]
+
+
+def test_running_output_reservations_are_temporary_pressure(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    running = _Running(20)
+    running.remain_len = 1000
+    pm.decode_manager.running_reqs = {running}
+    pm.pending_list = [_pending(7, 100, 16)]
+    assert pm.schedule_next_batch(512) is None
+    assert pm.pop_rejected_requests() == [] and [req.uid for req in pm.pending_list] == [7]
+    pm.decode_manager.running_reqs.clear()
+    assert pm.schedule_next_batch(512).reqs[0].uid == 7
+
+
+def _cache_prefix(cm, length):
+    pages = cm._allocate(length // cm.page_size)
+    cm.prefix_cache.insert_prefix(torch.arange(length, dtype=torch.int32), cm._page_to_token(pages))
+
+
+def test_shared_prefix_does_not_make_an_impossible_sequence_fit(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    _cache_prefix(cm, 800)
+    pm.pending_list = [_pending(7, 1000, 25)]
+    before = cm.prefix_cache.size_info
+    assert pm.schedule_next_batch(1024) is None
+    assert pm.pop_rejected_requests()[0].uid == 7
+    assert cm.prefix_cache.size_info == before  # no match, lock or eviction on rejection
+    assert tm.available_size == 2
+    cm.check_integrity()
+
+
+def test_exact_capacity_request_with_shared_prefix_is_admitted(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    _cache_prefix(cm, 800)
+    pm.pending_list = [_pending(7, 1000, 24)]
+    batch = pm.schedule_next_batch(1024)
+    assert batch.reqs[0].cache_handle.cached_len == 800
+    assert pm.pop_rejected_requests() == []
+
+
+def test_two_requests_sharing_prefix_do_not_double_charge_it(monkeypatch):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    _cache_prefix(cm, 800)
+    pm.pending_list = [_pending(7, 816, 16), _pending(8, 816, 16)]
+    batch = pm.schedule_next_batch(512)
+    assert [req.uid for req in batch.reqs] == [7, 8]
+    assert [req.cache_handle.cached_len for req in batch.reqs] == [800, 800]
+    assert pm.pop_rejected_requests() == []
+
+
+def test_rejection_after_chunk_does_not_drop_its_continuation(monkeypatch):
+    from freetoken.scheduler.prefill import ChunkedReq
+
+    cm, tm, pm, _ = _managers(monkeypatch)
+    pm.pending_list = [_pending(7, 40, 4), _pending(8, 100, 2000), _pending(9, 10, 4)]
+    batch = pm.schedule_next_batch(16)
+    assert len(batch.reqs) == 1 and isinstance(batch.reqs[0], ChunkedReq)
+    assert [req.uid for req in pm.pending_list] == [7, 9]
+    assert pm.pending_list[0].chunked_req is batch.reqs[0]
+    assert [error.uid for error in pm.pop_rejected_requests()] == [8]
+
+
+@pytest.mark.parametrize("cache_type,swa_paged", [("radix", True), ("swa_radix", False), ("owned", False)])
+def test_tiered_or_unknown_pool_keeps_existing_admission_policy(monkeypatch, cache_type, swa_paged):
+    cm, tm, pm, _ = _managers(monkeypatch)
+    cm.cache_type, cm.swa_paged = cache_type, swa_paged
+    pm.pending_list = [_pending(7, 100, 2000)]
+    assert pm.schedule_next_batch(512) is None
+    assert pm.pop_rejected_requests() == [] and [req.uid for req in pm.pending_list] == [7]
+
+
+def test_offline_rejection_drains_valid_batch_and_next_generate_reuses_resources(monkeypatch):
+    from types import SimpleNamespace
+
+    from freetoken.llm import LLM
+    from freetoken.message import DetokenizeMsg
+
+    cm, tm, pm, _ = _managers(monkeypatch, num_pages=4)
+    llm = LLM.__new__(LLM)
+    llm.prefill_manager = pm
+    llm.prefill_budget = 512
+    llm.engine = SimpleNamespace(prefill_chunk_now=lambda budget: budget)
+    llm.tokenizer = SimpleNamespace(decode=lambda ids: " ".join(map(str, ids)))
+    llm.eos_token_ids = set()
+    llm.send_result = llm.offline_send_result
+    finished = []
+
+    def run_without_model():
+        while True:
+            for msg in llm.offline_receive_msg(blocking=not pm.runnable):
+                # Exercise the final admission guard independently of the front-door clamp.
+                pm.add_one_req(msg)
+            batch = llm._schedule_prefill_batch()
+            if batch is None:
+                continue
+            cm.allocate_paged(batch.reqs)
+            for req in batch.reqs:
+                req.complete_one()
+                req.append_host(torch.tensor([77], dtype=torch.int32))
+                cm.cache_req(req, finished=True)
+                tm.free(req.table_idx)
+                llm.offline_send_result([DetokenizeMsg(uid=req.uid, next_token=77, finished=True)])
+                finished.append(req.uid)
+
+    llm.run_forever = run_without_model
+    with pytest.raises(ValueError, match="request 0: prompt is too long: 96 tokens > 64"):
+        llm.generate([list(range(80)), list(range(16))], SamplingParams(max_tokens=1))
+    assert finished == [1] and llm.status_map[1].output_ids == [77]
+    assert not pm.runnable and tm.available_size == 2
+    cm.check_integrity()
+
+    assert llm.generate([list(range(16))], SamplingParams(max_tokens=1)) == [
+        {"text": "77", "token_ids": [77]}
+    ]
+    assert finished == [1, 0] and tm.available_size == 2
+    cm.check_integrity()
 
 
 def test_no_request_slot_then_admitted_logs_the_wait(monkeypatch):

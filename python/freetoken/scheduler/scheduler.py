@@ -35,6 +35,7 @@ from .config import SchedulerConfig
 from .decode import DecodeManager
 from .io import SchedulerIOMixin
 from .mm import cut_image_spans, plan_mm_batch
+from .policy import FairBatchPolicy
 from .prefill import ChunkedReq, PrefillManager
 from .status import SchedulerStatusReporter
 from .table import TableManager
@@ -74,7 +75,17 @@ class Scheduler(SchedulerIOMixin):
     def __init__(self, config: SchedulerConfig):
         from freetoken.engine import Engine
 
+        self._fair_policy = (
+            FairBatchPolicy(config.scheduler_decode_burst_ms, config.scheduler_decode_burst_steps)
+            if config.scheduler_policy == "fair" else None
+        )
         self.engine = Engine(config)
+        if self._fair_policy is not None:
+            logger.info_rank0(
+                f"fair scheduler: one prefill batch, then generation budget "
+                f"{config.scheduler_decode_burst_ms:g} ms / "
+                f"{config.scheduler_decode_burst_steps} batches, checked after completion; overlap disabled"
+            )
 
         # use another stream to overlap metadata processing with computation
         self.device = self.engine.device
@@ -359,6 +370,8 @@ class Scheduler(SchedulerIOMixin):
         ):
             self._execute_pending_rebuild()
 
+        fair_policy = getattr(self, "_fair_policy", None)
+        started = time.monotonic() if fair_policy is not None else 0.0
         forward_input = self._schedule_next_batch()
         ongoing_data = None
         if forward_input is not None:
@@ -369,6 +382,12 @@ class Scheduler(SchedulerIOMixin):
             self._wait_nothing_scheduled()
 
         self._process_last_data(ongoing_data)
+        if fair_policy is not None and forward_input is not None:
+            batch = forward_input.batch
+            fair_policy.completed(
+                generation=not batch.is_prefill or batch.spec_verify,
+                elapsed_seconds=time.monotonic() - started,
+            )
         self._flush_abort_acks()
 
     @torch.inference_mode()
@@ -379,7 +398,8 @@ class Scheduler(SchedulerIOMixin):
         # next batch's allocate_paged cannot corrupt the in-flight graph replay. DSV4 overlaps.
         # A verify step's successor depends on its result (accepted length, new drafts), so
         # speculative decoding runs the non-overlapped loop.
-        if ENV.DISABLE_OVERLAP_SCHEDULING or _spec_k(self) > 0:
+        # The fair policy charges completed service time, never an asynchronous launch.
+        if ENV.DISABLE_OVERLAP_SCHEDULING or _spec_k(self) > 0 or self._fair_policy is not None:
             with self.engine_stream_ctx:
                 self.engine.stream.wait_stream(self.stream)
                 while True:
@@ -1006,8 +1026,7 @@ class Scheduler(SchedulerIOMixin):
                 f"an image of {hi - lo} tokens does not fit one prefill chunk (--max-extend-tokens {self.prefill_budget}, or the sliding-window pool's share of it): its earlier rows attend within the first part only"
             )
 
-    def _schedule_next_batch(self) -> ForwardInput | None:
-        # TODO: support other policies: e.g. DECODE first
+    def _schedule_prefill_batch(self) -> Batch | None:
         # Re-solve the chunk against the VRAM free right now, not the VRAM that was free at
         # boot: on a machine that is also a desktop, those differ by hundreds of MB within
         # minutes. Only when there is something to prefill -- the query is cheap but not free,
@@ -1016,10 +1035,30 @@ class Scheduler(SchedulerIOMixin):
         if self.prefill_manager.pending_list:
             budget = self.engine.prefill_chunk_now(budget)
         batch = self.prefill_manager.schedule_next_batch(budget)
-        if batch is None and _spec_k(self) > 0:
-            batch = self._schedule_spec_batch()
-        if batch is None:
-            batch = self.decode_manager.schedule_next_batch()
+        pop_rejected = getattr(self.prefill_manager, "pop_rejected_requests", None)
+        if pop_rejected is not None and (rejected := pop_rejected()):
+            self.send_result(rejected)
+        return batch
+
+    def _schedule_generation_batch(self) -> Batch | None:
+        batch = self._schedule_spec_batch() if _spec_k(self) > 0 else None
+        return batch if batch is not None else self.decode_manager.schedule_next_batch()
+
+    def _schedule_next_batch(self) -> ForwardInput | None:
+        policy = getattr(self, "_fair_policy", None)
+        generation_first = policy is not None and policy.prefer_generation(
+            prefill_pending=self.prefill_manager.runnable,
+            generation_runnable=self.decode_manager.runnable,
+        )
+        # Scheduling admits requests and reserves their resources: choose before calling it.
+        if generation_first:
+            batch = self._schedule_generation_batch()
+            if batch is None:
+                batch = self._schedule_prefill_batch()
+        else:
+            batch = self._schedule_prefill_batch()
+            if batch is None:
+                batch = self._schedule_generation_batch()
         if batch is None:
             return None
         self._refused_backoff = 0.0

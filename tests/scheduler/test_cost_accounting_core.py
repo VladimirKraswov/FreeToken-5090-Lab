@@ -270,6 +270,20 @@ def test_offline_handler_ignores_online_prompt_accounting_signal():
     LLM.offline_send_result(offline, [PromptAdmittedMsg(uid=1, prompt_tokens=10)])
 
 
+def test_offline_handler_records_terminal_errors_without_interrupting_other_replies():
+    from freetoken.llm.llm import LLM, RequestStatus
+
+    offline = SimpleNamespace(
+        status_map={uid: RequestStatus(uid, [10], []) for uid in (1, 2)}, eos_token_ids=set(),
+    )
+    LLM.offline_send_result(offline, [
+        ErrorReplyMsg(uid=1, error="prompt is too long", code="context_length_exceeded"),
+        DetokenizeMsg(uid=2, next_token=77, finished=True),
+    ])
+    assert offline.status_map[1].error == "prompt is too long"
+    assert offline.status_map[2].error is None and offline.status_map[2].output_ids == [77]
+
+
 def test_frontend_manager_generates_unique_uuid_instance_ids():
     config = SimpleNamespace()
     first = FrontendManager(config=config, send_tokenizer=None, recv_tokenizer=None)
