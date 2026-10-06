@@ -128,13 +128,67 @@ def one(base, tokens, index, barrier, pad, nonce, quality=False):
 def monitor_stats(base, samples, stop):
     while not stop.is_set():
         try:
+            poll_start = time.monotonic()
             snapshot = get(base, "/v1/stats")
             samples.append({"t": time.monotonic(), "active": snapshot["requests"]["active"],
                             "kv": snapshot.get("kv"), "mamba": snapshot.get("mamba"),
-                            "vram": snapshot.get("vram_bytes")})
+                            "vram": snapshot.get("vram_bytes"),
+                            "poll_start": poll_start, "poll_end": time.monotonic(),
+                            "requests": snapshot["requests"],
+                            "instance_id": snapshot.get("instance_id")})
         except Exception as error:
             samples.append({"error": str(error)})
         stop.wait(.5)
+
+
+
+def steady_generation(samples, before, rows):
+    """Counter rate while every prompt is consumed and every request is unfinished.
+
+    Discard five seconds after every stream first delivers nonempty output. Use a
+    contiguous window with <=3s HTTP poll latency and <=5s between samples.
+    This is aggregate frontend token accounting, independent of SSE text chunks.
+    """
+    if not rows or any("error" in row for row in rows):
+        return None
+    initial = before["requests"]
+    prompt_total = initial["prompt_tokens_total"] + sum(row["usage"]["prompt_tokens"] for row in rows)
+    count = len(rows)
+    first_ready = max(row["first"] for row in rows)
+    groups, current = [], []
+    for sample in samples:
+        requests = sample.get("requests", {})
+        valid = (sample.get("instance_id") == before["instance_id"] and
+                 requests.get("active") == count and
+                 requests.get("completed") == initial["completed"] and
+                 requests.get("prompt_tokens_total") == prompt_total and
+                 0 <= sample.get("poll_end", 0) - sample.get("poll_start", -2) <= 3)
+        valid = valid and sample["t"] >= first_ready + 5
+        if not valid or (current and sample["t"] - current[-1]["t"] > 5):
+            if current:
+                groups.append(current)
+                current = []
+        if valid:
+            current.append(sample)
+    if current:
+        groups.append(current)
+    if not groups:
+        return None
+    window = max(groups, key=lambda group: group[-1]["t"] - group[0]["t"])
+    left, right = window[0], window[-1]
+    span = right["t"] - left["t"]
+    delta = right["requests"]["completion_tokens_total"] - left["requests"]["completion_tokens_total"]
+    if span < 5 or delta < 32 or any(
+            b["requests"]["completion_tokens_total"] < a["requests"]["completion_tokens_total"]
+            for a, b in zip(window, window[1:])):
+        return None
+    return {"elapsed_s": span, "completion_tokens": delta, "aggregate_tps": delta / span,
+            "per_active_request_tps": delta / span / count, "active_requests": count,
+            "first_sample": left, "last_sample": right, "samples": len(window),
+            "warmup_excluded_s": 5, "max_poll_latency_s": 3, "max_sample_gap_s": 5,
+            "aggregate_tps_lower_bound": delta / (right["poll_end"] - left["poll_start"]),
+            "aggregate_tps_upper_bound": (delta / (right["poll_start"] - left["poll_end"])
+                                           if right["poll_start"] > left["poll_end"] else None)}
 
 
 def run_wave(args, pad, count):
@@ -167,6 +221,7 @@ def run_wave(args, pad, count):
         "before": before, "after": get(args.base, "/v1/stats"),
     }
     after = report["after"]
+    report["steady_generation"] = steady_generation(samples, before, rows)
     tokens = sum(row["usage"]["completion_tokens"] for row in good)
     prompts = sum(row["usage"]["prompt_tokens"] for row in good)
     counters_ok = (
@@ -193,6 +248,7 @@ def run_wave(args, pad, count):
         for row in rows
     ]), flush=True)
     if (len(good) != count or not counters_ok or not cold_usage_ok or
+            (getattr(args, "require_steady", False) and report["steady_generation"] is None) or
             any(not row["fixed_output_ok"] or row.get("quality_ok") is False for row in good)):
         raise RuntimeError("Benchmark completion, accounting, cold usage or quality check failed; stop further requests")
 
@@ -206,6 +262,7 @@ def main():
     parser.add_argument("--counts", default="1,2,3")
     parser.add_argument("--tokens", type=int, default=256)
     parser.add_argument("--quality", action="store_true")
+    parser.add_argument("--require-steady", action="store_true", help="Require a valid post-prefill counter window")
     parser.add_argument("--corpus-seed", required=True)
     parser.add_argument("--repeat", type=int, required=True)
     args = parser.parse_args()

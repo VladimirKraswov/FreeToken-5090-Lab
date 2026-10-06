@@ -14,6 +14,7 @@
 - `data/model-manifest.json`: pinned checkpoint filenames, sizes and Hugging Face metadata.
 - `data/runtime-versions.json`: measured Python package inventory.
 - `data/strata-results-20261005.json`: controlled Strata-inspired trials, exclusions and restoration evidence.
+- `data/concurrency-results-20261006.json`: paired concurrent serving, steady counter windows and correctness evidence.
 - `data/research-index.json`: dated branch/issue discovery references.
 - `data/tests/`: regression failures before fixes and passing CPU/GPU test results.
 
@@ -83,6 +84,37 @@ whole-wave aggregate tokens/s and before/after counters. A zero cached-token
 field establishes a cold result only when cache reporting is enabled. Natural
 JSON responses have different output lengths from the fixed-work probe; compare
 their correctness separately from fixed-work throughput.
+
+### Sustained generation after prefill
+
+For longer fixed output, `--require-steady` requires a measured window from
+frontend cumulative completion-token counters. The window starts at least five
+seconds after every stream has delivered its first nonempty output and all
+prompt tokens have been accounted for, while all C requests
+remain unfinished and active. It requires at least five seconds and 32 generated
+tokens, a contiguous sequence of polls no more than five seconds apart, and
+individual HTTP poll latency at most three seconds. Prompt accounting alone marks admission and does not prove completed prefill;
+requiring output from every stream provides that barrier. The first/last snapshots and
+counts are saved for independent arithmetic verification. Poll start/end times
+also yield lower/upper rate bounds, since a counter was read somewhere within
+that HTTP interval; slow control endpoints make these bounds wider. These bounds can
+leave no usable window on a short response, so the default 256-token probe does
+not require one.
+
+```bash
+python benchmarks/rtx5090/concurrency_fixed.py \
+  --base http://127.0.0.1:1919 --profile control-steady-r1 \
+  --corpus-seed concurrency-steady-v1 --repeat 1 \
+  --lengths 1024 --counts 1,2,3 --tokens 1024 --require-steady \
+  --out outputs/concurrency/control/steady/r1
+```
+
+`aggregate_tps` counts all active sessions together. Dividing it by C gives
+`per_active_request_tps`, an equal-share average rather than proof of identical
+per-session service. This metric excludes the initial prefill and parser-induced
+SSE buffering; complete-wave latency still includes all scheduling and input
+costs. Keep the steady corpus separate from the 256-token corpus, since output
+budget is not part of the version-1 corpus nonce.
 
 ### Delayed arrivals and conversation follow-ups
 

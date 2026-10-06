@@ -51,6 +51,31 @@ class ProbeTests(unittest.TestCase):
         wrong = self.call(sse(json.dumps({**answer, "sum": 46}), 17, finish="stop"), quality=True)
         self.assertFalse(wrong["quality_ok"])
 
+    def test_steady_rate_excludes_prefill_and_completed_requests(self):
+        before = {"instance_id": "same", "requests": {"completed": 10, "prompt_tokens_total": 100}}
+        rows = [{"first": 2, "usage": {"prompt_tokens": 50}}, {"first": 3, "usage": {"prompt_tokens": 50}}]
+        samples = [{"t": t, "poll_start": t - .1, "poll_end": t, "instance_id": "same",
+                    "requests": {"active": 2, "completed": 10, "prompt_tokens_total": 200 if t >= 3 else 150,
+                                 "completion_tokens_total": t * 60}} for t in range(20)]
+        samples[-1]["requests"]["completed"] = 11
+        result = fixed.steady_generation(samples, before, rows)
+        self.assertEqual(result["first_sample"]["t"], 8)
+        self.assertEqual(result["last_sample"]["t"], 18)
+        self.assertEqual(result["aggregate_tps"], 60)
+        self.assertEqual(result["per_active_request_tps"], 30)
+        for sample in samples:
+            sample["instance_id"] = "restarted"
+        self.assertIsNone(fixed.steady_generation(samples, before, rows))
+
+    def test_steady_rate_rejects_counter_reversal(self):
+        before = {"instance_id": "same", "requests": {"completed": 0, "prompt_tokens_total": 0}}
+        rows = [{"first": 0, "usage": {"prompt_tokens": 50}}]
+        samples = [{"t": t, "poll_start": t - .1, "poll_end": t, "instance_id": "same",
+                    "requests": {"active": 1, "completed": 0, "prompt_tokens_total": 50,
+                                 "completion_tokens_total": t * 60}} for t in range(20)]
+        samples[10]["requests"]["completion_tokens_total"] = 0
+        self.assertIsNone(fixed.steady_generation(samples, before, rows))
+
     def test_contaminated_accounting_is_saved_and_rejected(self):
         before = {"instance_id": "same", "requests": {
             "active": 0, "completed": 0, "prompt_tokens_total": 0, "completion_tokens_total": 0}}
